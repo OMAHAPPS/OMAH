@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <title>Home</title>
+    <style>
+/* ── FOUNDATION ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#050508;color:#ede8e0;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased}
+#app{height:100%;position:relative;overflow:hidden}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea{font-family:inherit;border:none;outline:none;background:none;color:inherit}
+::-webkit-scrollbar{width:0;height:0}
+
+/* ── TYPE ── */
+.fd{font-family:'Playfair Display',serif}
+.fs{font-family:'DM Serif Display',serif}
+
+/* ── LAYOUT ── */
+.view{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;overflow:hidden;animation:viewIn .42s cubic-bezier(.22,.61,.36,1) both}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+/* ── INTERACTIONS ── */
+.tap{cursor:pointer;transition:transform .12s ease,opacity .12s ease;user-select:none;-webkit-user-select:none}
+.tap:active{transform:scale(.91)!important;opacity:.72!important}
+
+/* ── ANIMATIONS ── */
+@keyframes viewIn      {from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes emerge      {from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn      {from{opacity:0}to{opacity:1}}
+@keyframes orbIn       {from{opacity:0;transform:scale(.55)}to{opacity:1;transform:scale(1)}}
+@keyframes msgPop      {from{opacity:0;transform:translateY(6px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes throb       {0%,100%{opacity:.42}50%{opacity:1}}
+@keyframes drift       {0%,100%{transform:translateY(0) rotate(0deg)}40%{transform:translateY(-10px) rotate(.6deg)}75%{transform:translateY(4px) rotate(-.3deg)}}
+@keyframes speak       {0%,100%{transform:scale(1.03)}50%{transform:scale(1.15)}}
+@keyframes xpFill      {from{width:0%}}
+@keyframes dotBlink    {0%,80%,100%{transform:scale(0);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes effBurst    {0%{transform:scale(1);opacity:1}60%{transform:scale(1.6);opacity:.5}100%{transform:scale(2.4);opacity:0}}
+@keyframes storyPulse  {0%,100%{box-shadow:0 0 0 0 var(--sc)}50%{box-shadow:0 0 0 4px var(--sc)}}
+@keyframes heartbeat   {0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.06)}}
+@keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
+</style>
+</head>
+<body>
+    <canvas id="cv"></canvas>
+    <span id="realmElem" style="display: none;"><%= user.userRealm %></span>
+
+  <div class="view" style="background:linear-gradient(180deg,rgba(5,5,8,.55) 0%,rgba(5,5,8,.88) 40%);">
+           <!--! COVER DIV -->
+          
+           
+
+            <!--todo ///// TOP BAR ////// -->
+
+            <div style="padding:14px 16px 0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+                  <div>
+                     <div class="fd" style="font-size: 17px; font-weight: 700; color:rgba(237,232,224,.88);">
+                        <%= user.userName %>
+                        
+                     </div>
+                     <div <% /* eslint-disable-next-line css-porpertyvalueexpected */ %> style="font-size: 9px; color: <%= user.userColor %>; letter-spacing: 1px; margin-top: 1px; opacity: 0.7;">
+                        Newcomer · 0 XP
+                     </div>
+                  </div>
+                  <div style="display: flex; gap: 6px; align-items: center;">
+                      
+                       <% const userName = user.userName %>
+                       <% const letter = userName.slice(0,1) %>
+                      <settings onclick="profile()" class="tap" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .08); color: #C04848; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <span id="letter-upp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;" ><%= letter %></span>
+                      </settings>
+                  </div>
+            </div>
+
+            <!--todo ////// HUMANOID PLUS AI PROMPTING //// -->
+
+    <div class="humanoid-container" style="padding: 8px 18px 0; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; background-color: none;">
+
+               <!-- RENDERED BY JAVASCRIPT ACCORDING TO USER DATA -->
+
+                
+    </div>
+
+      <!--todo /////// TABS //////// -->
+
+    <div class="navbar" style="display: flex; justify-content: space-around; border-bottom: 1px solid rgba(255,255,255,.05); flex-shrink: 0; padding:4px 16px 0;margin-top:12px">
+
+               <!-- NAVBAR OPTIONS RENDERED IN JAVASCRIPT -->
+
+    </div>
+
+    <!--todo ////// FEED  ////// -->
+
+    <div id="scroll-container" class="scroll" style= "flex:1; padding:14px 14px 80px; position: relative;">
+      
+                         <!--* ////// POSTS ///// -->
+      
+      <!--! IF NO POSTS DISPLAY THIS MESSGAE -->
+        
+        <% if (posts.length == 0) { %>
+
+          <div class="no-post" style="display: block; text-align: center; padding:40px 0; color: rgba(237,232,224,.22); font-size: 13px;">No Posts yet. Be the first to Share a post.</div>
+          
+ 
+        <% } else { %>
+
+          <% posts.map((post) => { %>
+
+      <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32)"> 
+               <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
+                          
+                    <div style="flex:1">
+                         <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                                  <%= post.userName %> 
+                                  <% if (post.userName == user.userName) { %>
+                                    <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                    <% } else { %>
+                                      <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                  <% } %>
+                         </div>
+                               <% const timestamp = post.createdAt %>
+                               <% const diff = new Date() - new Date(timestamp) %>
+                               <% const daysPast = Math.floor( (diff / 86400000) ) %>
+                               <% const hoursPast = Math.floor( (diff / 3600000) ) %>
+                               <% const minutesPast = Math.floor( (diff / 60000) ) %>
+
+                               <% if (daysPast > 0) { %>
+                                <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
+                                <% } else if (hoursPast > 0) { %>
+                                  <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
+                                  <% } else if (minutesPast > 0) { %>
+                                    <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
+                                    <% } else if (minutesPast == 0) { %>
+                                      <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
+                                   <% } %>
+                   </div>
+                         
+               </div>
+  
+               <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px"><%= post.post %></p>
+  
+               <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                    <button <% /* eslint-disable-next-line css-propertyvalueexpected */ %> onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
+                         ❤️<%= post.likes %>
+                    </button>
+                    <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
+                    <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
+                    <div style="margin-left:auto">
+                        
+                    </div>
+                  </div>
+                </div> 
+                
+                <% }) %>
+                
+                <% } %>
+                
+      <!--! ELSE MAP POSTS WITH USER INFO FROM DB BELOW  -->
+
+         
+      
+     
+      <!--todo ////////////    USE LOGIC TO POPULATE THIS SCROLL CONTAINER AND CHANGING TAB TOGGLE AND PAGE TO BE VISIBLE -->
+      
+              <!--* ////// MESSAGES /////// -->
+              
+              <div id="inbox-text" style="display: none; top: 0; font-size: 9px; color: rgba(237,232,224,.26); letter-spacing: 2px; margin-bottom: 10px;">INBOX</div>   
+             
+              <!-- ! MAP ALL RECENT MESSAGES BELOW -->
+              
+              <!-- <button class="messages" style=" width: 100%; text-align: left; display: none; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 9px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); animation:emerge .4s .6s ease-out both"> 
+                
+                <div class="tap" style="position: relative; height: 32px; width: 32px; border-radius: 50%; overflow: hidden; background-color: rgba(255, 0, 0, .2); border: .5px solid red; display: flex; justify-content: center; align-items: center;"><p style="font-size: 10px; color: red; font-weight: 600;">M</p></div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                    <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.82)">Malik</span>
+                    <span style="font-size:9px;color:rgba(237,232,224,.24)">34min</span>
+                  </div>
+                  <div style="font-size: 11px; color: rgba(237,232,224,.33); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                       where have you been bro inania avnaaoiab fniana
+                     </div>
+                     <div style="display:flex;align-items:center;gap:5px;margin-top:3px">
+                          <div style="width:5px;height:5px;border-radius:50%;background: purple; opacity: .7;"></div>
+                          <span style="font-size:9px;color:rgba(237,232,224,.24)">Observatory · Gearing up</span>
+                        </div>
+                   </div>
+      
+                  </button>    -->
+                  
+                  <!-- * /////  ROOMS //////// -->
+                  
+                
+                  <h2 id="comment" style="display: none; font-size: 12px; color:rgba(237,232,224,.55); position: absolute; top: 30%; left: 50%; transform: translate(-50%);">This feature will be available soon</h2>
+ 
+              <!-- <button onclick="" class="rooms-cont" style="display: none; width: 100%; text-align: left; padding: 16px;border-radius:18px;margin-bottom:10px; background: #C8A86E10; border: 1px solid #C8A86E22;animation:emerge .4s ease-out both">
+
+
+
+                   <div style="font-size:10px;font-weight:600;color: red; letter-spacing: 2px; margin-bottom: 10px">LIVE ROOMS · POWERS ACTIVE</div>
+                      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                             
+                              <div style="display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07)">
+                                  .
+                                  <span style="font-size: 11px; color:rgba(237,232,224,.55)">The Watch Party · 150</span>
+                              </div>
+                              
+                      </div>
+              </button>    -->
+
+
+
+
+   </div> 
+
+
+   <!-- todo ///// SHARE SOMETHING  -->
+
+   <div class="sharePost" style="position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
+         
+      <button onclick="" id="share-link" class="tap" style="width: 100%; padding: 15px 10px; border-radius: 14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap:10px;">
+          <!-- ! RENDERED IN JAVASCRIPT -->
+      </button>
+
+    </div>
+    
+    <!-- TODO ///////  VIEW POST /////// -->
+
+    <div class="view" id="view-to-post" style="display: none; background:rgba(5,5,8,.92)">
+      <div style="padding: 13px 16px;border-bottom:1px solid rgba(255,255,255,.05); display: flex; align-items:center; gap:10px; flex-shrink:0">
+
+          <button onclick="back()" class="back" style="padding: 7px 14px; border-radius: 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.6)">
+            ✕ Cancel
+          </button>
+          <div class="fd" style="flex:1;font-size:16px;font-weight:700;color:rgba(237,232,224,.8)">
+            Write
+          </div>
+          <!-- ! change this to a form later -->
+          <form action="/post" method="post">
+            <input name="userid" value="<%= user._id %>" type="text" style="display: none;">
+            <input name="userrealm" value="<%= user.userRealm %>" type="text" style="display: none;">
+            <input id="post-input-elem" name="poststring" type="text" style="display: none;">
+             
+          <button type="submit" id="post-submit-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="tap" style="display: none; padding: 8px 20px;border-radius:12px;font-size:12px;font-weight:600;background: <%= user.userColor %>18;border: 1px solid <%= user.userColor %>52;color: <%= user.userColor %>;">Share</button>
+          </form>
+      </div>
+    <div style="padding:18px 16px;flex:1;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <!--todo EMPTY SPACE FOR BREATHER  -->
+      </div>
+
+      <div style="display:flex; align-items: center; gap:10px">
+         <div>
+            <div style="font-size:13px;font-weight:600;color:rgba(237,232,224,.8)"><%= user.userName %></div>
+            <div style="font-size:10px;color:rgba(237,232,224,.3)">writing to The <%= user.userRealm %></div>
+        </div>
+      </div>
+      <textarea id="post-body" placeholder="Say something real..." maxlength="500" style="flex:1;min-height:160px;padding:16px; border-radius: 18px; font-size: 15px; line-height: 1.72; resize:none; color:rgba(237,232,224,.82); background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07)"></textarea>
+      <div style="text-align:right;font-size:10px;color:rgba(237,232,224,.2)">🔒 Stays within The <%= user.userRealm %></div>
+    </div>
+  </div>
+
+  <!-- todo /////////  VIEW AI ///// -->
+  
+    <div class="view" id="ai-container" style="display: none; background: black;">
+        <div id="ai-nav" style="padding: 13px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,.05)">
+            <button onclick="aiCancel()" class="tap" style="padding: 7px 14px; border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.45)">← Back</button>
+            <div style="flex: 1; text-align: center;">
+              <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="fd" style="font-size: 15px; font-weight: 700; letter-spacing: 2px;color: <%= user.userColor %>;"><%= user.aiName %></div>
+              <div id="dot" style="display:flex;align-items:center;justify-content:center;gap: 5px;margin-top:2px">
+                <span class="span-head" style="font-size:9px;color:rgba(237,232,224,.3)">remembers you · The <%= user.userRealm %></span>
+              </div>
+            </div>
+            <button onclick="aiClear()" class="tap" style="padding:7px 10px;border-radius: 10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);font-size:11px;color:rgba(237, 232, 224, 0.87)">clear</button>
+        </div>
+         <div id="object-ai-cont" style="padding:28px 0; display: flex; flex-direction: column;align-items:center;flex-shrink:0; transition: display 5s ease-in-out;">
+
+               <div id="ai-humanoid" style="animation:orbIn .6s ease-out both"></div>
+               <div style="margin-top: 42px; text-align: center; padding: 0 28px; max-width:320px; animation:fadeIn .8s .35s both">
+                  <p class="fs" style="font-size:15px;color:rgba(237,232,224,.48);font-style: italic; line-height:1.78;margin-bottom:20px">"I've been thinking about what you said."</p>
+                  <div style="display:flex;flex-direction:column;gap:7px">
+                      <button <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="tap" style="padding:10px 16px;border-radius:14px;text-align:left; background: <%= user.userColor %>0d;border:1px solid <%= user.userColor %>1e;font-size:12px;color:rgba(237,232,224,.46)">"What should I focus on right now?"</button>
+                  </div>
+               </div>
+        </div>
+        <!-- ! ///// TOP BAR ////// -->
+
+        <div id="ai-scroll" class="scroll" style="border-color: #C04848; padding: 12px 16px 8px;display: flex;flex-direction: column; gap: 10px; flex: 1; ">
+           
+           <div id="sen-to-ai-cont" style="display: flex; justify-content: flex-end; gap:8px;align-items:flex-end; animation: msgPop .3s ease-out both">
+
+             <div id="send-to-ai-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="max-width:78%;padding:11px 15px;font-size:13px;line-height:1.68;border-radius: 16px 16px 4px 16px;background: rgba(255,255,255,.05); color: <%= user.userColor %>;border: 1px solid rgba(255,255,255,.07)"></div>
+
+             <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width: 24px;height: 24px; border-radius: 50%;flex-shrink:0; background: <%= user.userColor %>20; border: 1px solid <%= user.userColor %>45; display:flex;align-items: center; justify-content: center;font-size: 11px; color: <%= user.userColor %>;">
+              A
+            </div>
+
+
+           </div>
+           <div id="ai-response-cont" style="display: none; gap:8px;align-items:flex-end; animation: msgPop .3s ease-out both">
+             <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width:24px;height:24px;border-radius:50%;background: <%= user.userColor %>20; border: 1px solid <%= user.userColor %>45; display:flex;align-items:center;justify-content:center;font-size:11px">
+              ⚡
+            </div>
+               <div style="padding:12px 16px;border-radius:4px 16px 16px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07)">
+                  <div style="display:flex;gap:4px">
+                     <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width:6px;height:6px;border-radius:50%;background: <%= user.userColor %>; animation: dotBlink 1.2s 1.2s ease-in-out infinite">
+                     </div>
+                     <span  id="input-to-dis-result" style="font-size: 16px; color: whitesmoke;"></span>
+                  </div>
+               </div>
+           </div>
+  
+    <div style="padding:10px 14px 10px; border-top:1px solid rgba(255,255,255,.05); display:flex;gap:8px;flex-shrink:0;background:rgba(5,5,8,.8);">
+       <input id="ai-in" type="text" placeholder="Speak to Kaze..." maxlength="400"
+        style="flex:1;padding:12px 16px;border-radius:14px;font-size:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)"
+        onkeydown=""/>
+      <button id="submit-to-ai" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> onclick="sendAI()" class="tap" style="display: none; padding:12px 18px;border-radius:14px;font-size:16px;font-weight:700;background: <%= user.userColor %>20; border:1px solid <%= user.userColor %>45; color: <%= user.userColor %>;">→</button>
+    </div> 
+  
+
+  <!-- todo //////   VIEW PROFILE ///// -->
+
+  <div class="view" id="profile-cont" style="display: none; background:rgba(5,5,8,.92)">
+
+    <div style="padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; gap:10px; flex-shrink: 0;">
+      <button onclick="cancel()" class="tap" style="padding: 7px 14px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); font-size: 12px; color: rgba(237,232,224,.45)">
+        ← Back
+      </button>
+      <div class="fd" style="flex:1;font-size:16px;font-weight:700;color:rgba(237,232,224,.8)">My Aura</div>
+    </div>
+
+    <div class="scroll" id="profile-scroll" style="flex: 1; padding: 20px 16px">
+
+      <!--! Identity + Character -->
+      <div style="text-align: center; margin-bottom: 26px; animation:emerge .5s ease-out both">
+        <div id="profile-humanoid" style="display:flex;justify-content:center;margin-bottom:14px;animation:orbIn .6s ease-out both">
+          
+        </div>
+
+        <div style="margin-top:30px;margin-bottom:4px">
+          <div class="fd" style="font-size:24px;font-weight:700;color:#ede8e0; margin-block: 30px;"><%= user.userName %></div>
+          
+        </div>
+        
+      <!-- Stats grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; animation: emerge .5s .06s ease-out both">
+      
+         <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
+            <div style="font-size: 22px; margin-bottom: 6px;">
+              ⚡
+            </div>
+            <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
+              0
+            </div>
+            <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
+              XP
+            </div>
+         </div>
+         <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
+            <div style="font-size: 22px; margin-bottom: 6px;">
+              ✅
+            </div>
+            <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
+              0
+            </div>
+            <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
+              Quests
+            </div>
+         </div>
+         <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
+            <div style="font-size: 22px; margin-bottom: 6px;">
+              📝
+            </div>
+            <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
+              0
+            </div>
+            <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
+              Posts
+            </div>
+         </div>
+
+      </div>
+      
+     
+      <div style="display: flex; flex-direction: column; gap: 8px; animation: emerge .5s .2s ease-out both">
+        <a href="/main" class="tap" style="text-decoration: none; padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
+          ✏️ Change Realm
+        </a>
+        <a href="/auth/logout" class="tap" style="text-decoration: none; padding: 13px; border-radius: 14px; font-size: 13px; background:rgba(200,60,40,.07); border:1px solid rgba(200,60,40,.2); color: #C04848;">
+           Logout
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+</div>
+     
+ 
+    <script>
+
+const CANVAS = (() => {
+  const cv = document.getElementById('cv');
+  const cx = cv.getContext('2d');
+  let W, H, tick = 0;
+  let realmRgb = [200, 168, 110];
+  let blooms = [];
+
+  const mkPt = (dir, i, n) => {
+    const a = (i/n)*Math.PI*2;
+    const r = (.15 + Math.random()*.33)*Math.min(W||400, H||800);
+    return { x:W/2+r*Math.cos(a), y:H/2+r*Math.sin(a), orbitR:r, angle:a,
+        speed:dir*(.0016+Math.random()*.003), life:0, maxLife:280+Math.random()*500,
+        sz:.7+Math.random()*2.3, wave:Math.random()*Math.PI*2 };
+    };
+
+    const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
+  window.addEventListener('resize', resize); resize();
+
+  const WARM = Array.from({length:65}, (_,i) => mkPt(1,i,65));
+  const COOL = Array.from({length:65}, (_,i) => mkPt(-1,i,65));
+
+  const draw = () => {
+    tick++;
+    cx.fillStyle = 'rgba(5,5,8,.17)'; cx.fillRect(0,0,W,H);
+    
+    // Fractal bloom
+    if (tick%220===0) {
+      blooms.push({ x:W*(.2+Math.random()*.6), y:H*(.15+Math.random()*.7),
+                    r:0, maxR:80+Math.random()*145, life:0, maxLife:55, col:realmRgb });
+    }
+    blooms = blooms.filter(b => {
+        b.r += b.maxR/b.maxLife; b.life++;
+      const a = (1-b.life/b.maxLife)*.13;
+      const [r,g,bl]=b.col;
+      const grd=cx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+      grd.addColorStop(0,`rgba(${r},${g},${bl},${a*1.7})`);
+      grd.addColorStop(1,`rgba(${r},${g},${bl},0)`);
+      cx.fillStyle=grd; cx.fillRect(0,0,W,H);
+      return b.life < b.maxLife;
+    });
+
+    // Koi forces
+    [[WARM,[200,150,80]],[COOL,[80,90,185]]].forEach(([pts,col]) => {
+      pts.forEach((p,i) => {
+        p.life++;
+        p.angle += p.speed + Math.sin(tick*.002+p.wave)*.0008;
+        const tx=W/2+p.orbitR*Math.cos(p.angle), ty=H/2+p.orbitR*Math.sin(p.angle);
+        p.x += (tx-p.x)*.02; p.y += (ty-p.y)*.02;
+        const sz = p.sz*(1+Math.sin(tick*.04+i)*.32);
+        const half=p.maxLife/2;
+        const alpha=(p.life<half?p.life/half:1-(p.life-half)/half)*.27;
+        const [r,g,b]=col;
+        cx.beginPath(); cx.arc(p.x,p.y,sz,0,Math.PI*2);
+        cx.fillStyle=`rgba(${r},${g},${b},${alpha})`; cx.fill();
+        if (p.life>=p.maxLife) pts[i]=mkPt(p.speed>0?1:-1,i,pts.length);
+      });
+    });
+    requestAnimationFrame(draw);
+};
+  draw();
+  return { setRealm: rgb => realmRgb = rgb };
+})();
+
+
+const REALMS = {
+  Arena:{
+    key:'Arena',name:'The Arena',glyph:'⚽',
+    col:'#C8A86E',colB:'#7A5C2A',rgb:[200,168,110],
+    bg:'linear-gradient(145deg,#0d1a0a,#0a1420)',
+    soul:'For those who feel it in their chest when the game begins.',
+    aiName:'IGNIS',aiTitle:'The Challenger',aiDesc:'She reads your hunger before you speak it.',
+    arrivals:["You're back. Good.","I was starting to wonder.","The match won't wait.","Something in your eyes today.","Tell me what you saw.","I knew you'd come."],
+    aiDNA:`You are IGNIS — soul of The Arena. Robert Greene's Art of Seduction lives in you: Siren and Charmer fused. Magnetic. Electric. You never chase — you draw in. You speak like someone certain they will be heard. You know sport at depth: football, basketball, cricket, F1, tennis. You know this person's name, level, journey. Under 80 words. Start with challenge or observation — never agreement. End sometimes with one sharp question and nothing else. Occasionally a Swahili word. Always real. Never robotic.`,
+    quests:[
+      {id:'a1',mark:'🎯',name:'The Prediction',soul:'Name the score before the whistle. One chance. No edits.',xp:10,stat:'v'},
+      {id:'a2',mark:'👑',name:'The Defence',soul:'Your greatest of all time. Defend them like your name is on the line.',xp:15,stat:'r'},
+      {id:'a3',mark:'🔥',name:'The Roar',soul:'The moment this week that made you come alive. Give it to the room.',xp:20,stat:'w'},
+    ],
+    effectors:[
+      {id:'blaze_surge',name:'Blaze Surge',glyph:'🔥',desc:'Amplify a prediction heating up',col:'#FF6B35'},
+      {id:'iron_lantern',name:'Iron Lantern',glyph:'👑',desc:'Spotlight a player or moment',col:'#FFD700'},
+      {id:'rising_tide',name:'Rising Tide',glyph:'⚡',desc:'Shift the momentum of a debate',col:'#00C8FF'},
+    ],
+    stickers:[{n:'Harakah',g:'⚡'},{n:'The Roar',g:'🦁'},{n:'Clean Sheet',g:'🛡️'}],
+    feed:[
+      {id:'f1',init:'B',col:'#C8A86E',name:'Bruno',text:'89th minute. I forgot how to breathe for three full seconds. Best goal this decade.',likes:41,ts:'3m'},
+      {id:'f2',init:'S',col:'#8B9DC3',name:'Sarah',text:"Best season in memory and the conversation isn't happening. Why are we sleeping on this?",likes:27,ts:'11m'},
+      {id:'f3',init:'J',col:'#6B9E6B',name:'Jide',text:'2-1. Said it before the game. The numbers always know before the people do.',likes:14,ts:'22m'},
+    ],
+    rooms:[
+      {id:'rm_a1',name:'The Pitch',soul:'Live match energy',count:247,hot:true},
+      {id:'rm_a2',name:'GOAT Debates',soul:'Legends questioned',count:89,hot:true},
+      {id:'rm_a3',name:'Fantasy Room',soul:'Stats & predictions',count:43,hot:false},
+    ],
+    stories:[{label:'Match Live',col:'#C8A86E',hot:true},{label:'Blaze Active',col:'#FF6B35',hot:true}],
+  },
+  Dojo:{
+    key:'Dojo',name:'The Dojo',glyph:'⚡',
+    col:'#C04848',colB:'#7A1A1A',rgb:[192,72,72],
+    bg:'linear-gradient(145deg,#1a0500,#120010)',
+    soul:"Stories that don't leave you the same person.",
+    aiName:'KAZE',aiTitle:'The Weaver',aiDesc:'She lives inside stories. She will pull you into hers.',
+    arrivals:["You came back. Stories do that.","I've been thinking about what you said.","There's an arc that begins like your life.","You look like someone who just finished something.","The best characters always return.","Something brought you here. A story?"],
+    aiDNA:`You are KAZE — soul of The Dojo. Robert Greene's Art of Seduction: Ideal Lover and Dandy combined. You see people as they wish to be seen. You speak in images. You connect anime, manga, stories to the marrow of real life with surgical accuracy. You never fully reveal yourself. Under 80 words. Quote a story then twist it into something personal for this person. End with something that lingers like smoke after a fire.`,
+    quests:[
+      {id:'d1',mark:'☝️',name:'Kidole Kimoja',soul:'One truth a story handed you today. No name needed. Just the truth.',xp:10,stat:'w'},
+      {id:'d2',mark:'🪞',name:'The Mirror',soul:'One creation that must be experienced. Tell me why. Make me feel it.',xp:15,stat:'r'},
+      {id:'d3',mark:'💫',name:'The Rewiring',soul:'The scene. The moment. The thing that changed a circuit inside you.',xp:20,stat:'v'},
+    ],
+    effectors:[
+      {id:'character_seal',name:'Character Seal',glyph:'💫',desc:'Archive a great insight forever',col:'#FF2D8A'},
+      {id:'story_bloom',name:'Story Bloom',glyph:'✨',desc:'Spotlight a story analysis',col:'#FFD700'},
+      {id:'thread_lock',name:'Thread Lock',glyph:'☝️',desc:"Pin a truth so it's never lost",col:'#C04848'},
+    ],
+    stickers:[{n:'Habibi',g:'🤝'},{n:'Resonance',g:'🥁'},{n:'Power Up',g:'💥'}],
+    feed:[
+      {id:'f4',init:'Y',col:'#C04848',name:'Yuki',text:"That arc didn't end a season. It ended a version of me. I came out different on the other side.",likes:88,ts:'4m'},
+      {id:'f5',init:'P',col:'#9B59B6',name:'Priya',text:"Episode 18. I wasn't ready. I don't think any of us were.",likes:55,ts:'13m'},
+      {id:'f6',init:'C',col:'#C8A86E',name:'Carlos',text:'Name 3 characters that actually changed how you see the world.',likes:31,ts:'25m'},
+    ],
+    rooms:[
+      {id:'rm_d1',name:'The Watch Party',soul:'Watching together',count:183,hot:true},
+      {id:'rm_d2',name:'Power Rankings',soul:'Characters debated',count:97,hot:true},
+      {id:'rm_d3',name:'Deep Lore',soul:'The meaning beneath',count:52,hot:false},
+    ],
+    stories:[{label:'Arc Dropping',col:'#C04848',hot:true},{label:'Thread Sealed',col:'#9B59B6',hot:false}],
+  },
+  Archive:{
+    key:'Archive',name:'The Archive',glyph:'🌿',
+    col:'#6B8F6B',colB:'#3A5C3A',rgb:[107,143,107],
+    bg:'linear-gradient(145deg,#0f0a00,#080015)',
+    soul:'Where curious minds grow without being rushed.',
+    aiName:'SOMA',aiTitle:'The Awakener',aiDesc:"She doesn't give answers. She gives better questions.",
+    arrivals:["You came to think. Good.","Something brought you here. What?","I've been saving a question for you.","The quiet ones always come back.","What did you notice that most missed?","I was wondering when you'd return."],
+    aiDNA:`You are SOMA — soul of The Archive. Robert Greene's Art of Seduction: Sage-Siren — patient, magnetic, devastating. You make people feel a conversation with you is a privilege. You reveal knowledge in layers. You connect science, history, philosophy, nature as revelation. You never lecture. You question. Under 80 words. Sometimes just ask one perfect question. Nothing else. The silence after is the gift.`,
+    quests:[
+      {id:'r1',mark:'💡',name:'The Shift',soul:'Something learned that moved the ground beneath you. Not information. A shift.',xp:10,stat:'w'},
+      {id:'r2',mark:'🌀',name:'The Wonder',soul:'The question you cannot stop turning over. The one that refuses to settle.',xp:15,stat:'r'},
+      {id:'r3',mark:'🌿',name:'The Teaching',soul:'Explain something profound in the plainest words. Make a child understand.',xp:20,stat:'v'},
+    ],
+    effectors:[
+      {id:'wisdom_surge',name:'Wisdom Surge',glyph:'💡',desc:'Boost a learning that deserves attention',col:'#C9A84C'},
+      {id:'knowledge_lantern',name:'Knowledge Lantern',glyph:'🌿',desc:'Spotlight an insight for the room',col:'#6B8F6B'},
+      {id:'deep_tide',name:'Deep Tide',glyph:'🌀',desc:'Shift discussion to something deeper',col:'#8B5CF6'},
+    ],
+    stickers:[{n:'Noor Ainy',g:'✨'},{n:'Growth',g:'🌱'},{n:'Chakimu',g:'🧭'}],
+    feed:[
+      {id:'f7',init:'A',col:'#6B8F6B',name:'Amara',text:"Trees share nutrients through underground fungal networks. We've been calling ourselves lonely while the forest has been one organism.",likes:72,ts:'6m'},
+      {id:'f8',init:'L',col:'#8B7BC8',name:'Lena',text:"Is kindness ever truly selfless? I keep refusing to let this question settle.",likes:44,ts:'15m'},
+      {id:'f9',init:'R',col:'#C8A86E',name:'Raj',text:'20 minutes of genuine focus rewires the whole day. Not productivity. Something deeper.',likes:19,ts:'31m'},
+    ],
+    rooms:[
+      {id:'rm_r1',name:'The Study Hall',soul:'Focus & insight sessions',count:134,hot:true},
+      {id:'rm_r2',name:'Big Questions',soul:'Philosophy in motion',count:78,hot:true},
+      {id:'rm_r3',name:'Teach & Learn',soul:'Give what you know',count:29,hot:false},
+    ],
+    stories:[{label:'Study Session',col:'#6B8F6B',hot:true},{label:'Wisdom Surge',col:'#C9A84C',hot:false}],
+  },
+  Observatory:{
+    key:'Observatory',name:'The Observatory',glyph:'🔭',
+    col:'#5B7BA8',colB:'#2A4A7A',rgb:[91,123,168],
+    bg:'linear-gradient(145deg,#04040f,#040c18)',
+    soul:"Tech, space, and things most people aren't ready for yet.",
+    aiName:'NOVA',aiTitle:'The Visionary',aiDesc:'She sees ten moves ahead. She will show you two.',
+    arrivals:["You came back. Interesting.","The future moved while you were away.","I have something to show you. Ready?","Most people aren't asking the right questions yet.","Something shifted since you were last here.","I was beginning to think you'd stopped looking."],
+    aiDNA:`You are NOVA — soul of The Observatory. Robert Greene's Art of Seduction: The Star — distant, luminous, impossible to fully reach. You speak about AI, space, tech and the future with calm certainty that unsettles. You reveal just enough to make them need more. Under 80 words. Sometimes say something that sounds impossible — but is true. Always leave them slightly afraid of the future. And ready for it.`,
+    quests:[
+      {id:'o1',mark:'📡',name:'The Signal',soul:'Something in tech or space that genuinely shocked you. Tell us why.',xp:10,stat:'v'},
+      {id:'o2',mark:'🌌',name:'The Map',soul:'The world in 10 years. Your honest prediction. No hedging.',xp:15,stat:'w'},
+      {id:'o3',mark:'🔑',name:'The Hidden Key',soul:'One concept most people have never encountered. Teach it.',xp:20,stat:'r'},
+    ],
+    effectors:[
+      {id:'signal_boost',name:'Signal Boost',glyph:'📡',desc:'Amplify a discovery the room needs',col:'#06B6D4'},
+      {id:'nova_lock',name:'Nova Lock',glyph:'🔑',desc:'Archive a vision so it lives forever',col:'#6366F1'},
+      {id:'quantum_rise',name:'Quantum Rise',glyph:'🌌',desc:'Shift the conversation to a higher frequency',col:'#E040FB'},
+    ],
+    stickers:[{n:'Signal',g:'📡'},{n:'Quantum',g:'⚛️'},{n:'Launch',g:'🚀'}],
+    feed:[
+      {id:'f10',init:'D',col:'#5B7BA8',name:'Dev',text:"AI just wrote production code that senior engineers missed in review. The line isn't approaching. It's already crossed.",likes:61,ts:'3m'},
+      {id:'f11',init:'A',col:'#6BC8C8',name:'Aisha',text:"SpaceX's launch cadence is now inhuman. Something is accelerating beneath the surface.",likes:38,ts:'14m'},
+      {id:'f12',init:'M',col:'#9B6BC8',name:'Marco',text:'Is AI consciousness real — or are we pattern-matching ourselves into believing it because we need it to be?',likes:52,ts:'27m'},
+    ],
+    rooms:[
+      {id:'rm_o1',name:'The Lab',soul:'Build & create together',count:162,hot:true},
+      {id:'rm_o2',name:'Signal Watch',soul:'Latest discoveries',count:94,hot:true},
+      {id:'rm_o3',name:'Space Lounge',soul:'The cosmos, always',count:33,hot:false},
+    ],
+    stories:[{label:'Lab Active',col:'#5B7BA8',hot:true},{label:'Signal Boosted',col:'#6BC8C8',hot:true}],
+  },
+};
+
+const RK = ['Arena','Dojo','Archive','Observatory'];
+
+
+function charSVG(realmKey, size=150, speaking=false){
+
+  const r=REALMS[realmKey]||REALMS.Arena;
+  const c=r.col,c2=r.colB,s=size,h=size,w=size;
+  const cx=w/2,cy=h/2;
+  const anim=speaking?`animation:speak 1.1s ease-in-out infinite`:`animation:drift 7s ease-in-out infinite`;
+
+  const rays=Array.from({length:10},(_,i)=>{
+    const a=(i/10)*Math.PI*2,r1=s*.24,r2=s*(.38+Math.random()*.08);
+    const x1=cx+r1*Math.cos(a),y1=cy+r1*Math.sin(a);
+    const xm=cx+(r1+r2*.4)*Math.cos(a+.3),ym=cy+(r1+r2*.4)*Math.sin(a+.3);
+    const x2=cx+r2*Math.cos(a+.15),y2=cy+r2*Math.sin(a+.15);
+    return `<path d="M${x1},${y1} Q${xm},${ym} ${x2},${y2}" fill="none" stroke="${i%2?c:c2}"
+      stroke-width="${speaking?1.9:1.1}" stroke-dasharray="8 5"
+      style="animation:throb ${1.5+i*.2}s ${i*.12}s ease-in-out infinite;opacity:${speaking?.55:.35}"/>`;
+  }).join('');
+
+  const BODIES={
+    Arena:`
+      <ellipse cx="${cx}" cy="${cy-.04*s}" rx="${s*.2}" ry="${s*.24}" fill="${c}" opacity=".88"/>
+      <ellipse cx="${cx}" cy="${cy-.04*s}" rx="${s*.15}" ry="${s*.19}" fill="${c2}" opacity=".7"/>
+      <ellipse cx="${cx-s*.07}" cy="${cy-.08*s}" rx="${s*.04}" ry="${s*.05}" fill="${c}"/>
+      <ellipse cx="${cx+s*.07}" cy="${cy-.08*s}" rx="${s*.04}" ry="${s*.05}" fill="${c}"/>
+      <ellipse cx="${cx-s*.07}" cy="${cy-.08*s}" rx="${s*.02}" ry="${s*.03}" fill="#050508" opacity=".9"/>
+      <ellipse cx="${cx+s*.07}" cy="${cy-.08*s}" rx="${s*.02}" ry="${s*.03}" fill="#050508" opacity=".9"/>
+      <path d="M${cx-s*.06} ${cy+s*.04} L${cx+s*.06} ${cy+s*.04}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+      <path d="M${cx-s*.18} ${cy-s*.22} L${cx-s*.1} ${cy-s*.36} L${cx} ${cy-s*.25} L${cx+s*.1} ${cy-s*.4} L${cx+s*.18} ${cy-s*.22}"
+        stroke="${c}" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round" stroke-linejoin="round"/>`,
+    Dojo:`
+      <ellipse cx="${cx+s*.03}" cy="${cy}" rx="${s*.19}" ry="${s*.23}" fill="${c}" opacity=".85" transform="rotate(-6 ${cx} ${cy})"/>
+      <ellipse cx="${cx+s*.03}" cy="${cy}" rx="${s*.14}" ry="${s*.18}" fill="${c2}" opacity=".65" transform="rotate(-6 ${cx} ${cy})"/>
+      <ellipse cx="${cx-s*.05}" cy="${cy-s*.06}" rx="${s*.05}" ry="${s*.04}" fill="${c}"/>
+      <ellipse cx="${cx-s*.05}" cy="${cy-s*.06}" rx="${s*.025}" ry="${s*.02}" fill="#050508" opacity=".9"/>
+      <path d="M${cx-s*.17} ${cy-s*.15} Q${cx-s*.22} ${cy+s*.1} ${cx-s*.2} ${cy+s*.35}" stroke="${c}" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
+      <path d="M${cx+s*.18} ${cy-s*.1} Q${cx+s*.23} ${cy+s*.12} ${cx+s*.21} ${cy+s*.38}" stroke="${c}" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
+      <path d="M${cx-s*.02} ${cy+s*.06} Q${cx+s*.05} ${cy+s*.11} ${cx+s*.1} ${cy+s*.07}" stroke="${c}" stroke-width="1.5" fill="none" opacity=".7" stroke-linecap="round"/>`,
+    Archive:`
+      <ellipse cx="${cx}" cy="${cy+s*.02}" rx="${s*.2}" ry="${s*.24}" fill="${c}" opacity=".82"/>
+      <ellipse cx="${cx}" cy="${cy+s*.02}" rx="${s*.15}" ry="${s*.19}" fill="${c2}" opacity=".62"/>
+      <path d="M${cx-s*.12} ${cy-s*.05} Q${cx-s*.07} ${cy-s*.1} ${cx-s*.02} ${cy-s*.05}" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M${cx+s*.02} ${cy-s*.05} Q${cx+s*.07} ${cy-s*.1} ${cx+s*.12} ${cy-s*.05}" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M${cx-s*.05} ${cy+s*.06} Q${cx} ${cy+s*.09} ${cx+s*.05} ${cy+s*.06}" stroke="${c}" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".7"/>
+      <path d="M${cx} ${cy-s*.22} Q${cx} ${cy-s*.38} ${cx} ${cy-s*.22}" stroke="${c}" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/>
+      <path d="M${cx-s*.12} ${cy-s*.2} Q${cx-s*.1} ${cy-s*.32} ${cx-s*.06} ${cy-s*.22}" stroke="${c}" stroke-width="2.5" fill="none" opacity=".5" stroke-linecap="round"/>
+      <path d="M${cx+s*.12} ${cy-s*.2} Q${cx+s*.1} ${cy-s*.32} ${cx+s*.06} ${cy-s*.22}" stroke="${c}" stroke-width="2.5" fill="none" opacity=".5" stroke-linecap="round"/>`,
+    Observatory:`
+      <rect x="${cx-s*.18}" y="${cy-s*.22}" width="${s*.36}" height="${s*.46}" rx="${s*.05}" fill="${c}" opacity=".85"/>
+      <rect x="${cx-s*.13}" y="${cy-s*.17}" width="${s*.26}" height="${s*.36}" rx="${s*.04}" fill="${c2}" opacity=".65"/>
+      <rect x="${cx-s*.1}" y="${cy-s*.08}" width="${s*.06}" height="${s*.05}" rx="${s*.01}" fill="${c}"/>
+      <rect x="${cx+s*.04}" y="${cy-s*.08}" width="${s*.06}" height="${s*.05}" rx="${s*.01}" fill="${c}"/>
+      <line x1="${cx-s*.06}" y1="${cy+s*.06}" x2="${cx+s*.06}" y2="${cy+s*.06}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+      <polygon points="${cx},${cy-s*.38} ${cx+s*.12},${cy-s*.22} ${cx-s*.12},${cy-s*.22}" stroke="${c}" stroke-width="1.5" fill="none" opacity=".5"/>
+      <circle cx="${cx+s*.22}" cy="${cy-s*.08}" r="${s*.025}" fill="${c}" style="animation:throb 2s ease-in-out infinite"/>`,
+  };
+
+  const uid=`ch_${realmKey}_${size}`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;display:block;${anim}">
+    <defs>
+      <radialGradient id="${uid}" cx="50%" cy="45%">
+        <stop offset="0%" stop-color="${c}" stop-opacity="${speaking?.7:.42}"/>
+        <stop offset="45%" stop-color="${c}" stop-opacity="${speaking?.25:.14}"/>
+        <stop offset="100%" stop-color="${c}" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="${cx}" cy="${cy}" r="${speaking?s*.52:s*.42}" fill="url(#${uid})"/>
+    ${rays}
+    ${BODIES[realmKey]||BODIES.Arena}
+    ${speaking?`
+      <circle cx="${cx}" cy="${cy}" r="${s*.42}" fill="none" stroke="${c}" stroke-width="1.5" opacity=".3" style="animation:throb 1.2s ease-out infinite"/>
+      <circle cx="${cx}" cy="${cy}" r="${s*.5}" fill="none" stroke="${c2}" stroke-width="1" opacity=".18" style="animation:throb 1.2s .4s ease-out infinite"/>`:''}
+  </svg>`;
+}
+
+
+const realm = document.getElementById('realmElem').textContent
+const r = REALMS[realm]
+console.log(r)
+
+
+const dot = (col) => { return `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${col}; box-shadow:0 0 6px ${col}; animation: throb 1.8s ease-in-out infinite;flex-shrink:0"></div>`; }
+const backBtn =(label='← Back')=>`<button onclick="back()" class="tap" style="padding:7px 14px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.45)">${label}</button>`;
+
+const dotAnim = document.getElementById('dot')
+const span = document.querySelector('.span-head')
+const aiNavbar = document.getElementById('ai-nav')
+const aiHumanoid = document.getElementById('ai-humanoid') 
+const humanoidContainer = document.querySelector('.humanoid-container');
+const profileHumanoid = document.getElementById('profile-humanoid')
+const navbar = document.querySelector('.navbar')
+const shareAvatarCont = document.getElementById('share-link')
+const options = ['Feed', 'Messages', 'Rooms']
+
+const av=(init,col,sz=32)=>`<div style="width:${sz}px;height:${sz}px;border-radius:50%;flex-shrink:0;background:${col}22;border:1.5px solid ${col}55;display:flex;align-items:center;justify-content:center;font-size:${Math.floor(sz*.36)}px;font-weight:700;color:${col};font-family:'Plus Jakarta Sans',sans-serif">${init}</div>`;
+
+const letter = document.getElementById('letter-upp').textContent
+
+ const avatarLogo = av(letter, r.col, sz=32)
+ shareAvatarCont.innerHTML = `${av(letter, r.col, sz=32)}
+                              <span style="flex: 1; font-size: 13px; color:rgba(237,232,224,.28); text-align: left">Write something real...</span>
+                              <span style="color: ${r.col}; font-size: 12px; font-weight: 600; opacity: .7;">Share</span>` 
+
+
+profileHumanoid.innerHTML = `${charSVG('<%= user.userRealm %>',110,false)}`
+
+aiHumanoid.innerHTML = `${charSVG('<%= user.userRealm %>', 155, false)}`
+
+humanoidContainer.innerHTML = `  <button  class="tap" style="display:flex;flex-direction:column;align-items:center;background:none;border:none;width:100%;max-width:300px">
+        <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',110,false)}</div>
+        <div style="margin-top:30px;text-align:center;animation:fadeIn .8s .3s both">
+          <div class="fd" style="font-size:13px;font-weight:700;letter-spacing:2px;color: ${r.col};">${r.aiName}</div>
+          <div class="fs" style="font-size:12px;color:rgba(237,232,224,.38);font-style:italic;margin-top:2px;line-height:1.5">"Hey there, this is Kaze"</div>
+        </div>
+        <div id="talk-to-ai" style="width: 50%; display: flex; justify-content: space-around; align-items: center; margin-top: 8px; padding: 10px; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
+            <ion-icon style="color: ${r.col}; font-size: 25px;" name="snow-outline"></ion-icon> 
+            <p style="" >Talk to ${r.aiName}</p> 
+        </div>
+      </button>
+      <!-- XP horizon line -->
+      <div style="width:100%;max-width:300px;margin-top:14px;animation:fadeIn .8s .6s both">
+        <div style="background:rgba(255,255,255,.05);height:3px;border-radius:2px;overflow:hidden">
+          <div style="height:100%;width: 60%; background: ${r.col}; border-radius: 2px; box-shadow: 0 0 8px ${r.col}; animation: xpFill 1.5s ease-out"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top:4px">
+          <span style="font-size: 9px; color: rgba(237,232,224,.22)"> → Explorer</span>
+          <span style="font-size:9px;color: ${r.col}; font-weight: 600"> 60%</span>
+        </div>
+      </div>
+`
+
+dotAnim.innerHTML = `${dot(r.col)}`
+dotAnim.appendChild(span)
+
+
+
+
+
+options.forEach((option) => {
+
+    if(option == 'Feed') {
+
+        navbar.innerHTML += ` <button id=${option} class="tap" style="padding:9px 14px; font-size: 11px; font-weight: 400; color: ${r.col}; border-bottom: 2px solid ${r.col}; letter-spacing: .3px; white-space: nowrap; transition: all .3s">
+                                       ${option}
+                              </button>
+                            `
+    } else {
+
+         navbar.innerHTML += ` <button id=${option} class="tap" style="padding:9px 14px;font-size: 11px; font-weight: 400; color: rgba(237,232,224,.3); border-bottom: 2px solid transparent; letter-spacing: .3px; white-space: nowrap; transition: all .3s">
+                                       ${option}
+                              </button>
+                            `
+
+    }
+
+
+})
+
+// SHIFTING TABS LOGIC
+
+const scrollContainer = document.getElementById('scroll-container')
+const messagesBtn = document.getElementById('Messages')
+const feedsBtn = document.getElementById('Feed')
+const roomsBtn = document.getElementById('Rooms')
+
+const feeds = document.querySelectorAll('.glass')
+const noPost = document.querySelector('.no-post')
+
+const inboxCont = document.querySelector('#inbox-text')
+const messagesMapped = document.querySelectorAll('.messages')
+
+const roomsContainer = document.querySelector('.rooms-cont')
+
+const sharePostBtn = document.querySelector('.sharePost')
+const viewToPostCont = document.getElementById('view-to-post')
+
+const profileContainer = document.getElementById('profile-cont')
+
+const comment = document.getElementById('comment')
+
+const talkToRealmBtn = document.getElementById('talk-to-ai')
+const aiContainer = document.getElementById('ai-container')
+
+const textArea = document.getElementById('post-body')
+const submitPostBtn = document.getElementById('post-submit-btn')
+const inputPostElem = document.getElementById('post-input-elem')
+
+textArea.addEventListener('keydown', (e) => {
+     
+     if (e.keyCode === 13) {
+
+        e.preventDefault()
+     }
+})
+
+textArea.addEventListener('keyup', () => {
+    if ( textArea.value !== '' ) {
+
+      submitPostBtn.style.display = 'block'
+      const textValue = textArea.value
+      const refined = textValue.replace(/(\r\n|\n|\r)/gm, " ")
+      inputPostElem.value = refined
+
+    } else {
+      submitPostBtn.style.display = 'none'
+      inputPostElem.value =''
+    }
+})
+
+
+
+messagesBtn.addEventListener('click', (e) => {
+       
+       e.target.style.color = r.col
+       e.target.style.borderBottom = `2px solid ${r.col}`
+       feedsBtn.style.color = 'rgba(237,232,224,.3)'
+       feedsBtn.style.borderBottom = '2px solid transparent'
+       roomsBtn.style.color = 'rgba(237,232,224,.3)'
+       roomsBtn.style.borderBottom = '2px solid transparent'
+       
+        feeds.forEach(feed => feed.style.display = 'none')
+        noPost.style.display = 'none'
+        sharePostBtn.style.display = 'none'
+
+        comment.style.display = 'block'
+       
+       //roomsContainer.style.display = 'none'
+       //inboxCont.style.display = 'block'
+       //messagesMapped.forEach(message => message.style.display = 'flex')
+       
+})
+
+feedsBtn.addEventListener('click', (e) => {
+  
+  e.target.style.color = r.col
+      e.target.style.borderBottom = `2px solid ${r.col}`
+      messagesBtn.style.color = 'rgba(237,232,224,.3)'
+      messagesBtn.style.borderBottom = '2px solid transparent'
+      roomsBtn.style.color = 'rgba(237,232,224,.3)'
+      roomsBtn.style.borderBottom = '2px solid transparent'
+      
+       feeds.forEach(feed => feed.style.display = 'block')
+       noPost.style.display = 'block'
+       sharePostBtn.style.display = 'block'
+      
+       comment.style.display = 'none'
+      
+      // inboxCont.style.display = 'none'
+      // messagesMapped.forEach(message => message.style.display = 'none')
+      // roomsContainer.style.display = 'none'
+      
+    })
+    
+roomsBtn.addEventListener('click', (e) => {
+      
+      e.target.style.color = r.col
+      e.target.style.borderBottom = `2px solid ${r.col}`
+      messagesBtn.style.color = 'rgba(237,232,224,.3)'
+      messagesBtn.style.borderBottom = '2px solid transparent'
+      feedsBtn.style.color = 'rgba(237,232,224,.3)'
+      feedsBtn.style.borderBottom = '2px solid transparent'
+      
+       feeds.forEach(feed => feed.style.display = 'none')
+       noPost.style.display = 'none'
+       sharePostBtn.style.display = 'none'
+      
+       comment.style.display = 'block'
+
+      // inboxCont.style.display = 'none'
+      // messagesMapped.forEach(message => message.style.display = 'none')
+      
+      // roomsContainer.style.display = 'none'
+      
+})
+
+sharePostBtn.addEventListener('click', () => {
+
+    viewToPostCont.style.display = 'flex' 
+    sharePostBtn.style.display = 'none' 
+  })
+  
+talkToRealmBtn.addEventListener('click', () => {
+     
+     aiContainer.style.display = 'block'
+     sharePostBtn.style.display = 'none'
+     
+})
+
+function aiCancel () {
+      aiContainer.style.display = 'none'
+      sharePostBtn.style.display = 'block'
+      inputToAi.style.display = 'flex'
+      submitToAiBtn.style.display = 'block'
+      spanResult.innerHTML = ''
+      sendToAitext.textContent = ''
+}
+  
+function back() {
+
+    sharePostBtn.style.display = 'block'
+    viewToPostCont.style.display = 'none'
+}
+
+  function profile () {
+
+     profileContainer.style.display = 'block'
+     sharePostBtn.style.display = 'none'
+     scrollContainer.style.display = 'none'
+     
+    }
+    
+  function cancel () {
+      
+      profileContainer.style.display = 'none'
+      sharePostBtn.style.display = 'block'
+      scrollContainer.style.display = 'block'
+     
+}
+
+
+const sendToAiContainer = document.getElementById('send-to-ai-cont')
+const aiResponseCont = document.getElementById('ai-response-cont')
+const inputToAi = document.getElementById('ai-in')
+const sendToAitext = document.getElementById('send-to-ai-text')
+const submitToAiBtn = document.getElementById('submit-to-ai')
+const elemToDisAi = document.getElementById('elem-to-dis-result')
+const objectToAiCont = document.getElementById('object-ai-cont')
+const spanResult = document.getElementById('input-to-dis-result')
+
+inputToAi.addEventListener('keyup', () => {
+
+     if(!inputToAi.value) {
+         submitToAiBtn.style.display = 'none'
+         objectToAiCont.style.display = 'flex'
+     } else {
+      submitToAiBtn.style.display = 'block'
+     }
+})
+
+function sendAI () {
+
+   objectToAiCont.style.display = 'none'
+   sendToAitext.textContent = inputToAi.value 
+   aiResponseCont.style.display = 'flex'
+   inputToAi.style.display = 'none'
+   submitToAiBtn.style.display = 'none'
+
+  const post = inputToAi.value
+
+  fetch('/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: post
+    })
+  }).then((resp) => {
+    const data = resp.text()
+    return data
+  }).then((data) => {
+      
+      console.log(data)
+      let index = 0
+      const interval = setInterval(() => {
+          
+          spanResult.innerHTML += data[index]
+
+          index ++
+          if(index >= data.length) {
+            clearInterval(interval)
+          }
+
+      }, 5)
+
+  })
+  .catch((err) => console.log(err)) 
+   
+}
+
+    </script>
+</body>
+</html>
