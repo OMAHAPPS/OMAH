@@ -73,16 +73,16 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      <div <% /* eslint-disable-next-line css-porpertyvalueexpected */ %> style="font-size: 9px; color: <%= user.userColor %>; letter-spacing: 1px; margin-top: 1px; opacity: 0.7;">
                         Newcomer · 0 XP
                      </div>
-                  </div>
+            </div>
                   <div style="display: flex; gap: 6px; align-items: center;">
                       
                        <% const userName = user.userName %>
                        <% const letter = userName.slice(0,1) %>
-                      <settings onclick="profile()" class="tap" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .08); color: #C04848; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                      <a href="/settings" class="tap" style="text-decoration: none; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .08); color: #C04848; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                         <span id="letter-upp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;" ><%= letter %></span>
-                      </settings>
+                      </a>
                   </div>
-            </div>
+  </div>
 
             <!--todo ////// HUMANOID PLUS AI PROMPTING //// -->
 
@@ -94,7 +94,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     </div>
 
       <!--todo /////// TABS //////// -->
-
+   <section>
     <div class="navbar" style="display: flex; justify-content: space-around; border-bottom: 1px solid rgba(255,255,255,.05); flex-shrink: 0; padding:4px 16px 0;margin-top:12px">
 
                <!-- NAVBAR OPTIONS RENDERED IN JAVASCRIPT -->
@@ -103,7 +103,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!--todo ////// FEED  ////// -->
 
-    <div id="scroll-container" class="scroll" style= "flex:1; padding:14px 14px 80px; position: relative;">
+    <div id="scroll-container" class="scroll" style="display: block; flex:1; padding:14px 14px 80px; position: relative;">
       
                          <!--* ////// POSTS ///// -->
       
@@ -223,11 +223,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
    </div> 
+   </section>
 
 
    <!-- todo ///// SHARE SOMETHING  -->
 
-   <div class="sharePost" style="position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
+   <div class="sharePost" style="display: block; position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
          
       <button onclick="" id="share-link" class="tap" style="width: 100%; padding: 15px 10px; border-radius: 14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap:10px;">
           <!-- ! RENDERED IN JAVASCRIPT -->
@@ -273,7 +274,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
   <!-- todo /////////  VIEW AI ///// -->
   
-    <div class="view" id="ai-container" style="display: none; background: black;">
+<div class="view" id="ai-container" style="display: none; background: black;">
         <div id="ai-nav" style="padding: 13px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,.05)">
             <button onclick="aiCancel()" class="tap" style="padding: 7px 14px; border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.45)">← Back</button>
             <div style="flex: 1; text-align: center;">
@@ -283,7 +284,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               </div>
             </div>
             <button onclick="aiClear()" class="tap" style="padding:7px 10px;border-radius: 10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);font-size:11px;color:rgba(237, 232, 224, 0.87)">clear</button>
-        </div>
+          </div>
          <div id="object-ai-cont" style="padding:28px 0; display: flex; flex-direction: column;align-items:center;flex-shrink:0; transition: display 5s ease-in-out;">
 
                <div id="ai-humanoid" style="animation:orbIn .6s ease-out both"></div>
@@ -328,10 +329,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
       <button id="submit-to-ai" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> onclick="sendAI()" class="tap" style="display: none; padding:12px 18px;border-radius:14px;font-size:16px;font-weight:700;background: <%= user.userColor %>20; border:1px solid <%= user.userColor %>45; color: <%= user.userColor %>;">→</button>
     </div> 
   
+  
 
   <!-- todo //////   VIEW PROFILE ///// -->
 
-  <div class="view" id="profile-cont" style="display: none; background:rgba(5,5,8,.92)">
+     <div class="view" id="profile-cont" style="display: none; z-index: 4; background:rgba(5,5,8,.92)">
 
     <div style="padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; gap:10px; flex-shrink: 0;">
       <button onclick="cancel()" class="tap" style="padding: 7px 14px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); font-size: 12px; color: rgba(237,232,224,.45)">
@@ -405,8 +407,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     </div>
   </div>
 
-
-</div>
+</div> 
      
  
     <script>
@@ -887,6 +888,7 @@ sharePostBtn.addEventListener('click', () => {
 talkToRealmBtn.addEventListener('click', () => {
      
      aiContainer.style.display = 'block'
+     profileContainer.style.display = 'none'
      sharePostBtn.style.display = 'none'
      
 })
@@ -906,13 +908,7 @@ function back() {
     viewToPostCont.style.display = 'none'
 }
 
-  function profile () {
-
-     profileContainer.style.display = 'block'
-     sharePostBtn.style.display = 'none'
-     scrollContainer.style.display = 'none'
-     
-    }
+  
     
   function cancel () {
       
@@ -965,15 +961,12 @@ function sendAI () {
     return data
   }).then((info) => {
 
-      if (info.length > 600) {
 
-        let data = info.slice(0, 599)
-      } else {
-        let data = info
-      }
+  const data = info.slice(0, 999)
+    
       
 
-      let index = 0
+  let index = 0
       const interval = setInterval(() => {
           
           spanResult.innerHTML += data[index]

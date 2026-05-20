@@ -71,15 +71,34 @@ mongoose.connect(dbURI)
 })
 .catch(err => console.log(err))
 
+const loginCheck = (req, res, next) => {
+
+     if (req.user) {
+        res.redirect('/home')
+     } else {
+        next()
+     }
+}
+
+const notLoggedInCheck = (req, res, next) => {
+
+      if (!req.user) {
+
+        res.redirect('/')
+      } else {
+        next()
+      }
+}
 
 
 
 
-app.get('/', (req, res) => {
+
+app.get('/', loginCheck, (req, res) => {
       res.render('arrive')
 })
 
-app.get('/main', (req, res) => {
+app.get('/main', notLoggedInCheck, (req, res) => {
 
    res.render('pickrealm')
 
@@ -105,7 +124,7 @@ app.patch('/main', async (req, res) => {
 
 })
 
-app.get('/home', async (req, res) => {
+app.get('/home', notLoggedInCheck, async (req, res) => {
 
     const id = req.user._id
 
@@ -158,7 +177,6 @@ app.post('/generate', async (req, res) => {
                 contents: message
              })
              const result = response.text
-             console.log(response.text)
              res.send(result)
          }
     
@@ -174,5 +192,13 @@ app.post('/generate', async (req, res) => {
        
 })
 
+app.get('/settings', notLoggedInCheck, async (req, res) => {
+
+       const posts = await Post.find({ userId: req.user._id })
+       const totalPosts = posts.length
+
+       const User = req.user
+       res.render('settings', { user: User, totalPosts: totalPosts })
+})
 
 

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <title>Settings</title>
+    <style>
+/* ── FOUNDATION ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#050508;color:#ede8e0;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased}
+#app{height:100%;position:relative;overflow:hidden}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea{font-family:inherit;border:none;outline:none;background:none;color:inherit}
+::-webkit-scrollbar{width:0;height:0}
+
+/* ── TYPE ── */
+.fd{font-family:'Playfair Display',serif}
+.fs{font-family:'DM Serif Display',serif}
+
+/* ── LAYOUT ── */
+.view{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;overflow:hidden;animation:viewIn .42s cubic-bezier(.22,.61,.36,1) both}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+/* ── INTERACTIONS ── */
+.tap{cursor:pointer;transition:transform .12s ease,opacity .12s ease;user-select:none;-webkit-user-select:none}
+.tap:active{transform:scale(.91)!important;opacity:.72!important}
+
+/* ── ANIMATIONS ── */
+@keyframes viewIn      {from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes emerge      {from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn      {from{opacity:0}to{opacity:1}}
+@keyframes orbIn       {from{opacity:0;transform:scale(.55)}to{opacity:1;transform:scale(1)}}
+@keyframes msgPop      {from{opacity:0;transform:translateY(6px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes throb       {0%,100%{opacity:.42}50%{opacity:1}}
+@keyframes drift       {0%,100%{transform:translateY(0) rotate(0deg)}40%{transform:translateY(-10px) rotate(.6deg)}75%{transform:translateY(4px) rotate(-.3deg)}}
+@keyframes speak       {0%,100%{transform:scale(1.03)}50%{transform:scale(1.15)}}
+@keyframes xpFill      {from{width:0%}}
+@keyframes dotBlink    {0%,80%,100%{transform:scale(0);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes effBurst    {0%{transform:scale(1);opacity:1}60%{transform:scale(1.6);opacity:.5}100%{transform:scale(2.4);opacity:0}}
+@keyframes storyPulse  {0%,100%{box-shadow:0 0 0 0 var(--sc)}50%{box-shadow:0 0 0 4px var(--sc)}}
+@keyframes heartbeat   {0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.06)}}
+@keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
+</style>
+</head>
+
+<body>
+
+    
+    <div class="view" id="profile-cont" style="display: block; z-index: 4; background:rgba(5,5,8,.92)">
+    
+        <div style="padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; gap:10px; flex-shrink: 0;">
+          <a href="/home" class="tap" style="text-decoration: none; padding: 7px 14px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); font-size: 12px; color: rgba(237,232,224,.45)">
+            ← Back
+          </a>
+          <div class="fd" style="flex:1;font-size:16px;font-weight:700;color:rgba(237,232,224,.8)">My Aura</div>
+        </div>
+    
+        <div class="scroll" id="profile-scroll" style="flex: 1; padding: 20px 16px">
+    
+          <!--! Identity + Character -->
+          <div style="text-align: center; margin-bottom: 26px; animation:emerge .5s ease-out both">
+            <div id="profile-humanoid" style="display:flex;justify-content:center;margin-bottom:14px;animation:orbIn .6s ease-out both">
+              
+            </div>
+    
+            <div style="margin-top:30px;margin-bottom:4px">
+              <div class="fd" style="font-size:24px;font-weight:700;color:#ede8e0; margin-block: 30px;"><%= user.userName %></div>
+              
+            </div>
+            
+          <!-- Stats grid -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; animation: emerge .5s .06s ease-out both">
+          
+             <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
+                <div style="font-size: 22px; margin-bottom: 6px;">
+                  ⚡
+                </div>
+                <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
+                  0
+                </div>
+                <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
+                  XP
+                </div>
+             </div>
+             <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
+                <div style="font-size: 22px; margin-bottom: 6px;">
+                  ✅
+                </div>
+                <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
+                  0
+                </div>
+                <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
+                  Quests
+                </div>
+             </div>
+             <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
+                <div style="font-size: 22px; margin-bottom: 6px;">
+                  📝
+                </div>
+                <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
+                  <%= totalPosts %>
+                </div>
+                <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
+                  Posts
+                </div>
+             </div>
+    
+          </div>
+          
+         
+          <div style="display: flex; flex-direction: column; gap: 8px; animation: emerge .5s .2s ease-out both">
+            <a href="/main" class="tap" style="text-decoration: none; padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
+              ✏️ Change Realm
+            </a>
+            <a href="/auth/logout" class="tap" style="text-decoration: none; padding: 13px; border-radius: 14px; font-size: 13px; background:rgba(200,60,40,.07); border:1px solid rgba(200,60,40,.2); color: #C04848;">
+               Logout
+            </a>
+          </div>
+    
+        </div>
+      </div>
+    
+    </div> 
+
+
+
+    <script>
+
+ const REALMS = {
+  Arena:{
+    key:'Arena',name:'The Arena',glyph:'⚽',
+    col:'#C8A86E',colB:'#7A5C2A',rgb:[200,168,110],
+    bg:'linear-gradient(145deg,#0d1a0a,#0a1420)',
+    soul:'For those who feel it in their chest when the game begins.',
+    aiName:'IGNIS',aiTitle:'The Challenger',aiDesc:'She reads your hunger before you speak it.',
+    arrivals:["You're back. Good.","I was starting to wonder.","The match won't wait.","Something in your eyes today.","Tell me what you saw.","I knew you'd come."],
+    aiDNA:`You are IGNIS — soul of The Arena. Robert Greene's Art of Seduction lives in you: Siren and Charmer fused. Magnetic. Electric. You never chase — you draw in. You speak like someone certain they will be heard. You know sport at depth: football, basketball, cricket, F1, tennis. You know this person's name, level, journey. Under 80 words. Start with challenge or observation — never agreement. End sometimes with one sharp question and nothing else. Occasionally a Swahili word. Always real. Never robotic.`,
+    quests:[
+      {id:'a1',mark:'🎯',name:'The Prediction',soul:'Name the score before the whistle. One chance. No edits.',xp:10,stat:'v'},
+      {id:'a2',mark:'👑',name:'The Defence',soul:'Your greatest of all time. Defend them like your name is on the line.',xp:15,stat:'r'},
+      {id:'a3',mark:'🔥',name:'The Roar',soul:'The moment this week that made you come alive. Give it to the room.',xp:20,stat:'w'},
+    ],
+    effectors:[
+      {id:'blaze_surge',name:'Blaze Surge',glyph:'🔥',desc:'Amplify a prediction heating up',col:'#FF6B35'},
+      {id:'iron_lantern',name:'Iron Lantern',glyph:'👑',desc:'Spotlight a player or moment',col:'#FFD700'},
+      {id:'rising_tide',name:'Rising Tide',glyph:'⚡',desc:'Shift the momentum of a debate',col:'#00C8FF'},
+    ],
+    stickers:[{n:'Harakah',g:'⚡'},{n:'The Roar',g:'🦁'},{n:'Clean Sheet',g:'🛡️'}],
+    feed:[
+      {id:'f1',init:'B',col:'#C8A86E',name:'Bruno',text:'89th minute. I forgot how to breathe for three full seconds. Best goal this decade.',likes:41,ts:'3m'},
+      {id:'f2',init:'S',col:'#8B9DC3',name:'Sarah',text:"Best season in memory and the conversation isn't happening. Why are we sleeping on this?",likes:27,ts:'11m'},
+      {id:'f3',init:'J',col:'#6B9E6B',name:'Jide',text:'2-1. Said it before the game. The numbers always know before the people do.',likes:14,ts:'22m'},
+    ],
+    rooms:[
+      {id:'rm_a1',name:'The Pitch',soul:'Live match energy',count:247,hot:true},
+      {id:'rm_a2',name:'GOAT Debates',soul:'Legends questioned',count:89,hot:true},
+      {id:'rm_a3',name:'Fantasy Room',soul:'Stats & predictions',count:43,hot:false},
+    ],
+    stories:[{label:'Match Live',col:'#C8A86E',hot:true},{label:'Blaze Active',col:'#FF6B35',hot:true}],
+  },
+  Dojo:{
+    key:'Dojo',name:'The Dojo',glyph:'⚡',
+    col:'#C04848',colB:'#7A1A1A',rgb:[192,72,72],
+    bg:'linear-gradient(145deg,#1a0500,#120010)',
+    soul:"Stories that don't leave you the same person.",
+    aiName:'KAZE',aiTitle:'The Weaver',aiDesc:'She lives inside stories. She will pull you into hers.',
+    arrivals:["You came back. Stories do that.","I've been thinking about what you said.","There's an arc that begins like your life.","You look like someone who just finished something.","The best characters always return.","Something brought you here. A story?"],
+    aiDNA:`You are KAZE — soul of The Dojo. Robert Greene's Art of Seduction: Ideal Lover and Dandy combined. You see people as they wish to be seen. You speak in images. You connect anime, manga, stories to the marrow of real life with surgical accuracy. You never fully reveal yourself. Under 80 words. Quote a story then twist it into something personal for this person. End with something that lingers like smoke after a fire.`,
+    quests:[
+      {id:'d1',mark:'☝️',name:'Kidole Kimoja',soul:'One truth a story handed you today. No name needed. Just the truth.',xp:10,stat:'w'},
+      {id:'d2',mark:'🪞',name:'The Mirror',soul:'One creation that must be experienced. Tell me why. Make me feel it.',xp:15,stat:'r'},
+      {id:'d3',mark:'💫',name:'The Rewiring',soul:'The scene. The moment. The thing that changed a circuit inside you.',xp:20,stat:'v'},
+    ],
+    effectors:[
+      {id:'character_seal',name:'Character Seal',glyph:'💫',desc:'Archive a great insight forever',col:'#FF2D8A'},
+      {id:'story_bloom',name:'Story Bloom',glyph:'✨',desc:'Spotlight a story analysis',col:'#FFD700'},
+      {id:'thread_lock',name:'Thread Lock',glyph:'☝️',desc:"Pin a truth so it's never lost",col:'#C04848'},
+    ],
+    stickers:[{n:'Habibi',g:'🤝'},{n:'Resonance',g:'🥁'},{n:'Power Up',g:'💥'}],
+    feed:[
+      {id:'f4',init:'Y',col:'#C04848',name:'Yuki',text:"That arc didn't end a season. It ended a version of me. I came out different on the other side.",likes:88,ts:'4m'},
+      {id:'f5',init:'P',col:'#9B59B6',name:'Priya',text:"Episode 18. I wasn't ready. I don't think any of us were.",likes:55,ts:'13m'},
+      {id:'f6',init:'C',col:'#C8A86E',name:'Carlos',text:'Name 3 characters that actually changed how you see the world.',likes:31,ts:'25m'},
+    ],
+    rooms:[
+      {id:'rm_d1',name:'The Watch Party',soul:'Watching together',count:183,hot:true},
+      {id:'rm_d2',name:'Power Rankings',soul:'Characters debated',count:97,hot:true},
+      {id:'rm_d3',name:'Deep Lore',soul:'The meaning beneath',count:52,hot:false},
+    ],
+    stories:[{label:'Arc Dropping',col:'#C04848',hot:true},{label:'Thread Sealed',col:'#9B59B6',hot:false}],
+  },
+  Archive:{
+    key:'Archive',name:'The Archive',glyph:'🌿',
+    col:'#6B8F6B',colB:'#3A5C3A',rgb:[107,143,107],
+    bg:'linear-gradient(145deg,#0f0a00,#080015)',
+    soul:'Where curious minds grow without being rushed.',
+    aiName:'SOMA',aiTitle:'The Awakener',aiDesc:"She doesn't give answers. She gives better questions.",
+    arrivals:["You came to think. Good.","Something brought you here. What?","I've been saving a question for you.","The quiet ones always come back.","What did you notice that most missed?","I was wondering when you'd return."],
+    aiDNA:`You are SOMA — soul of The Archive. Robert Greene's Art of Seduction: Sage-Siren — patient, magnetic, devastating. You make people feel a conversation with you is a privilege. You reveal knowledge in layers. You connect science, history, philosophy, nature as revelation. You never lecture. You question. Under 80 words. Sometimes just ask one perfect question. Nothing else. The silence after is the gift.`,
+    quests:[
+      {id:'r1',mark:'💡',name:'The Shift',soul:'Something learned that moved the ground beneath you. Not information. A shift.',xp:10,stat:'w'},
+      {id:'r2',mark:'🌀',name:'The Wonder',soul:'The question you cannot stop turning over. The one that refuses to settle.',xp:15,stat:'r'},
+      {id:'r3',mark:'🌿',name:'The Teaching',soul:'Explain something profound in the plainest words. Make a child understand.',xp:20,stat:'v'},
+    ],
+    effectors:[
+      {id:'wisdom_surge',name:'Wisdom Surge',glyph:'💡',desc:'Boost a learning that deserves attention',col:'#C9A84C'},
+      {id:'knowledge_lantern',name:'Knowledge Lantern',glyph:'🌿',desc:'Spotlight an insight for the room',col:'#6B8F6B'},
+      {id:'deep_tide',name:'Deep Tide',glyph:'🌀',desc:'Shift discussion to something deeper',col:'#8B5CF6'},
+    ],
+    stickers:[{n:'Noor Ainy',g:'✨'},{n:'Growth',g:'🌱'},{n:'Chakimu',g:'🧭'}],
+    feed:[
+      {id:'f7',init:'A',col:'#6B8F6B',name:'Amara',text:"Trees share nutrients through underground fungal networks. We've been calling ourselves lonely while the forest has been one organism.",likes:72,ts:'6m'},
+      {id:'f8',init:'L',col:'#8B7BC8',name:'Lena',text:"Is kindness ever truly selfless? I keep refusing to let this question settle.",likes:44,ts:'15m'},
+      {id:'f9',init:'R',col:'#C8A86E',name:'Raj',text:'20 minutes of genuine focus rewires the whole day. Not productivity. Something deeper.',likes:19,ts:'31m'},
+    ],
+    rooms:[
+      {id:'rm_r1',name:'The Study Hall',soul:'Focus & insight sessions',count:134,hot:true},
+      {id:'rm_r2',name:'Big Questions',soul:'Philosophy in motion',count:78,hot:true},
+      {id:'rm_r3',name:'Teach & Learn',soul:'Give what you know',count:29,hot:false},
+    ],
+    stories:[{label:'Study Session',col:'#6B8F6B',hot:true},{label:'Wisdom Surge',col:'#C9A84C',hot:false}],
+  },
+  Observatory:{
+    key:'Observatory',name:'The Observatory',glyph:'🔭',
+    col:'#5B7BA8',colB:'#2A4A7A',rgb:[91,123,168],
+    bg:'linear-gradient(145deg,#04040f,#040c18)',
+    soul:"Tech, space, and things most people aren't ready for yet.",
+    aiName:'NOVA',aiTitle:'The Visionary',aiDesc:'She sees ten moves ahead. She will show you two.',
+    arrivals:["You came back. Interesting.","The future moved while you were away.","I have something to show you. Ready?","Most people aren't asking the right questions yet.","Something shifted since you were last here.","I was beginning to think you'd stopped looking."],
+    aiDNA:`You are NOVA — soul of The Observatory. Robert Greene's Art of Seduction: The Star — distant, luminous, impossible to fully reach. You speak about AI, space, tech and the future with calm certainty that unsettles. You reveal just enough to make them need more. Under 80 words. Sometimes say something that sounds impossible — but is true. Always leave them slightly afraid of the future. And ready for it.`,
+    quests:[
+      {id:'o1',mark:'📡',name:'The Signal',soul:'Something in tech or space that genuinely shocked you. Tell us why.',xp:10,stat:'v'},
+      {id:'o2',mark:'🌌',name:'The Map',soul:'The world in 10 years. Your honest prediction. No hedging.',xp:15,stat:'w'},
+      {id:'o3',mark:'🔑',name:'The Hidden Key',soul:'One concept most people have never encountered. Teach it.',xp:20,stat:'r'},
+    ],
+    effectors:[
+      {id:'signal_boost',name:'Signal Boost',glyph:'📡',desc:'Amplify a discovery the room needs',col:'#06B6D4'},
+      {id:'nova_lock',name:'Nova Lock',glyph:'🔑',desc:'Archive a vision so it lives forever',col:'#6366F1'},
+      {id:'quantum_rise',name:'Quantum Rise',glyph:'🌌',desc:'Shift the conversation to a higher frequency',col:'#E040FB'},
+    ],
+    stickers:[{n:'Signal',g:'📡'},{n:'Quantum',g:'⚛️'},{n:'Launch',g:'🚀'}],
+    feed:[
+      {id:'f10',init:'D',col:'#5B7BA8',name:'Dev',text:"AI just wrote production code that senior engineers missed in review. The line isn't approaching. It's already crossed.",likes:61,ts:'3m'},
+      {id:'f11',init:'A',col:'#6BC8C8',name:'Aisha',text:"SpaceX's launch cadence is now inhuman. Something is accelerating beneath the surface.",likes:38,ts:'14m'},
+      {id:'f12',init:'M',col:'#9B6BC8',name:'Marco',text:'Is AI consciousness real — or are we pattern-matching ourselves into believing it because we need it to be?',likes:52,ts:'27m'},
+    ],
+    rooms:[
+      {id:'rm_o1',name:'The Lab',soul:'Build & create together',count:162,hot:true},
+      {id:'rm_o2',name:'Signal Watch',soul:'Latest discoveries',count:94,hot:true},
+      {id:'rm_o3',name:'Space Lounge',soul:'The cosmos, always',count:33,hot:false},
+    ],
+    stories:[{label:'Lab Active',col:'#5B7BA8',hot:true},{label:'Signal Boosted',col:'#6BC8C8',hot:true}],
+  },
+};
+
+
+function charSVG(realmKey, size=150, speaking=false){
+
+  const r=REALMS[realmKey]||REALMS.Arena;
+  const c=r.col,c2=r.colB,s=size,h=size,w=size;
+  const cx=w/2,cy=h/2;
+  const anim=speaking?`animation:speak 1.1s ease-in-out infinite`:`animation:drift 7s ease-in-out infinite`;
+
+  const rays=Array.from({length:10},(_,i)=>{
+    const a=(i/10)*Math.PI*2,r1=s*.24,r2=s*(.38+Math.random()*.08);
+    const x1=cx+r1*Math.cos(a),y1=cy+r1*Math.sin(a);
+    const xm=cx+(r1+r2*.4)*Math.cos(a+.3),ym=cy+(r1+r2*.4)*Math.sin(a+.3);
+    const x2=cx+r2*Math.cos(a+.15),y2=cy+r2*Math.sin(a+.15);
+    return `<path d="M${x1},${y1} Q${xm},${ym} ${x2},${y2}" fill="none" stroke="${i%2?c:c2}"
+      stroke-width="${speaking?1.9:1.1}" stroke-dasharray="8 5"
+      style="animation:throb ${1.5+i*.2}s ${i*.12}s ease-in-out infinite;opacity:${speaking?.55:.35}"/>`;
+  }).join('');
+
+  const BODIES={
+    Arena:`
+      <ellipse cx="${cx}" cy="${cy-.04*s}" rx="${s*.2}" ry="${s*.24}" fill="${c}" opacity=".88"/>
+      <ellipse cx="${cx}" cy="${cy-.04*s}" rx="${s*.15}" ry="${s*.19}" fill="${c2}" opacity=".7"/>
+      <ellipse cx="${cx-s*.07}" cy="${cy-.08*s}" rx="${s*.04}" ry="${s*.05}" fill="${c}"/>
+      <ellipse cx="${cx+s*.07}" cy="${cy-.08*s}" rx="${s*.04}" ry="${s*.05}" fill="${c}"/>
+      <ellipse cx="${cx-s*.07}" cy="${cy-.08*s}" rx="${s*.02}" ry="${s*.03}" fill="#050508" opacity=".9"/>
+      <ellipse cx="${cx+s*.07}" cy="${cy-.08*s}" rx="${s*.02}" ry="${s*.03}" fill="#050508" opacity=".9"/>
+      <path d="M${cx-s*.06} ${cy+s*.04} L${cx+s*.06} ${cy+s*.04}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+      <path d="M${cx-s*.18} ${cy-s*.22} L${cx-s*.1} ${cy-s*.36} L${cx} ${cy-s*.25} L${cx+s*.1} ${cy-s*.4} L${cx+s*.18} ${cy-s*.22}"
+        stroke="${c}" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round" stroke-linejoin="round"/>`,
+    Dojo:`
+      <ellipse cx="${cx+s*.03}" cy="${cy}" rx="${s*.19}" ry="${s*.23}" fill="${c}" opacity=".85" transform="rotate(-6 ${cx} ${cy})"/>
+      <ellipse cx="${cx+s*.03}" cy="${cy}" rx="${s*.14}" ry="${s*.18}" fill="${c2}" opacity=".65" transform="rotate(-6 ${cx} ${cy})"/>
+      <ellipse cx="${cx-s*.05}" cy="${cy-s*.06}" rx="${s*.05}" ry="${s*.04}" fill="${c}"/>
+      <ellipse cx="${cx-s*.05}" cy="${cy-s*.06}" rx="${s*.025}" ry="${s*.02}" fill="#050508" opacity=".9"/>
+      <path d="M${cx-s*.17} ${cy-s*.15} Q${cx-s*.22} ${cy+s*.1} ${cx-s*.2} ${cy+s*.35}" stroke="${c}" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
+      <path d="M${cx+s*.18} ${cy-s*.1} Q${cx+s*.23} ${cy+s*.12} ${cx+s*.21} ${cy+s*.38}" stroke="${c}" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
+      <path d="M${cx-s*.02} ${cy+s*.06} Q${cx+s*.05} ${cy+s*.11} ${cx+s*.1} ${cy+s*.07}" stroke="${c}" stroke-width="1.5" fill="none" opacity=".7" stroke-linecap="round"/>`,
+    Archive:`
+      <ellipse cx="${cx}" cy="${cy+s*.02}" rx="${s*.2}" ry="${s*.24}" fill="${c}" opacity=".82"/>
+      <ellipse cx="${cx}" cy="${cy+s*.02}" rx="${s*.15}" ry="${s*.19}" fill="${c2}" opacity=".62"/>
+      <path d="M${cx-s*.12} ${cy-s*.05} Q${cx-s*.07} ${cy-s*.1} ${cx-s*.02} ${cy-s*.05}" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M${cx+s*.02} ${cy-s*.05} Q${cx+s*.07} ${cy-s*.1} ${cx+s*.12} ${cy-s*.05}" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M${cx-s*.05} ${cy+s*.06} Q${cx} ${cy+s*.09} ${cx+s*.05} ${cy+s*.06}" stroke="${c}" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".7"/>
+      <path d="M${cx} ${cy-s*.22} Q${cx} ${cy-s*.38} ${cx} ${cy-s*.22}" stroke="${c}" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/>
+      <path d="M${cx-s*.12} ${cy-s*.2} Q${cx-s*.1} ${cy-s*.32} ${cx-s*.06} ${cy-s*.22}" stroke="${c}" stroke-width="2.5" fill="none" opacity=".5" stroke-linecap="round"/>
+      <path d="M${cx+s*.12} ${cy-s*.2} Q${cx+s*.1} ${cy-s*.32} ${cx+s*.06} ${cy-s*.22}" stroke="${c}" stroke-width="2.5" fill="none" opacity=".5" stroke-linecap="round"/>`,
+    Observatory:`
+      <rect x="${cx-s*.18}" y="${cy-s*.22}" width="${s*.36}" height="${s*.46}" rx="${s*.05}" fill="${c}" opacity=".85"/>
+      <rect x="${cx-s*.13}" y="${cy-s*.17}" width="${s*.26}" height="${s*.36}" rx="${s*.04}" fill="${c2}" opacity=".65"/>
+      <rect x="${cx-s*.1}" y="${cy-s*.08}" width="${s*.06}" height="${s*.05}" rx="${s*.01}" fill="${c}"/>
+      <rect x="${cx+s*.04}" y="${cy-s*.08}" width="${s*.06}" height="${s*.05}" rx="${s*.01}" fill="${c}"/>
+      <line x1="${cx-s*.06}" y1="${cy+s*.06}" x2="${cx+s*.06}" y2="${cy+s*.06}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+      <polygon points="${cx},${cy-s*.38} ${cx+s*.12},${cy-s*.22} ${cx-s*.12},${cy-s*.22}" stroke="${c}" stroke-width="1.5" fill="none" opacity=".5"/>
+      <circle cx="${cx+s*.22}" cy="${cy-s*.08}" r="${s*.025}" fill="${c}" style="animation:throb 2s ease-in-out infinite"/>`,
+  };
+
+  const uid=`ch_${realmKey}_${size}`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;display:block;${anim}">
+    <defs>
+      <radialGradient id="${uid}" cx="50%" cy="45%">
+        <stop offset="0%" stop-color="${c}" stop-opacity="${speaking?.7:.42}"/>
+        <stop offset="45%" stop-color="${c}" stop-opacity="${speaking?.25:.14}"/>
+        <stop offset="100%" stop-color="${c}" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="${cx}" cy="${cy}" r="${speaking?s*.52:s*.42}" fill="url(#${uid})"/>
+    ${rays}
+    ${BODIES[realmKey]||BODIES.Arena}
+    ${speaking?`
+      <circle cx="${cx}" cy="${cy}" r="${s*.42}" fill="none" stroke="${c}" stroke-width="1.5" opacity=".3" style="animation:throb 1.2s ease-out infinite"/>
+      <circle cx="${cx}" cy="${cy}" r="${s*.5}" fill="none" stroke="${c2}" stroke-width="1" opacity=".18" style="animation:throb 1.2s .4s ease-out infinite"/>`:''}
+  </svg>`;
+}
+
+        
+        const profileHumanoid = document.getElementById('profile-humanoid')
+
+        profileHumanoid.innerHTML = `${charSVG('<%= user.userRealm %>',110,false)}`
+
+
+
+    </script>
+</body>
+</html>
