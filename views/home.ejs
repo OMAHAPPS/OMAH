@@ -52,6 +52,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     <canvas id="cv"></canvas>
     <span id="realmElem" style="display: none;"><%= user.userRealm %></span>
 
+    <% if (locals.messages) { %>
+          <p style="color: red; background-color: #fff; text-align: center; border-radius: 4px; font-size: 1.2rem; top: 5%; left: 50%; transform: translateX(-50%);
+           font-weight: bold; position: absolute;"><%= messages %></p>
+          <% } %>
+
   <div class="view" style="background:linear-gradient(180deg,rgba(5,5,8,.55) 0%,rgba(5,5,8,.88) 40%);">
            <!--! COVER DIV -->
           
@@ -974,7 +979,10 @@ function sendAI () {
       }, 5)
 
   })
-  .catch((err) => console.log(err)) 
+  .catch((err) => {
+    spanResult.innerHTML = 'Sorry...AI is having trouble responding right now.'
+    console.log(err)
+  }) 
    
 }
 

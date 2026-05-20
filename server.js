@@ -90,9 +90,19 @@ app.patch('/main', async (req, res) => {
     const userId = req.user._id
     const { realm, rcol, ainame } = req.body
 
-    await Omaruser.findByIdAndUpdate({ _id: userId }, { $set: { userRealm: realm, userColor: rcol, aiName: ainame } })
+    try {
+        
+        await Omaruser.findByIdAndUpdate({ _id: userId }, { $set: { userRealm: realm, userColor: rcol, aiName: ainame } })
+    
+        res.redirect('/home')
 
-    res.redirect('/home')
+    } catch (error) {
+
+        req.flash('error', 'Sorry...You cannot update your Realm now')
+        res.redirect('/home')
+        
+    }
+
 })
 
 app.get('/home', async (req, res) => {
@@ -126,7 +136,6 @@ app.post('/post', async (req, res) => {
      }).catch((err) => {
 
          req.flash('error', 'Sorry...You cannot send Posts now')
-         res.json(err)
          res.redirect('/home')
      })
      
@@ -137,22 +146,31 @@ app.post('/post', async (req, res) => {
 app.post('/generate', async (req, res) => {
 
      const { message } = req.body
+     
+     try {
+        
+         const ai = new GoogleGenAI(process.env.GEMINI_API_KEY)
+    
+         async function main() {
+    
+             const response = await ai.models.generateContent({
+                model: `${process.env.GEMINI_MODEL}`,
+                contents: message
+             })
+             const result = response.text
+             console.log(response.text)
+             res.send(result)
+         }
+    
+         await main()
 
+     } catch (error) {
 
-      const ai = new GoogleGenAI(process.env.GEMINI_API_KEY)
+        req.flash('error', 'Sorry...AI is not responding now')
+        res.redirect('/home')
+        
+     }
 
-      async function main() {
-
-          const response = await ai.models.generateContent({
-             model: "gemini-3-flash-preview",
-             contents: message
-          })
-          const result = response.text
-          console.log(response.text)
-          res.send(result)
-      }
-
-      await main()
        
 })
 
