@@ -300,7 +300,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
            
            <div id="sen-to-ai-cont" style="display: flex; justify-content: flex-end; gap:8px;align-items:flex-end; animation: msgPop .3s ease-out both">
 
-             <div id="send-to-ai-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="max-width:78%;padding:11px 15px;font-size:13px;line-height:1.68;border-radius: 16px 16px 4px 16px;background: rgba(255,255,255,.05); color: <%= user.userColor %>;border: 1px solid rgba(255,255,255,.07)"></div>
+             <div id="send-to-ai-text" style="max-width:78%;padding:11px 15px;font-size:13px;line-height:1.68;border-radius: 16px 16px 4px 16px;background: rgba(255,255,255,.05); color: whitesmoke;border: 1px solid rgba(255,255,255,.07)"></div>
 
              <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width: 24px;height: 24px; border-radius: 50%;flex-shrink:0; background: <%= user.userColor %>20; border: 1px solid <%= user.userColor %>45; display:flex;align-items: center; justify-content: center;font-size: 11px; color: <%= user.userColor %>;">
               A
@@ -316,7 +316,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   <div style="display:flex;gap:4px">
                      <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width:6px;height:6px;border-radius:50%;background: <%= user.userColor %>; animation: dotBlink 1.2s 1.2s ease-in-out infinite">
                      </div>
-                     <span  id="input-to-dis-result" style="font-size: 16px; color: whitesmoke;"></span>
+                     <span id="input-to-dis-result" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="font-size: 16px; color: <%= user.userColor %>;"></span>
                   </div>
                </div>
            </div>
@@ -963,9 +963,16 @@ function sendAI () {
   }).then((resp) => {
     const data = resp.text()
     return data
-  }).then((data) => {
+  }).then((info) => {
+
+      if (info.length > 600) {
+
+        let data = info.slice(0, 599)
+      } else {
+        let data = info
+      }
       
-      console.log(data)
+
       let index = 0
       const interval = setInterval(() => {
           
