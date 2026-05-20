@@ -150,7 +150,6 @@ app.post('/post', async (req, res) => {
          post: poststring
      }).save().then((post) => {
          
-         console.log(post)
          res.redirect('/home')
      }).catch((err) => {
 
@@ -158,6 +157,14 @@ app.post('/post', async (req, res) => {
          res.redirect('/home')
      })
      
+
+})
+
+app.get('/ai', notLoggedInCheck, (req, res) => {
+    
+     const User = req.user
+
+     res.render('ai', { user: User })
 
 })
 

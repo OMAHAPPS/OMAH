@@ -94,8 +94,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     </div>
 
       <!--todo /////// TABS //////// -->
-   <section>
-    <div class="navbar" style="display: flex; justify-content: space-around; border-bottom: 1px solid rgba(255,255,255,.05); flex-shrink: 0; padding:4px 16px 0;margin-top:12px">
+   <section style="height: 60%;">
+    <div class="navbar" style="display: flex; justify-content: space-around; height: 8%; border-bottom: 1px solid rgba(255,255,255,.05); flex-shrink: 0; padding:4px 16px 0;margin-top:12px">
 
                <!-- NAVBAR OPTIONS RENDERED IN JAVASCRIPT -->
 
@@ -103,7 +103,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!--todo ////// FEED  ////// -->
 
-    <div id="scroll-container" class="scroll" style="display: block; flex:1; padding:14px 14px 80px; position: relative;">
+    <div id="scroll-container" class="scroll" style="display: block; height: 92%; flex:1; padding:14px 14px 80px; position: relative; overflow-y: scroll; overflow-x: hidden;">
       
                          <!--* ////// POSTS ///// -->
       
@@ -117,7 +117,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         <% } else { %>
 
           <% posts.map((post) => { %>
-
+    
       <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32)"> 
                <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
                           
@@ -164,8 +164,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 </div> 
                 
                 <% }) %>
-                
-                <% } %>
+                        
+              <% } %>
                 
       <!--! ELSE MAP POSTS WITH USER INFO FROM DB BELOW  -->
 
@@ -219,10 +219,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                       </div>
               </button>    -->
 
+   </div>
 
-
-
-   </div> 
    </section>
 
 
@@ -274,140 +272,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
   <!-- todo /////////  VIEW AI ///// -->
   
-<div class="view" id="ai-container" style="display: none; background: black;">
-        <div id="ai-nav" style="padding: 13px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,.05)">
-            <button onclick="aiCancel()" class="tap" style="padding: 7px 14px; border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.45)">← Back</button>
-            <div style="flex: 1; text-align: center;">
-              <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="fd" style="font-size: 15px; font-weight: 700; letter-spacing: 2px;color: <%= user.userColor %>;"><%= user.aiName %></div>
-              <div id="dot" style="display:flex;align-items:center;justify-content:center;gap: 5px;margin-top:2px">
-                <span class="span-head" style="font-size:9px;color:rgba(237,232,224,.3)">remembers you · The <%= user.userRealm %></span>
-              </div>
-            </div>
-            <button onclick="aiClear()" class="tap" style="padding:7px 10px;border-radius: 10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);font-size:11px;color:rgba(237, 232, 224, 0.87)">clear</button>
-          </div>
-         <div id="object-ai-cont" style="padding:28px 0; display: flex; flex-direction: column;align-items:center;flex-shrink:0; transition: display 5s ease-in-out;">
 
-               <div id="ai-humanoid" style="animation:orbIn .6s ease-out both"></div>
-               <div style="margin-top: 42px; text-align: center; padding: 0 28px; max-width:320px; animation:fadeIn .8s .35s both">
-                  <p class="fs" style="font-size:15px;color:rgba(237,232,224,.48);font-style: italic; line-height:1.78;margin-bottom:20px">"I've been thinking about what you said."</p>
-                  <div style="display:flex;flex-direction:column;gap:7px">
-                      <button <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="tap" style="padding:10px 16px;border-radius:14px;text-align:left; background: <%= user.userColor %>0d;border:1px solid <%= user.userColor %>1e;font-size:12px;color:rgba(237,232,224,.46)">"What should I focus on right now?"</button>
-                  </div>
-               </div>
-        </div>
         <!-- ! ///// TOP BAR ////// -->
-
-        <div id="ai-scroll" class="scroll" style="border-color: #C04848; padding: 12px 16px 8px;display: flex;flex-direction: column; gap: 10px; flex: 1; ">
-           
-           <div id="send-to-ai-cont" style="display: flex; justify-content: flex-end; gap:8px;align-items:flex-end; animation: msgPop .3s ease-out both">
-
-             <div id="send-to-ai-text" style="max-width:78%;padding:11px 15px;font-size:13px;line-height:1.68;border-radius: 16px 16px 4px 16px;background: rgba(255,255,255,.05); color: whitesmoke;border: 1px solid rgba(255,255,255,.07)"></div>
-
-             <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width: 24px;height: 24px; border-radius: 50%;flex-shrink:0; background: <%= user.userColor %>20; border: 1px solid <%= user.userColor %>45; display:flex;align-items: center; justify-content: center;font-size: 11px; color: <%= user.userColor %>;">
-              A
-            </div>
-
-
-           </div>
-           <div id="ai-response-cont" style="display: none; gap:8px;align-items:flex-end; animation: msgPop .3s ease-out both">
-             <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width:24px;height:24px;border-radius:50%;background: <%= user.userColor %>20; border: 1px solid <%= user.userColor %>45; display:flex;align-items:center;justify-content:center;font-size:11px">
-              ⚡
-            </div>
-               <div style="padding:12px 16px;border-radius:4px 16px 16px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07)">
-                  <div style="display:flex;gap:4px">
-                     <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width:6px;height:6px;border-radius:50%;background: <%= user.userColor %>; animation: dotBlink 1.2s 1.2s ease-in-out infinite">
-                     </div>
-                     <span id="input-to-dis-result" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="font-size: 16px; color: <%= user.userColor %>;"></span>
-                  </div>
-               </div>
-           </div>
-  
-    <div style="padding:10px 14px 10px; border-top:1px solid rgba(255,255,255,.05); display:flex;gap:8px;flex-shrink:0;background:rgba(5,5,8,.8);">
-       <input id="ai-in" type="text" placeholder="Speak to Kaze..." maxlength="400"
-        style="flex:1;padding:12px 16px;border-radius:14px;font-size:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)"
-        onkeydown=""/>
-      <button id="submit-to-ai" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> onclick="sendAI()" class="tap" style="display: none; padding:12px 18px;border-radius:14px;font-size:16px;font-weight:700;background: <%= user.userColor %>20; border:1px solid <%= user.userColor %>45; color: <%= user.userColor %>;">→</button>
-    </div> 
-  
-  
-
-  <!-- todo //////   VIEW PROFILE ///// -->
-
-     <div class="view" id="profile-cont" style="display: none; z-index: 4; background:rgba(5,5,8,.92)">
-
-    <div style="padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; gap:10px; flex-shrink: 0;">
-      <button onclick="cancel()" class="tap" style="padding: 7px 14px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); font-size: 12px; color: rgba(237,232,224,.45)">
-        ← Back
-      </button>
-      <div class="fd" style="flex:1;font-size:16px;font-weight:700;color:rgba(237,232,224,.8)">My Aura</div>
-    </div>
-
-    <div class="scroll" id="profile-scroll" style="flex: 1; padding: 20px 16px">
-
-      <!--! Identity + Character -->
-      <div style="text-align: center; margin-bottom: 26px; animation:emerge .5s ease-out both">
-        <div id="profile-humanoid" style="display:flex;justify-content:center;margin-bottom:14px;animation:orbIn .6s ease-out both">
-          
-        </div>
-
-        <div style="margin-top:30px;margin-bottom:4px">
-          <div class="fd" style="font-size:24px;font-weight:700;color:#ede8e0; margin-block: 30px;"><%= user.userName %></div>
-          
-        </div>
+         
         
-      <!-- Stats grid -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; animation: emerge .5s .06s ease-out both">
-      
-         <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
-            <div style="font-size: 22px; margin-bottom: 6px;">
-              ⚡
-            </div>
-            <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
-              0
-            </div>
-            <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
-              XP
-            </div>
-         </div>
-         <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
-            <div style="font-size: 22px; margin-bottom: 6px;">
-              ✅
-            </div>
-            <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
-              0
-            </div>
-            <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
-              Quests
-            </div>
-         </div>
-         <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
-            <div style="font-size: 22px; margin-bottom: 6px;">
-              📝
-            </div>
-            <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
-              0
-            </div>
-            <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
-              Posts
-            </div>
-         </div>
-
-      </div>
-      
-     
-      <div style="display: flex; flex-direction: column; gap: 8px; animation: emerge .5s .2s ease-out both">
-        <a href="/main" class="tap" style="text-decoration: none; padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
-          ✏️ Change Realm
-        </a>
-        <a href="/auth/logout" class="tap" style="text-decoration: none; padding: 13px; border-radius: 14px; font-size: 13px; background:rgba(200,60,40,.07); border:1px solid rgba(200,60,40,.2); color: #C04848;">
-           Logout
-        </a>
-      </div>
-
-    </div>
-  </div>
-
-</div> 
+        <!-- todo //////   VIEW PROFILE ///// -->
      
  
     <script>
@@ -682,8 +551,6 @@ function charSVG(realmKey, size=150, speaking=false){
 
 const realm = document.getElementById('realmElem').textContent
 const r = REALMS[realm]
-console.log(r)
-
 
 const dot = (col) => { return `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${col}; box-shadow:0 0 6px ${col}; animation: throb 1.8s ease-in-out infinite;flex-shrink:0"></div>`; }
 const backBtn =(label='← Back')=>`<button onclick="back()" class="tap" style="padding:7px 14px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.45)">${label}</button>`;
@@ -708,9 +575,8 @@ const letter = document.getElementById('letter-upp').textContent
                               <span style="color: ${r.col}; font-size: 12px; font-weight: 600; opacity: .7;">Share</span>` 
 
 
-profileHumanoid.innerHTML = `${charSVG('<%= user.userRealm %>',110,false)}`
 
-aiHumanoid.innerHTML = `${charSVG('<%= user.userRealm %>', 155, false)}`
+// aiHumanoid.innerHTML = `${charSVG('<%= user.userRealm %>', 155, false)}`
 
 humanoidContainer.innerHTML = `  <button  class="tap" style="display:flex;flex-direction:column;align-items:center;background:none;border:none;width:100%;max-width:300px">
         <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',110,false)}</div>
@@ -718,10 +584,10 @@ humanoidContainer.innerHTML = `  <button  class="tap" style="display:flex;flex-d
           <div class="fd" style="font-size:13px;font-weight:700;letter-spacing:2px;color: ${r.col};">${r.aiName}</div>
           <div class="fs" style="font-size:12px;color:rgba(237,232,224,.38);font-style:italic;margin-top:2px;line-height:1.5">"Hey there, this is Kaze"</div>
         </div>
-        <div id="talk-to-ai" style="width: 50%; display: flex; justify-content: space-around; align-items: center; margin-top: 8px; padding: 10px; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
+        <a href="/ai" id="talk-to-ai" style="text-decoration: none; width: 50%; display: flex; justify-content: space-around; align-items: center; margin-top: 8px; padding: 10px; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
             <ion-icon style="color: ${r.col}; font-size: 25px;" name="snow-outline"></ion-icon> 
             <p style="" >Talk to ${r.aiName}</p> 
-        </div>
+        </a>
       </button>
       <!-- XP horizon line -->
       <div style="width:100%;max-width:300px;margin-top:14px;animation:fadeIn .8s .6s both">
@@ -735,8 +601,8 @@ humanoidContainer.innerHTML = `  <button  class="tap" style="display:flex;flex-d
       </div>
 `
 
-dotAnim.innerHTML = `${dot(r.col)}`
-dotAnim.appendChild(span)
+// dotAnim.innerHTML = `${dot(r.col)}`
+// dotAnim.appendChild(span)
 
 
 
@@ -885,13 +751,13 @@ sharePostBtn.addEventListener('click', () => {
     sharePostBtn.style.display = 'none' 
   })
   
-talkToRealmBtn.addEventListener('click', () => {
+// talkToRealmBtn.addEventListener('click', () => {
      
-     aiContainer.style.display = 'block'
-     profileContainer.style.display = 'none'
-     sharePostBtn.style.display = 'none'
+//      aiContainer.style.display = 'block'
+//      profileContainer.style.display = 'none'
+//      sharePostBtn.style.display = 'none'
      
-})
+// })
 
 function aiCancel () {
       aiContainer.style.display = 'none'
@@ -928,63 +794,63 @@ const elemToDisAi = document.getElementById('elem-to-dis-result')
 const objectToAiCont = document.getElementById('object-ai-cont')
 const spanResult = document.getElementById('input-to-dis-result')
 
-inputToAi.addEventListener('keyup', () => {
+// inputToAi.addEventListener('keyup', () => {
 
-     if(!inputToAi.value) {
-         submitToAiBtn.style.display = 'none'
-         objectToAiCont.style.display = 'flex'
-     } else {
-      submitToAiBtn.style.display = 'block'
-     }
-})
+//      if(!inputToAi.value) {
+//          submitToAiBtn.style.display = 'none'
+//          objectToAiCont.style.display = 'flex'
+//      } else {
+//       submitToAiBtn.style.display = 'block'
+//      }
+// })
 
-function sendAI () {
+// function sendAI () {
 
-   objectToAiCont.style.display = 'none'
-   sendToAitext.textContent = inputToAi.value 
-   aiResponseCont.style.display = 'flex'
-   inputToAi.style.display = 'none'
-   submitToAiBtn.style.display = 'none'
+//    objectToAiCont.style.display = 'none'
+//    sendToAitext.textContent = inputToAi.value 
+//    aiResponseCont.style.display = 'flex'
+//    inputToAi.style.display = 'none'
+//    submitToAiBtn.style.display = 'none'
 
-  const post = inputToAi.value
+//   const post = inputToAi.value
 
-  fetch('/generate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      message: post
-    })
-  }).then((resp) => {
-    const data = resp.text()
-    return data
-  }).then((info) => {
+//   fetch('/generate', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({
+//       message: post
+//     })
+//   }).then((resp) => {
+//     const data = resp.text()
+//     return data
+//   }).then((info) => {
 
 
-  const data = info.slice(0, 999)
+//   const data = info.slice(0, 999)
     
       
 
-  let index = 0
-      const interval = setInterval(() => {
+//   let index = 0
+//       const interval = setInterval(() => {
           
-          spanResult.innerHTML += data[index]
+//           spanResult.innerHTML += data[index]
 
-          index ++
-          if(index >= data.length) {
-            clearInterval(interval)
-          }
+//           index ++
+//           if(index >= data.length) {
+//             clearInterval(interval)
+//           }
 
-      }, 5)
+//       }, 5)
 
-  })
-  .catch((err) => {
-    spanResult.innerHTML = 'Sorry...AI is having trouble responding right now.'
-    console.log(err)
-  }) 
+//   })
+//   .catch((err) => {
+//     spanResult.innerHTML = 'Sorry...AI is having trouble responding right now.'
+//     console.log(err)
+//   }) 
    
-}
+// }
 
     </script>
 </body>
