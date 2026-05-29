@@ -5,6 +5,9 @@ const passport = require('passport')
 const cookieSession = require('cookie-session')
 const methodOverride = require('method-override')
 const flash = require('connect-flash')
+const multer = require('multer')
+const path = require('path')
+const fs = require('fs')
 
 const passportSetup = require('./config/passport-config')
 
@@ -29,6 +32,7 @@ const dbURI = process.env.MONGODB_URI
 // MIDDLEWARE
 
 app.use(express.static('public'))
+app.use(express.static('public/uploads'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.set('view engine', 'ejs')
@@ -135,6 +139,41 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
 
      res.render('home', { user: userData, posts: allPosts, messages: req.flash('error') })
 })
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './public/uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${path.basename(file.originalname, path.extname(file.originalname))}-${Date.now()}${path.extname(file.originalname)}`)
+    }
+})
+
+const upload = multer({storage: storage })
+
+app.post('/post/upload', upload.single('image'), (req, res) => {
+
+     // console.log(req.file)
+        res.json(req.file)
+})
+
+// app.post('/post/cancel', (req, res) => {
+     
+//       const { file } = req.body
+      
+//       const filePath = path.join(__dirname, 'public', 'uploads', file.filename)
+//       fs.unlink(`${filePath}`, (err) => {
+//             if (err) {
+//                 console.log(err)
+//                 res.json({ success: false})
+//                 return;
+//             } else {
+//                 res.json({ success: true })
+//                 console.log('File deleted successfully')
+//             }
+//       })
+ 
+// })
 
 app.post('/post', async (req, res) => {
 
