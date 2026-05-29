@@ -52,6 +52,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     <canvas id="cv"></canvas>
     <span id="realmElem" style="display: none;"><%= user.userRealm %></span>
 
+    <p id="error-display" style="position: absolute; top: 5%; left: 50%; transform: translateX(-50%); background-color: white; color:red; padding-inline: 5px; border-radius: 2px; font-weight: bold;"></p>
+    
+
     <% if (locals.messages) { %>
           <p style="color: red; background-color: #fff; text-align: center; border-radius: 4px; font-size: 1.2rem; top: 5%; left: 50%; transform: translateX(-50%);
            font-weight: bold; position: absolute;"><%= messages %></p>
@@ -103,7 +106,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!--todo ////// FEED  ////// -->
 
-    <div id="scroll-container" class="scroll" style="display: block; height: 82%; flex:1; padding:14px 14px 80px; position: relative; overflow-y: scroll; overflow-x: hidden;">
+    <div id="scroll-container" class="scroll" style="display: block; height: 92%; flex:1; padding:14px 14px 80px; position: relative; overflow-y: scroll; overflow-x: hidden;">
       
                          <!--* ////// POSTS ///// -->
       
@@ -137,13 +140,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                                <% const minutesPast = Math.floor( (diff / 60000) ) %>
 
                                <% if (daysPast > 0) { %>
-                                <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
+                                <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
                                 <% } else if (hoursPast > 0) { %>
-                                  <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
+                                  <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
                                   <% } else if (minutesPast > 0) { %>
-                                    <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
+                                    <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
                                     <% } else if (minutesPast == 0) { %>
-                                      <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
+                                      <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
                                    <% } %>
                    </div>
                          
@@ -225,10 +228,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
    <!-- todo ///// SHARE SOMETHING  -->
+   
+   
 
    <div class="sharePost" style="display: block; position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
          
-      <button onclick="" id="share-link" class="tap" style="width: 100%; padding: 15px 10px; border-radius: 14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap:10px;">
+      <button id="share-link" class="tap" style="width: 100%; padding: 15px 10px; border-radius: 14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap:10px;">
           <!-- ! RENDERED IN JAVASCRIPT -->
       </button>
 
@@ -250,14 +255,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             <input name="userid" value="<%= user._id %>" type="text" style="display: none;">
             <input name="userrealm" value="<%= user.userRealm %>" type="text" style="display: none;">
             <input id="post-input-elem" name="poststring" type="text" style="display: none;">
+            <input id="post-image-input" name="postimage" type="file" style="display: none;" />
              
           <button type="submit" id="post-submit-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="tap" style="display: none; padding: 8px 20px;border-radius:12px;font-size:12px;font-weight:600;background: <%= user.userColor %>18;border: 1px solid <%= user.userColor %>52;color: <%= user.userColor %>;">Share</button>
           </form>
       </div>
     <div style="padding:18px 16px;flex:1;display:flex;flex-direction:column;gap:14px">
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <!--todo EMPTY SPACE FOR BREATHER  -->
-      </div>
+        
 
       <div style="display:flex; align-items: center; gap:10px">
          <div>
@@ -265,10 +269,23 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             <div style="font-size:10px;color:rgba(237,232,224,.3)">writing to The <%= user.userRealm %></div>
         </div>
       </div>
-      <textarea id="post-body" placeholder="Say something real..." maxlength="500" style="flex:1;min-height:160px;padding:16px; border-radius: 18px; font-size: 15px; line-height: 1.72; resize:none; color:rgba(237,232,224,.82); background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07)"></textarea>
+      
+      <div class="post-box" style="display: flex; flex-flow: column nowrap; flex-grow: 1;">
+ 
+              <!--! ///// IMAGE TO BE RENDERED IN JS AFTER MULTER UPLOAD ////  -->
+              <article id="image-article" style="width: clamp(350px, 100%, 600px); height: 375px; border-radius: 18px 18px 0 0; display: none;">
+
+              </article>
+              <textarea id="post-body" placeholder="Say something real..." maxlength="500" style="flex-grow: 1; padding:16px; border-radius: 0 0 18px 18px; font-size: 15px; line-height: 1.72; resize: none; color:rgba(237,232,224,.82); background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07)">
+              </textarea>
+        
+      </div>   
+
       <div style="text-align:right;font-size:10px;color:rgba(237,232,224,.2)">🔒 Stays within The <%= user.userRealm %></div>
     </div>
   </div>
+
+
 
   <!-- todo /////////  VIEW AI ///// -->
   
@@ -563,6 +580,8 @@ const humanoidContainer = document.querySelector('.humanoid-container');
 const profileHumanoid = document.getElementById('profile-humanoid')
 const navbar = document.querySelector('.navbar')
 const shareAvatarCont = document.getElementById('share-link')
+const sharePostBtn = document.querySelector('.sharePost')
+const viewToPostCont = document.getElementById('view-to-post')
 const options = ['Feed', 'Messages', 'Rooms']
 
 const av=(init,col,sz=32)=>`<div style="width:${sz}px;height:${sz}px;border-radius:50%;flex-shrink:0;background:${col}22;border:1.5px solid ${col}55;display:flex;align-items:center;justify-content:center;font-size:${Math.floor(sz*.36)}px;font-weight:700;color:${col};font-family:'Plus Jakarta Sans',sans-serif">${init}</div>`;
@@ -570,13 +589,112 @@ const av=(init,col,sz=32)=>`<div style="width:${sz}px;height:${sz}px;border-radi
 const letter = document.getElementById('letter-upp').textContent
 
  const avatarLogo = av(letter, r.col, sz=32)
+
  shareAvatarCont.innerHTML = `${av(letter, r.col, sz=32)}
-                              <span style="flex: 1; font-size: 14px; color:rgba(237,232,224,.28); text-align: left">Write something real...</span>
-                              <span style="color: ${r.col}; font-size: 12px; font-weight: 600; opacity: .7;">Share</span>` 
+                              <span id="post-placeholder" style="flex: 1; font-size: 14px; color:rgba(237,232,224,.28); text-align: left;">Write something real...</span>
+                              <form action="/post/upload" method="POST" enctype="multipart/form-data" id="file-form" style="display: flex; width: fit-content; justify-content: flex-end;">
+                                <input id="image" type="file" name="image" accept="image/*" style="display: none;">
+                                <label for="image" class="label"><ion-icon name="attach-outline" style="color: ${r.col}; cursor: pointer; font-size: 32px; display: block;"></ion-icon></label>
+                                <div class="upload-actions" style="display: none; justify-content: center; align-items: center;">
+                                <button type="submit" id="submit-upload" style="padding: 10px 10px; margin-right: 8px; outline: none; border-radius: 10px; background-color: #1ed760; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
+                                  Upload<ion-icon name="arrow-up-outline" style="color: white; font-size: 15px;"></ion-icon>
+                                  </button>
+                                  <button  id="cancel-upload" style="padding: 10px 10px; outline: none; border-radius: 10px; background-color: red; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
+                                  <ion-icon name="trash-outline" style="color: white; font-size: 20px;"></ion-icon>
+                                </button>
+                                </div>
+                              </form> 
+                              `
+const submitActionsCont = document.querySelector('.upload-actions')
+const labelFileInput = document.querySelector('.label')
+const fileForm = document.getElementById('file-form')
+const postPlaceholder = document.getElementById('post-placeholder')
+const inputFile = document.getElementById('image')
+const cancelUploadBtn = document.getElementById('cancel-upload')
+const submitUploadBtn = document.getElementById('submit-upload')
+const errorMessage = document.getElementById('error-display')
+const postBox = document.querySelector('.post-box')
+const textArea = document.getElementById('post-body')
+const textAreaWithFile = document.getElementById('post-body-image')
+const imageArticle = document.getElementById('image-article')
+
+
+labelFileInput.addEventListener('click', () => {
+     
+     submitActionsCont.style.display = 'flex'
+     postPlaceholder.textContent = 'Image Attached'
+     labelFileInput.style.display = 'none'
+})
+
+cancelUploadBtn.addEventListener('click', (e) => {
+     
+     e.preventDefault()
+     submitActionsCont.style.display = 'none'
+     postPlaceholder.textContent = 'Write something real...'
+     labelFileInput.style.display = 'block'
+})
+
+ submitUploadBtn.addEventListener('click', (e) => {
+
+     e.preventDefault()
+     
+     if (inputFile.files.length === 0) {
+          errorMessage.textContent = 'No Image Selected...'
+          return;
+     } else {
+       const selectedFile = inputFile.files[0]
+
+        if (!selectedFile.type.startsWith('image/')) {
+            errorMessage.textContent = 'Selected file is not an image...'
+            return;
+        } else {
+          
+          const formData = new FormData()
+          
+          formData.append('image', selectedFile)
+          
+          fetch('/post/upload', {
+            method: 'POST',
+            body: formData
+          }).then((response) => {
+            if (response.ok) {
+
+                      submitUploadBtn.disabled = true
+                      submitUploadBtn.style.backgroundColor = '#121212'
+                      return response.json()
+                } else {
+                      errorMessage.textContent = 'Uploading currently unavailable...'
+                      throw new Error('Network response was not ok')
+                }
+            }).then((data) => {
+                
+                console.log(data)
+
+                const image = `<img src=/uploads/${data.filename} alt="" style="width: 100%; height: 100%;" />`
+
+                imageArticle.innerHTML = image
+                imageArticle.style.display = 'block'
+                viewToPostCont.style.display = 'block'
+                sharePostBtn.style.display = 'none'
+                
+          
+            }).catch((error) => {
+                errorMessage.textContent = 'Error uploading image. Please try again.'
+                console.error('Upload error:', error)
+          })
 
 
 
-// aiHumanoid.innerHTML = `${charSVG('<%= user.userRealm %>', 155, false)}`
+
+
+        }
+
+
+     }
+ })
+
+
+
 
 humanoidContainer.innerHTML = `  <button  class="tap" style="display:flex;flex-direction:column;align-items:center;background:none;border:none;width:100%;max-width:300px">
         <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',110,false)}</div>
@@ -643,8 +761,6 @@ const messagesMapped = document.querySelectorAll('.messages')
 
 const roomsContainer = document.querySelector('.rooms-cont')
 
-const sharePostBtn = document.querySelector('.sharePost')
-const viewToPostCont = document.getElementById('view-to-post')
 
 const profileContainer = document.getElementById('profile-cont')
 
@@ -653,7 +769,6 @@ const comment = document.getElementById('comment')
 const talkToRealmBtn = document.getElementById('talk-to-ai')
 const aiContainer = document.getElementById('ai-container')
 
-const textArea = document.getElementById('post-body')
 const submitPostBtn = document.getElementById('post-submit-btn')
 const inputPostElem = document.getElementById('post-input-elem')
 
@@ -664,6 +779,10 @@ textArea.addEventListener('keydown', (e) => {
         e.preventDefault()
      }
 })
+
+
+
+
 
 textArea.addEventListener('keyup', () => {
     if ( textArea.value !== '' ) {
@@ -745,19 +864,13 @@ roomsBtn.addEventListener('click', (e) => {
       
 })
 
-sharePostBtn.addEventListener('click', () => {
+postPlaceholder.addEventListener('click', () => {
 
     viewToPostCont.style.display = 'flex' 
     sharePostBtn.style.display = 'none' 
   })
   
-// talkToRealmBtn.addEventListener('click', () => {
-     
-//      aiContainer.style.display = 'block'
-//      profileContainer.style.display = 'none'
-//      sharePostBtn.style.display = 'none'
-     
-// })
+
 
 function aiCancel () {
       aiContainer.style.display = 'none'
@@ -767,11 +880,37 @@ function aiCancel () {
       spanResult.innerHTML = ''
       sendToAitext.textContent = ''
 }
+
+
   
 function back() {
 
     sharePostBtn.style.display = 'block'
     viewToPostCont.style.display = 'none'
+    textArea.value = ''
+    inputPostElem.value = ''
+    imageArticle.innerHTML = ''
+    submitActionsCont.style.display = 'none'
+    labelFileInput.style.display = 'block'
+
+    fetch('/post/cancel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ file: inputFile.files[0] ? inputFile.files[0] : null })
+     }).then((response) => {
+        if (response.ok) {
+          console.log('Post cancelled successfully');
+        } else {
+          console.error('Failed to cancel post');
+        }
+      }).catch((error) => {
+        console.error('Error cancelling post:', error);
+      });
+    
+
+
 }
 
   
@@ -794,63 +933,8 @@ const elemToDisAi = document.getElementById('elem-to-dis-result')
 const objectToAiCont = document.getElementById('object-ai-cont')
 const spanResult = document.getElementById('input-to-dis-result')
 
-// inputToAi.addEventListener('keyup', () => {
-
-//      if(!inputToAi.value) {
-//          submitToAiBtn.style.display = 'none'
-//          objectToAiCont.style.display = 'flex'
-//      } else {
-//       submitToAiBtn.style.display = 'block'
-//      }
-// })
-
-// function sendAI () {
-
-//    objectToAiCont.style.display = 'none'
-//    sendToAitext.textContent = inputToAi.value 
-//    aiResponseCont.style.display = 'flex'
-//    inputToAi.style.display = 'none'
-//    submitToAiBtn.style.display = 'none'
-
-//   const post = inputToAi.value
-
-//   fetch('/generate', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({
-//       message: post
-//     })
-//   }).then((resp) => {
-//     const data = resp.text()
-//     return data
-//   }).then((info) => {
 
 
-//   const data = info.slice(0, 999)
-    
-      
-
-//   let index = 0
-//       const interval = setInterval(() => {
-          
-//           spanResult.innerHTML += data[index]
-
-//           index ++
-//           if(index >= data.length) {
-//             clearInterval(interval)
-//           }
-
-//       }, 5)
-
-//   })
-//   .catch((err) => {
-//     spanResult.innerHTML = 'Sorry...AI is having trouble responding right now.'
-//     console.log(err)
-//   }) 
-   
-// }
 
     </script>
 </body>
