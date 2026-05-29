@@ -157,23 +157,23 @@ app.post('/post/upload', upload.single('image'), (req, res) => {
         res.json(req.file)
 })
 
-// app.post('/post/cancel', (req, res) => {
+app.post('/post/cancel', (req, res) => {
      
-//       const { file } = req.body
+      const { file } = req.body
       
-//       const filePath = path.join(__dirname, 'public', 'uploads', file.filename)
-//       fs.unlink(`${filePath}`, (err) => {
-//             if (err) {
-//                 console.log(err)
-//                 res.json({ success: false})
-//                 return;
-//             } else {
-//                 res.json({ success: true })
-//                 console.log('File deleted successfully')
-//             }
-//       })
+      const filePath = path.join(__dirname, 'public', 'uploads', file.filename)
+      fs.unlink(`${filePath}`, (err) => {
+            if (err) {
+                console.log(err)
+                res.json({ success: false})
+                return;
+            } else {
+                res.json({ success: true })
+                console.log('File deleted successfully')
+            }
+      })
  
-// })
+})
 
 app.post('/post', async (req, res) => {
 
