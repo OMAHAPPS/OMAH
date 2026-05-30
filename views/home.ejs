@@ -680,6 +680,9 @@ cancelUploadBtn.addEventListener('click', (e) => {
           }, 2000)
           submitActionsCont.style.display = 'none'
           labelFileInput.style.display = 'block'
+          submitUploadBtn.disabled = false
+          submitUploadBtn.style.backgroundColor = '#1ed760'
+          submitUploadBtn.textContent = 'Upload'
           return;
      } else {
        const selectedFile = inputFile.files[0]
@@ -691,6 +694,9 @@ cancelUploadBtn.addEventListener('click', (e) => {
             }, 2000)
             submitActionsCont.style.display = 'none'
             labelFileInput.style.display = 'block'
+            submitUploadBtn.disabled = false
+            submitUploadBtn.style.backgroundColor = '#1ed760'
+            submitUploadBtn.textContent = 'Upload'
             return;
         } else {
 
@@ -711,6 +717,9 @@ cancelUploadBtn.addEventListener('click', (e) => {
                         errorMessage.textContent = ''
                       }, 2000)
                       throw new Error('Network response was not ok')
+                      submitUploadBtn.disabled = false
+                      submitUploadBtn.style.backgroundColor = '#1ed760'
+                      submitUploadBtn.textContent = 'Upload'
                     }
                   }).then((data) => {
                     
@@ -733,6 +742,9 @@ cancelUploadBtn.addEventListener('click', (e) => {
                 }, 2000)
                  submitActionsCont.style.display = 'none'
                  labelFileInput.style.display = 'block'
+                 submitUploadBtn.disabled = false
+                 submitUploadBtn.style.backgroundColor = '#1ed760'
+                 submitUploadBtn.textContent = 'Upload'
           })
 
 
@@ -944,6 +956,8 @@ function back() {
     submitUploadBtn.disabled = false
     imageArticle.style.display = 'none'
     submitUploadBtn.style.backgroundColor = '#1ed760'
+    submitUploadBtn.textContent = 'Upload'
+    submitUploadBtn.disabled = false
     
     const imageSource = document.getElementById('filepath').textContent;
   
