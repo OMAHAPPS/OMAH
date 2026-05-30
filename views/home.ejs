@@ -762,16 +762,12 @@ cancelUploadBtn.addEventListener('click', (e) => {
 
 humanoidContainer.innerHTML = `  <button  class="tap" style="display:flex; justify-content: center; align-items:center;background:none;border:none;width:100%;max-width:300px">
   
-         <a href="/ai" id="talk-to-ai" style="text-decoration: none; width: 50%; display: flex; justify-content: space-around; align-items: center; margin-top: 8px; padding: 10px; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
+         <a href="/ai" id="talk-to-ai" style="text-decoration: none; width: 55%; display: flex; justify-content: space-around; align-items: center; margin-top: 8px; padding: 10px; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
             <ion-icon style="color: ${r.col}; font-size: 25px;" name="snow-outline"></ion-icon> 
-            <p style="" >Talk to AI</p> 
+            <p style="font-weight: ;bold" >Talk to AI</p> 
+            <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',25,false)}</div>
          </a>
-    <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',55,false)}</div>
       </button>
-      <!-- XP horizon line -->
-      <div style="width:100%;max-width:300px;margin-top:14px;animation:fadeIn .8s .6s both">
-        
-      </div>
 `
 
 // dotAnim.innerHTML = `${dot(r.col)}`
