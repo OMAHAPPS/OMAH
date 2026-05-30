@@ -633,11 +633,17 @@ cancelUploadBtn.addEventListener('click', (e) => {
      submitActionsCont.style.display = 'none'
      postPlaceholder.textContent = 'Write something real...'
      labelFileInput.style.display = 'block'
+     submitUploadBtn.disabled = false
+     submitUploadBtn.style.backgroundColor = '#1ed760'
 })
 
  submitUploadBtn.addEventListener('click', (e) => {
 
-     e.preventDefault()
+   e.preventDefault()
+   
+   submitUploadBtn.disabled = true
+   submitUploadBtn.style.backgroundColor = '#121212'
+
      
      if (inputFile.files.length === 0) {
           errorMessage.textContent = 'No Image Selected...'
@@ -670,8 +676,6 @@ cancelUploadBtn.addEventListener('click', (e) => {
           }).then((response) => {
             if (response.ok) {
 
-                      submitUploadBtn.disabled = true
-                      submitUploadBtn.style.backgroundColor = '#121212'
                       return response.json()
                     } else {
                       errorMessage.textContent = 'Uploading currently unavailable...'
