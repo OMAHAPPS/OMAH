@@ -8,6 +8,7 @@ const postSchema = new Schema({
        userName: { type: String, required: true },
        userRealm: { type: String, required: true },
        post: { type: String, required: true },
+       image: { type: String, default: 'none', required: false },
        likes: { type: Number, default: 0, required: false }
 }, { timestamps: true })
 

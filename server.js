@@ -136,8 +136,10 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
 
     const allPosts = await Post.find()
 
+    const targetPost = allPosts[1]
 
-     res.render('home', { user: userData, posts: allPosts, messages: req.flash('error') })
+
+     res.render('home', { user: userData, posts: allPosts, post: targetPost, messages: req.flash('error') })
 })
 
 const storage = multer.diskStorage({
@@ -166,7 +168,7 @@ app.post('/post/cancel', (req, res) => {
 
       fs.unlink(`./public/uploads/${filepath}`, (err) => {
             if (err) {
-                console.log(err)
+                console.log('No file to delete')
                 res.json({ success: false})
                 return;
             } else {
@@ -181,7 +183,7 @@ app.post('/post/cancel', (req, res) => {
 
 app.post('/post', async (req, res) => {
 
-     const { userid, userrealm, poststring } = req.body
+     const { userid, userrealm, poststring, imagesrc } = req.body
      
      const userData = await Omaruser.findOne({ _id: userid })
      const username = userData.userName
@@ -190,6 +192,7 @@ app.post('/post', async (req, res) => {
          userId: userid,
          userName: username,
          userRealm: userrealm,
+         image: imagesrc,
          post: poststring
      }).save().then((post) => {
          

@@ -107,7 +107,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!--todo ////// FEED  ////// -->
 
-    <div id="scroll-container" class="scroll" style="display: block; height: 92%; flex:1; padding:14px 14px 80px; position: relative; overflow-y: scroll; overflow-x: hidden;">
+    <div id="scroll-container" class="scroll" style="display: block; height: 120%; flex:1; padding:14px 14px 80px; position: relative; overflow-y: scroll; overflow-x: hidden;">
       
                          <!--* ////// POSTS ///// -->
       
@@ -120,52 +120,65 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
  
         <% } else { %>
 
-          <% posts.map((post) => { %>
-    
-      <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32)"> 
-               <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
-                          
-                    <div style="flex:1">
-                         <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
-                                  <%= post.userName %> 
-                                  <% if (post.userName == user.userName) { %>
-                                    <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                    <% } else { %>
-                                      <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                  <% } %>
-                         </div>
-                               <% const timestamp = post.createdAt %>
-                               <% const diff = new Date() - new Date(timestamp) %>
-                               <% const daysPast = Math.floor( (diff / 86400000) ) %>
-                               <% const hoursPast = Math.floor( (diff / 3600000) ) %>
-                               <% const minutesPast = Math.floor( (diff / 60000) ) %>
+          
+          <!-- ! ///// TRIAL POST WITH IMAGE ////// -->
 
-                               <% if (daysPast > 0) { %>
-                                <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
-                                <% } else if (hoursPast > 0) { %>
-                                  <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
-                                  <% } else if (minutesPast > 0) { %>
-                                    <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
-                                    <% } else if (minutesPast == 0) { %>
-                                      <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
-                                   <% } %>
-                   </div>
+
+
+          
+          <% posts.map((post) => { %>
+          
+          
+          <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32)"> 
+              <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
                          
-               </div>
-  
-               <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px"><%= post.post %></p>
-  
-               <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
-                    <button <% /* eslint-disable-next-line css-propertyvalueexpected */ %> onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
-                         ❤️<%= post.likes %>
-                    </button>
-                    <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
-                    <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
-                    <div style="margin-left:auto">
-                        
-                    </div>
+                   <div style="flex:1">
+                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                                 <%= post.userName %> 
+                                 <% if (post.userName == user.userName) { %>
+                                   <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                   <% } else { %>
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                 <% } %>
+                        </div>
+                              <% const timestamp = post.createdAt %>
+                              <% const diff = new Date() - new Date(timestamp) %>
+                              <% const daysPast = Math.floor( (diff / 86400000) ) %>
+                              <% const hoursPast = Math.floor( (diff / 3600000) ) %>
+                              <% const minutesPast = Math.floor( (diff / 60000) ) %>
+
+                              <% if (daysPast > 0) { %>
+                               <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
+                               <% } else if (hoursPast > 0) { %>
+                                 <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
+                                 <% } else if (minutesPast > 0) { %>
+                                   <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
+                                   <% } else if (minutesPast == 0) { %>
+                                     <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
+                                  <% } %>
                   </div>
-                </div> 
+                        
+              </div>
+ 
+              <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px"><%= post.post %></p>
+
+              <% if (post.image !== 'none') { %>
+                <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
+                <% } else { %>
+                 <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
+              <% } %>
+
+              <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                   <button <% /* eslint-disable-next-line css-propertyvalueexpected */ %> onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
+                        ❤️<%= post.likes %>
+                   </button>
+                   <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
+                   <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
+                   <div style="margin-left:auto">
+                       
+                   </div>
+                 </div>
+         </div> 
                 
                 <% }) %>
                         
@@ -252,11 +265,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             Write
           </div>
           <!-- ! change this to a form later -->
-          <form action="/post" method="post">
+          <form id="post-form" action="/post" method="post">
             <input name="userid" value="<%= user._id %>" type="text" style="display: none;">
             <input name="userrealm" value="<%= user.userRealm %>" type="text" style="display: none;">
             <input id="post-input-elem" name="poststring" type="text" style="display: none;">
-            <input id="post-image-input" name="postimage" type="file" style="display: none;" />
+            <input id="post-image-input" name="imagesrc" type="text" style="display: none;" value="none" />
              
           <button type="submit" id="post-submit-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="tap" style="display: none; padding: 8px 20px;border-radius:12px;font-size:12px;font-weight:600;background: <%= user.userColor %>18;border: 1px solid <%= user.userColor %>52;color: <%= user.userColor %>;">Share</button>
           </form>
@@ -580,10 +593,13 @@ const aiHumanoid = document.getElementById('ai-humanoid')
 const humanoidContainer = document.querySelector('.humanoid-container');
 const profileHumanoid = document.getElementById('profile-humanoid')
 const navbar = document.querySelector('.navbar')
+const postSubmitPostBtn = document.getElementById('post-submit-btn')
+const postForm = document.getElementById('post-form')
 const shareAvatarCont = document.getElementById('share-link')
 const sharePostBtn = document.querySelector('.sharePost')
 const viewToPostCont = document.getElementById('view-to-post')
 const options = ['Feed', 'Messages', 'Rooms']
+
 
 const av=(init,col,sz=32)=>`<div style="width:${sz}px;height:${sz}px;border-radius:50%;flex-shrink:0;background:${col}22;border:1.5px solid ${col}55;display:flex;align-items:center;justify-content:center;font-size:${Math.floor(sz*.36)}px;font-weight:700;color:${col};font-family:'Plus Jakarta Sans',sans-serif">${init}</div>`;
 
@@ -592,7 +608,7 @@ const letter = document.getElementById('letter-upp').textContent
  const avatarLogo = av(letter, r.col, sz=32)
 
  shareAvatarCont.innerHTML = `${av(letter, r.col, sz=32)}
-                              <span id="post-placeholder" style="flex: 1; font-size: 14px; color:rgba(237,232,224,.28); text-align: left;">Write something real...</span>
+                              <span id="post-placeholder" style="flex: 1; font-size: 14px; color:rgba(237,232,224,.28); text-align: left;">Add new Post.........</span>
                               <form action="/post/upload" method="POST" enctype="multipart/form-data" id="file-form" style="display: flex; width: fit-content; justify-content: flex-end;">
                                 <input id="image" type="file" name="image" accept="image/*" style="display: none;">
                                 <label for="image" class="label"><ion-icon name="attach-outline" style="color: ${r.col}; cursor: pointer; font-size: 32px; display: block;"></ion-icon></label>
@@ -618,6 +634,15 @@ const postBox = document.querySelector('.post-box')
 const textArea = document.getElementById('post-body')
 const textAreaWithFile = document.getElementById('post-body-image')
 const imageArticle = document.getElementById('image-article')
+const imagePostInput = document.getElementById('post-image-input')
+
+
+postSubmitPostBtn.addEventListener('click', (e) => {
+      e.preventDefault()
+      postSubmitPostBtn.disabled = true
+      postSubmitPostBtn.textContent = 'Posting...'
+      postForm.submit()
+})
 
 
 labelFileInput.addEventListener('click', () => {
@@ -635,6 +660,8 @@ cancelUploadBtn.addEventListener('click', (e) => {
      labelFileInput.style.display = 'block'
      submitUploadBtn.disabled = false
      submitUploadBtn.style.backgroundColor = '#1ed760'
+     submitUploadBtn.textContent = 'Upload'
+     inputFile.value = ''
 })
 
  submitUploadBtn.addEventListener('click', (e) => {
@@ -643,6 +670,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
    
    submitUploadBtn.disabled = true
    submitUploadBtn.style.backgroundColor = '#121212'
+   submitUploadBtn.textContent = 'Uploading...'
 
      
      if (inputFile.files.length === 0) {
@@ -689,7 +717,8 @@ cancelUploadBtn.addEventListener('click', (e) => {
                     // console.log(data)
                     
                document.getElementById('filepath').textContent = data.filename
-                const image = `<img src=/uploads/${data.filename} alt="" style="width: 100%; height: 100%;" />`
+               const image = `<img src=/uploads/${data.filename} alt="" style="width: 100%; height: 100%;" />`
+               imagePostInput.value = data.filename
 
                 imageArticle.innerHTML = image
                 imageArticle.style.display = 'block'
@@ -719,16 +748,13 @@ cancelUploadBtn.addEventListener('click', (e) => {
 
 
 
-humanoidContainer.innerHTML = `  <button  class="tap" style="display:flex;flex-direction:column;align-items:center;background:none;border:none;width:100%;max-width:300px">
-        <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',110,false)}</div>
-        <div style="margin-top:30px;text-align:center;animation:fadeIn .8s .3s both">
-          <div class="fd" style="font-size:13px;font-weight:700;letter-spacing:2px;color: ${r.col};">${r.aiName}</div>
-          <div class="fs" style="font-size:12px;color:rgba(237,232,224,.38);font-style:italic;margin-top:2px;line-height:1.5">"Hey there, this is Kaze"</div>
-        </div>
-        <a href="/ai" id="talk-to-ai" style="text-decoration: none; width: 50%; display: flex; justify-content: space-around; align-items: center; margin-top: 8px; padding: 10px; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
+humanoidContainer.innerHTML = `  <button  class="tap" style="display:flex; justify-content: center; align-items:center;background:none;border:none;width:100%;max-width:300px">
+  
+         <a href="/ai" id="talk-to-ai" style="text-decoration: none; width: 50%; display: flex; justify-content: space-around; align-items: center; margin-top: 8px; padding: 10px; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
             <ion-icon style="color: ${r.col}; font-size: 25px;" name="snow-outline"></ion-icon> 
-            <p style="" >Talk to ${r.aiName}</p> 
-        </a>
+            <p style="" >Talk to AI</p> 
+         </a>
+    <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',55,false)}</div>
       </button>
       <!-- XP horizon line -->
       <div style="width:100%;max-width:300px;margin-top:14px;animation:fadeIn .8s .6s both">
