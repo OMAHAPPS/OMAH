@@ -77,7 +77,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      <div <% /* eslint-disable-next-line css-porpertyvalueexpected */ %> style="font-size: 9px; color: <%= user.userColor %>; letter-spacing: 1px; margin-top: 1px; opacity: 0.7;">
                         Newcomer · 0 XP
                      </div>
-            </div>
+                  </div>
+                  
+                  <div id="humanoid">
+                    <!-- ! RENDERED BY JAVASCRIPT -->
+                  </div>
+
                   <div style="display: flex; gap: 6px; align-items: center;">
                       
                        <% const userName = user.userName %>
@@ -88,14 +93,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   </div>
   </div>
 
-            <!--todo ////// HUMANOID PLUS AI PROMPTING //// -->
 
-    <div class="humanoid-container" style="padding: 8px 18px 0; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; background-color: none;">
-
-               <!-- RENDERED BY JAVASCRIPT ACCORDING TO USER DATA -->
-
-                
-    </div>
 
       <!--todo /////// TABS //////// -->
    <section style="height: 60%;">
@@ -107,7 +105,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!--todo ////// FEED  ////// -->
 
-    <div id="scroll-container" class="scroll" style="display: block; height: 120%; flex:1; padding:14px 14px 80px; position: relative; overflow-y: scroll; overflow-x: hidden;">
+    <div id="scroll-container" class="scroll" style="margin-top: 12px; display: block; height: 120%; flex:1; padding:14px 14px 80px; position: relative; overflow-y: scroll; overflow-x: hidden;">
       
                          <!--* ////// POSTS ///// -->
       
@@ -590,7 +588,7 @@ const dotAnim = document.getElementById('dot')
 const span = document.querySelector('.span-head')
 const aiNavbar = document.getElementById('ai-nav')
 const aiHumanoid = document.getElementById('ai-humanoid') 
-const humanoidContainer = document.querySelector('.humanoid-container');
+const humanoidContainer = document.getElementById('humanoid')
 const profileHumanoid = document.getElementById('profile-humanoid')
 const navbar = document.querySelector('.navbar')
 const postSubmitPostBtn = document.getElementById('post-submit-btn')
@@ -760,15 +758,31 @@ cancelUploadBtn.addEventListener('click', (e) => {
 
 
 
-humanoidContainer.innerHTML = `  <button  class="tap" style="display:flex; justify-content: center; align-items:center;background:none;border:none;width:100%;max-width:300px">
+humanoidContainer.innerHTML = `
   
-         <a href="/ai" id="talk-to-ai" style="text-decoration: none; width: 55%; display: flex; justify-content: space-around; align-items: center; margin-top: 8px; padding: 10px; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
-            <ion-icon style="color: ${r.col}; font-size: 25px;" name="snow-outline"></ion-icon> 
-            <p style="font-weight: ;bold" >Talk to AI</p> 
-            <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',25,false)}</div>
+         <a href="/ai" id="talk-to-ai" style="text-decoration: none; width: fit-content; display: flex; justify-content: space-around; align-items: center; padding: 5px; transition: background-color 1s ease-out, border 1s ease-out; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
+            <ion-icon id="ai-icon" style="color: ${r.col}; display: block; font-size: 25px; margin-right: 5px; transition: opacity 5s ease-out;" name="snow-outline"></ion-icon> 
+            <p id="ai-text" style="font-weight: bold; display: block; margin-right: 5px; transition: opacity 5s ease-out;" >Ask Nova AI</p> 
+            <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',28,false)}</div>
          </a>
-      </button>
+  
 `
+
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        
+       document.getElementById('ai-icon').style.opacity = '0'
+       document.getElementById('ai-text').style.opacity = '0'
+       document.getElementById('talk-to-ai').style.backgroundColor = 'transparent'
+       document.getElementById('talk-to-ai').style.border = 'none'
+       setTimeout(() => {
+         document.getElementById('ai-icon').style.display = 'none'
+         document.getElementById('ai-text').style.display = 'none'
+       }, 5000)
+       
+                
+    }, 5000)
+})
 
 // dotAnim.innerHTML = `${dot(r.col)}`
 // dotAnim.appendChild(span)
