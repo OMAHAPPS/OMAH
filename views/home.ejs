@@ -96,7 +96,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
       <!--todo /////// TABS //////// -->
-   <section style="height: 60%;">
+   <section style="height: 90%; position: relative;">
     <div class="navbar" style="display: flex; justify-content: space-around; height: 8%; border-bottom: 1px solid rgba(255,255,255,.05); flex-shrink: 0; padding:4px 16px 0;margin-top:12px">
 
                <!-- NAVBAR OPTIONS RENDERED IN JAVASCRIPT -->
@@ -105,7 +105,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!--todo ////// FEED  ////// -->
 
-    <div id="scroll-container" class="scroll" style="margin-top: 12px; display: block; height: 120%; flex:1; padding:14px 14px 80px; position: relative; overflow-y: scroll; overflow-x: hidden;">
+    <section id="scroll-container-posts" class="scroll" style="margin-top: 12px; display: block; height: 92%; width: 100%; flex:1; padding:14px 14px 80px; position: absolute; top: 8%; left: 0; overflow-y: scroll; overflow-x: hidden; transition: .3s ease-in-out;">
       
                          <!--* ////// POSTS ///// -->
       
@@ -127,7 +127,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <% posts.map((post) => { %>
           
           
-          <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32)"> 
+          <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
               <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
                          
                    <div style="flex:1">
@@ -182,59 +182,73 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                         
               <% } %>
                 
-      <!--! ELSE MAP POSTS WITH USER INFO FROM DB BELOW  -->
-
-         
-      
-     
-      <!--todo ////////////    USE LOGIC TO POPULATE THIS SCROLL CONTAINER AND CHANGING TAB TOGGLE AND PAGE TO BE VISIBLE -->
-      
-              <!--* ////// MESSAGES /////// -->
+            </section>
+            
+    <section id="scroll-container-messages" class="scroll" style="display: block; height: 92%; width: 100%; flex:1; padding: 30px 14px 80px 14px; position: absolute; top: 8%; left: 100%; overflow-y: scroll; overflow-x: hidden; transition: .3s ease-in-out;">
               
-              <div id="inbox-text" style="display: none; top: 0; font-size: 9px; color: rgba(237,232,224,.26); letter-spacing: 2px; margin-bottom: 10px;">INBOX</div>   
+              <!--* //////  Messages ////////  -->
+              
              
-              <!-- ! MAP ALL RECENT MESSAGES BELOW -->
-              
-              <!-- <button class="messages" style=" width: 100%; text-align: left; display: none; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 9px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); animation:emerge .4s .6s ease-out both"> 
+                   <!-- ! IF MESSAGES IS EMPTY DISPLAY THIS -->
+              <h2 id="comment" style="display: none; justify-content: center; align-items: center; flex-flow: column nowrap; font-size: 12px; color:rgba(237,232,224,.55); position: absolute; top: 30%; left: 50%; transform: translate(-50%);">
+                Inbox is Empty
+                <span style="display: flex; align-items: center; justify-content: center; padding: 10px 15px 10px 15px; background-color: transparent; margin-top: 20px; border: 1px dotted green; border-radius: 10px; color: #ede8e0;"><ion-icon name="add-outline" style="color: #ede8e0; font-size: 1.2rem;"></ion-icon> Start Chat</span>
+              </h2>
+               
+               <!-- ! ELSE MAP MESSAGES -->
                 
-                <div class="tap" style="position: relative; height: 32px; width: 32px; border-radius: 50%; overflow: hidden; background-color: rgba(255, 0, 0, .2); border: .5px solid red; display: flex; justify-content: center; align-items: center;"><p style="font-size: 10px; color: red; font-weight: 600;">M</p></div>
-                <div style="flex: 1; min-width: 0;">
-                  <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-                    <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.82)">Malik</span>
-                    <span style="font-size:9px;color:rgba(237,232,224,.24)">34min</span>
-                  </div>
-                  <div style="font-size: 11px; color: rgba(237,232,224,.33); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                       where have you been bro inania avnaaoiab fniana
-                     </div>
-                     <div style="display:flex;align-items:center;gap:5px;margin-top:3px">
-                          <div style="width:5px;height:5px;border-radius:50%;background: purple; opacity: .7;"></div>
-                          <span style="font-size:9px;color:rgba(237,232,224,.24)">Observatory · Gearing up</span>
-                        </div>
-                   </div>
+               <button class="messages" style="scroll-snap-align: start; width: 100%; text-align: left; display: flex; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both"> 
+                
+                         <!-- todo //// IF NO PROFILE PIC /// -->
+                         <div class="tap" style="position: relative; height: 40px; width: 40px; border-radius: 50%; overflow: hidden;  border: 1px solid rgba(237,232,224,.6); display: none; justify-content: center; align-items: center;">
+                            <ion-icon name="person" style="color: rgba(237,232,224,.6); font-size: 1.1rem;"></ion-icon>
+                         </div>
+
+                         <!-- ! ELSE -->
+
+                         <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+
+
+                         <div style="flex: 1; min-width: 0;">
+                             <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                               <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">Malik</span>
+                               <span style="font-size:9px;color:rgba(237,232,224,.5)">34min</span>
+                             </div>
+                             <p style="font-size: 11px; color: rgba(237,232,224,.53); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <ion-icon name="checkmark-done-outline" style="color: rgb(37, 134, 224); font-size: 13px;"></ion-icon>
+                                    where have you been bro inania avnaaoiab fniana Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illum recusandae nemo, assumenda cum deserunt doloremque ratione! Modi fugit omnis temporibus?
+                             </p>         
       
-                  </button>    -->
-                  
-                  <!-- * /////  ROOMS //////// -->
-                  
+               </button>   
+                 
                 
-                  <h2 id="comment" style="display: none; font-size: 12px; color:rgba(237,232,224,.55); position: absolute; top: 30%; left: 50%; transform: translate(-50%);">This feature will be available soon</h2>
- 
-              <!-- <button onclick="" class="rooms-cont" style="display: none; width: 100%; text-align: left; padding: 16px;border-radius:18px;margin-bottom:10px; background: #C8A86E10; border: 1px solid #C8A86E22;animation:emerge .4s ease-out both">
+
+    </section>
+
+    <section id="scroll-container-groups" class="scroll" style="margin-top: 12px; display: block; height: 92%; width: 100%; flex:1; padding:14px 14px 80px; position: absolute; top: 8%; left: 200%; overflow-y: scroll; overflow-x: hidden; transition: .3s ease-in-out;">
+
+                     <!-- * /////  ROOMS //////// -->
 
 
+            <button  class="groups-cont" style="display: block; width: 100%; text-align: left; padding: 16px;border-radius:18px;margin-bottom:10px; background: #C8A86E10; border: 1px solid #C8A86E22;animation:emerge .4s ease-out both">
+                
+                 
+                    <div style="font-size:10px;font-weight:bold;color: #C04848; letter-spacing: 2px; margin-bottom: 10px">LIVE GROUPS · ENGAGEMENTS ACTIVE</div>
 
-                   <div style="font-size:10px;font-weight:600;color: red; letter-spacing: 2px; margin-bottom: 10px">LIVE ROOMS · POWERS ACTIVE</div>
-                      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                             
-                              <div style="display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07)">
-                                  .
-                                  <span style="font-size: 11px; color:rgba(237,232,224,.55)">The Watch Party · 150</span>
-                              </div>
-                              
-                      </div>
-              </button>    -->
+                    <div id="groups-wrapper" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                     
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 5px; padding: 20px 18px; border-radius: 20px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07)">
+                          <div style="width: 6px; height: 6px; border-radius: 50%; background: #C04848; box-shadow: 0 0 6px #C04848; animation: throb 1.8s ease-in-out infinite; flex-shrink:0;"></div>
+                          <span style="font-size: 11px; color:rgba(237,232,224,.55)">The Football Die Hards Legends · <span style="color: #1ed760;">  150</span></span>
+                        </div>
+                                      
+                    </div>
+            </button>   
 
-   </div>
+    </section>
+
+
+   
 
    </section>
 
@@ -254,6 +268,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     <!-- TODO ///////  VIEW POST /////// -->
 
     <div class="view" id="view-to-post" style="display: none; background:rgba(5,5,8,.92)">
+
       <div style="padding: 13px 16px;border-bottom:1px solid rgba(255,255,255,.05); display: flex; align-items:center; gap:10px; flex-shrink:0">
 
           <button onclick="back()" class="back" style="padding: 7px 14px; border-radius: 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.6)">
@@ -262,7 +277,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <div class="fd" style="flex:1;font-size:16px;font-weight:700;color:rgba(237,232,224,.8)">
             Write
           </div>
-          <!-- ! change this to a form later -->
+      
           <form id="post-form" action="/post" method="post">
             <input name="userid" value="<%= user._id %>" type="text" style="display: none;">
             <input name="userrealm" value="<%= user.userRealm %>" type="text" style="display: none;">
@@ -272,43 +287,39 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <button type="submit" id="post-submit-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="tap" style="display: none; padding: 8px 20px;border-radius:12px;font-size:12px;font-weight:600;background: <%= user.userColor %>18;border: 1px solid <%= user.userColor %>52;color: <%= user.userColor %>;">Share</button>
           </form>
       </div>
-    <div style="padding:18px 16px;flex:1;display:flex;flex-direction:column;gap:14px">
+      <div style="height: 78%; padding: 18px 16px; flex:1; display:flex; flex-flow: column nowrap; gap: 14px;">
         
-
-      <div style="display:flex; align-items: center; gap:10px">
-         <div>
-            <div style="font-size:13px;font-weight:600;color:rgba(237,232,224,.8)"><%= user.userName %></div>
-            <div style="font-size:10px;color:rgba(237,232,224,.3)">writing to The <%= user.userRealm %></div>
-        </div>
-      </div>
+              <div style="height: 8%; padding: 10px; display: flex; align-items: center; gap:10px;">
+                 <div>
+                    <div style="font-size:13px;font-weight:600;color:rgba(237,232,224,.8)">
+                       <%= user.userName %>
+                    </div>
+                    <div style="font-size:10px;color:rgba(237,232,224,.3)">
+                      writing to The <%= user.userRealm %>
+                    </div>
+                 </div>
+              </div>
       
-      <div class="post-box" style="display: flex; flex-flow: column nowrap; flex-grow: 1;">
+              <div class="post-box" style="height: 88%; display: flex; flex-flow: column nowrap; overflow-x: hidden; overflow-y: scroll;">
  
-              <!--! ///// IMAGE TO BE RENDERED IN JS AFTER MULTER UPLOAD ////  -->
-              <article id="image-article" style="width: clamp(350px, 100%, 600px); height: 375px; border-radius: 18px 18px 0 0; display: none;">
+                  <textarea id="post-body" placeholder="Add Caption..." maxlength="500" style="padding: 16px; border-radius: 18px 18px 0 0; font-size: 15px; line-height: 1.72; color:rgba(237,232,224,.82); background:rgba(255,255,255,.02); border: 2px solid rgba(255,255,255,.07); flex-grow: 1;"></textarea>
+                
+                   <!--! ///// IMAGE TO BE RENDERED IN JS AFTER MULTER UPLOAD ////  -->
+                  <article id="image-article" style="width: clamp(350px, 100%, 600px); height: 60%; border-radius: 0 0 18px 18px; display: none;">
 
-              </article>
-              <textarea id="post-body" placeholder="Say something real..." maxlength="500" style="flex-grow: 1; padding:16px; border-radius: 0 0 18px 18px; font-size: 15px; line-height: 1.72; resize: none; color:rgba(237,232,224,.82); background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07)">
-              </textarea>
+                  </article>
+
         
-      </div>   
+              </div>   
 
-      <div style="text-align:right;font-size:10px;color:rgba(237,232,224,.2)">🔒 Stays within The <%= user.userRealm %></div>
-    </div>
+              <div style="text-align:right;font-size:10px;color:rgba(237,232,224,.2)">🔒 Stays within The <%= user.userRealm %></div>
+      </div>
   </div>
 
 
-
-  <!-- todo /////////  VIEW AI ///// -->
-  
-
-        <!-- ! ///// TOP BAR ////// -->
-         
-        
-        <!-- todo //////   VIEW PROFILE ///// -->
-     
  
-    <script>
+<script>
+
 
 const CANVAS = (() => {
   const cv = document.getElementById('cv');
@@ -596,7 +607,8 @@ const postForm = document.getElementById('post-form')
 const shareAvatarCont = document.getElementById('share-link')
 const sharePostBtn = document.querySelector('.sharePost')
 const viewToPostCont = document.getElementById('view-to-post')
-const options = ['Feed', 'Messages', 'Rooms']
+const groupsWrapper = document.getElementById('groups-wrapper')
+const options = ['Feed', 'Messages', 'Groups']
 
 
 const av=(init,col,sz=32)=>`<div style="width:${sz}px;height:${sz}px;border-radius:50%;flex-shrink:0;background:${col}22;border:1.5px solid ${col}55;display:flex;align-items:center;justify-content:center;font-size:${Math.floor(sz*.36)}px;font-weight:700;color:${col};font-family:'Plus Jakarta Sans',sans-serif">${init}</div>`;
@@ -620,6 +632,13 @@ const letter = document.getElementById('letter-upp').textContent
                                 </div>
                               </form> 
                               `
+
+  groupsWrapper.innerHTML                            
+
+                              
+
+
+
 const submitActionsCont = document.querySelector('.upload-actions')
 const labelFileInput = document.querySelector('.label')
 const fileForm = document.getElementById('file-form')
@@ -746,9 +765,6 @@ cancelUploadBtn.addEventListener('click', (e) => {
           })
 
 
-
-
-
         }
 
 
@@ -790,8 +806,7 @@ window.addEventListener('load', () => {
 
 
 
-
-options.forEach((option) => {
+ options.forEach((option) => {
 
     if(option == 'Feed') {
 
@@ -811,25 +826,171 @@ options.forEach((option) => {
 
 })
 
+
+
+const messageActive = {
+           targetColor: 'r.col',
+           targetBorder: `2px solid ${r.col}`,
+           feedColor: 'rgba(237,232,224,.3)',
+           feedBorder: '2px solid transparent',
+           roomColor: 'rgba(237,232,224,.3)',
+           roomBorder: '2px solid transparent',
+           postLeft: '-100%',
+           messageLeft: '0',
+           roomLeft: '100%',
+           sharePostBtn: 'none'
+}
+const feedActive = {
+           targetColor: 'r.col',
+           targetBorder: `2px solid ${r.col}`,
+           messageColor: 'rgba(237,232,224,.3)',
+           messageBorder: '2px solid transparent',
+           roomColor: 'rgba(237,232,224,.3)',
+           roomBorder: '2px solid transparent',
+           postLeft: '0',
+           messageLeft: '100%',
+           roomLeft: '200%',
+           sharePostBtn: 'block'
+}
+
+const roomActive = {
+           targetColor: 'r.col',
+           targetBorder: `2px solid ${r.col}`,
+           messageColor: 'rgba(237,232,224,.3)',
+           messageBorder: '2px solid transparent',
+           feedColor: 'rgba(237,232,224,.3)',
+           feedBorder: '2px solid transparent',
+           postLeft: '-200%',
+           messageLeft: '-100%',
+           roomLeft: '0',
+           sharePostBtn: 'none'
+}
+
+
 // SHIFTING TABS LOGIC
 
-const scrollContainer = document.getElementById('scroll-container')
+const postScrollContainer = document.getElementById('scroll-container-posts')
+const messagesScrollContainer = document.getElementById('scroll-container-messages')
+const groupsScrollContainer = document.getElementById('scroll-container-groups')
 const messagesBtn = document.getElementById('Messages')
 const feedsBtn = document.getElementById('Feed')
-const roomsBtn = document.getElementById('Rooms')
+const roomsBtn = document.getElementById('Groups')
 
-const feeds = document.querySelectorAll('.glass')
-const noPost = document.querySelector('.no-post')
 
-const inboxCont = document.querySelector('#inbox-text')
-const messagesMapped = document.querySelectorAll('.messages')
+document.addEventListener('DOMContentLoaded', () => {
+   
+    const savedDOMString = localStorage.getItem('storedDOMState')
+    const activeBtn = localStorage.getItem('activeBtn')
 
-const roomsContainer = document.querySelector('.rooms-cont')
+    if (savedDOMString) {
+      
+       const savedState = JSON.parse(savedDOMString)
+
+       if(activeBtn === 'messagesBtn') {
+           
+           messagesBtn.style.color = savedState.targetColor
+           messagesBtn.style.borderBottom = savedState.targetBorder
+           feedsBtn.style.color = savedState.feedColor
+           feedsBtn.style.borderBottom = savedState.feedBorder
+           roomsBtn.style.color = savedState.roomColor
+           roomsBtn.style.borderBottom = savedState.roomBorder
+           postScrollContainer.style.left = savedState.postLeft
+           messagesScrollContainer.style.left = savedState.messageLeft
+           groupsScrollContainer.style.left = savedState.roomLeft
+           sharePostBtn.style.display = savedState.sharePostBtn
+           
+          } else if (activeBtn === 'feedsBtn') {
+
+           feedsBtn.style.color = savedState.targetColor
+           feedsBtn.style.borderBottom = savedState.targetBorder
+           messagesBtn.style.color = savedState.messageColor
+           messagesBtn.style.borderBottom = savedState.messageBorder
+           roomsBtn.style.color = savedState.roomColor
+           roomsBtn.style.borderBottom = savedState.roomBorder
+           postScrollContainer.style.left = savedState.postLeft
+           messagesScrollContainer.style.left = savedState.messageLeft
+           groupsScrollContainer.style.left = savedState.roomLeft
+           sharePostBtn.style.display = savedState.sharePostBtn
+           
+          } else if (activeBtn === 'roomsBtn') {
+            
+            roomsBtn.style.color = savedState.targetColor
+            roomsBtn.style.borderBottom = savedState.targetBorder
+           messagesBtn.style.color = savedState.messageColor
+           messagesBtn.style.borderBottom = savedState.messageBorder
+           feedsBtn.style.color = savedState.feedColor
+           feedsBtn.style.borderBottom = savedState.feedBorder
+           postScrollContainer.style.left = savedState.postLeft
+           messagesScrollContainer.style.left = savedState.messageLeft
+           groupsScrollContainer.style.left = savedState.roomLeft
+           sharePostBtn.style.display = savedState.sharePostBtn
+           
+       }  
+           
+       
+    }
+})
+
+messagesBtn.addEventListener('click', (e) => {
+    
+    e.target.style.color = r.col
+    e.target.style.borderBottom = `2px solid ${r.col}`
+    feedsBtn.style.color = 'rgba(237,232,224,.3)'
+    feedsBtn.style.borderBottom = '2px solid transparent'
+    roomsBtn.style.color = 'rgba(237,232,224,.3)'
+    roomsBtn.style.borderBottom = '2px solid transparent'
+    postScrollContainer.style.left = '-100%'
+    messagesScrollContainer.style.left = '0'
+    groupsScrollContainer.style.left = '100%'
+    sharePostBtn.style.display = 'none'
+
+    localStorage.setItem('storedDOMState', JSON.stringify(messageActive))
+    localStorage.setItem('activeBtn', 'messagesBtn')
+
+})
+
+feedsBtn.addEventListener('click', (e) => {
+
+    e.target.style.color = r.col
+    e.target.style.borderBottom = `2px solid ${r.col}`
+    messagesBtn.style.color = 'rgba(237,232,224,.3)'
+    messagesBtn.style.borderBottom = '2px solid transparent'
+    roomsBtn.style.color = 'rgba(237,232,224,.3)'
+    roomsBtn.style.borderBottom = '2px solid transparent'
+    postScrollContainer.style.left = '0'
+    messagesScrollContainer.style.left = '100%'
+    groupsScrollContainer.style.left = '200%'
+    sharePostBtn.style.display = 'block'
+
+    localStorage.setItem('storedDOMState', JSON.stringify(feedActive))
+    localStorage.setItem('activeBtn', 'feedsBtn')
+
+})
+
+roomsBtn.addEventListener('click', (e) => {
+
+    e.target.style.color = r.col
+    e.target.style.borderBottom = `2px solid ${r.col}`
+    messagesBtn.style.color = 'rgba(237,232,224,.3)'
+    messagesBtn.style.borderBottom = '2px solid transparent'
+    feedsBtn.style.color = 'rgba(237,232,224,.3)'
+    feedsBtn.style.borderBottom = '2px solid transparent'
+    postScrollContainer.style.left = '-200%'
+    messagesScrollContainer.style.left = '-100%'
+    groupsScrollContainer.style.left = '0'
+    sharePostBtn.style.display = 'none'
+
+    localStorage.setItem('storedDOMState', JSON.stringify(roomActive))
+    localStorage.setItem('activeBtn', 'roomsBtn')
+
+})
+
+
 
 
 const profileContainer = document.getElementById('profile-cont')
 
-const comment = document.getElementById('comment')
+
 
 const talkToRealmBtn = document.getElementById('talk-to-ai')
 const aiContainer = document.getElementById('ai-container')
@@ -865,70 +1026,11 @@ textArea.addEventListener('keyup', () => {
 
 
 
-messagesBtn.addEventListener('click', (e) => {
-       
-       e.target.style.color = r.col
-       e.target.style.borderBottom = `2px solid ${r.col}`
-       feedsBtn.style.color = 'rgba(237,232,224,.3)'
-       feedsBtn.style.borderBottom = '2px solid transparent'
-       roomsBtn.style.color = 'rgba(237,232,224,.3)'
-       roomsBtn.style.borderBottom = '2px solid transparent'
-       
-        feeds.forEach(feed => feed.style.display = 'none')
-        noPost.style.display = 'none'
-        sharePostBtn.style.display = 'none'
 
-        comment.style.display = 'block'
-       
-       //roomsContainer.style.display = 'none'
-       //inboxCont.style.display = 'block'
-       //messagesMapped.forEach(message => message.style.display = 'flex')
-       
-})
 
-feedsBtn.addEventListener('click', (e) => {
+
   
-  e.target.style.color = r.col
-      e.target.style.borderBottom = `2px solid ${r.col}`
-      messagesBtn.style.color = 'rgba(237,232,224,.3)'
-      messagesBtn.style.borderBottom = '2px solid transparent'
-      roomsBtn.style.color = 'rgba(237,232,224,.3)'
-      roomsBtn.style.borderBottom = '2px solid transparent'
-      
-       feeds.forEach(feed => feed.style.display = 'block')
-       noPost.style.display = 'block'
-       sharePostBtn.style.display = 'block'
-      
-       comment.style.display = 'none'
-      
-      // inboxCont.style.display = 'none'
-      // messagesMapped.forEach(message => message.style.display = 'none')
-      // roomsContainer.style.display = 'none'
-      
-    })
-    
-roomsBtn.addEventListener('click', (e) => {
-      
-      e.target.style.color = r.col
-      e.target.style.borderBottom = `2px solid ${r.col}`
-      messagesBtn.style.color = 'rgba(237,232,224,.3)'
-      messagesBtn.style.borderBottom = '2px solid transparent'
-      feedsBtn.style.color = 'rgba(237,232,224,.3)'
-      feedsBtn.style.borderBottom = '2px solid transparent'
-      
-       feeds.forEach(feed => feed.style.display = 'none')
-       noPost.style.display = 'none'
-       sharePostBtn.style.display = 'none'
-      
-       comment.style.display = 'block'
-
-      // inboxCont.style.display = 'none'
-      // messagesMapped.forEach(message => message.style.display = 'none')
-      
-      // roomsContainer.style.display = 'none'
-      
-})
-
+  
 postPlaceholder.addEventListener('click', () => {
 
     viewToPostCont.style.display = 'flex' 

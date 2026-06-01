@@ -1,6 +1,8 @@
 require('dotenv').config()
 
 const express = require('express')
+const { createServer } = require('node:http')
+const { Server } = require('socket.io')
 const passport = require('passport')
 const cookieSession = require('cookie-session')
 const methodOverride = require('method-override')
@@ -21,6 +23,7 @@ const googleRoutes = require('./routes/auth-routes')
 
 
 const app = express()
+const server = createServer(app)
 const mongoose = require('mongoose')
 
 const PORT = 4000
@@ -69,11 +72,17 @@ app.use('/auth', googleRoutes)
 mongoose.connect(dbURI)
 .then(() => {
     console.log('Connected to Database')
-    app.listen(PORT, () => { 
+    server.listen(PORT, () => { 
         console.log(`Server is running on port ${PORT}`)
     })
 })
 .catch(err => console.log(err))
+
+const io = new Server(server)
+
+io.on('connection', (socket) => {
+    console.log(`New Socket ${socket.id} Mounted on port ${PORT}`)
+})
 
 const loginCheck = (req, res, next) => {
 
