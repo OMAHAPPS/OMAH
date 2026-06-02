@@ -134,7 +134,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                             
                   </div>
      
-                  <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px"><%= post.post %></p>
+                  <p style="font-size: 14px; line-height:1.68; color:rgba(237,232,224,.72); margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
     
         
                     <video id="player" controls preload="auto" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;">
@@ -196,7 +196,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                         
               </div>
  
-              <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px"><%= post.post %></p>
+              <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
 
               <% if (post.image !== 'none') { %>
                 <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
@@ -318,8 +318,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           </div>
       
           <form id="post-form" action="/post" method="post">
-            <input name="userid" value="<%= user._id %>" type="text" style="display: none;">
-            <input name="userrealm" value="<%= user.userRealm %>" type="text" style="display: none;">
+            <input id="userid" name="userid" value="<%= user._id %>" type="text" style="display: none;">
+            <input id="userrealm" name="userrealm" value="<%= user.userRealm %>" type="text" style="display: none;">
             <input id="post-input-elem" name="poststring" type="text" style="display: none;">
             <input id="post-image-input" name="imagesrc" type="text" style="display: none;" value="none" />
              
@@ -691,12 +691,55 @@ const textAreaWithFile = document.getElementById('post-body-image')
 const imageArticle = document.getElementById('image-article')
 const imagePostInput = document.getElementById('post-image-input')
 
+textArea.addEventListener('keyup', () => {
+  if (textArea.value.trim() !== '') {
+    postSubmitPostBtn.disabled = false
+    postSubmitPostBtn.style.display = 'block'
+  } else {
+    postSubmitPostBtn.disabled = true
+    postSubmitPostBtn.style.display = 'none'
+    textArea.value = textArea.value.trimStart()
+  }
+})
+
 
 postSubmitPostBtn.addEventListener('click', (e) => {
       e.preventDefault()
       postSubmitPostBtn.disabled = true
       postSubmitPostBtn.textContent = 'Posting...'
-      postForm.submit()
+      const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n') 
+      
+      fetch('/post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          poststring: formatTextAreaValue,
+          imagesrc: imagePostInput.value,
+          userid: document.getElementById('userid').value,
+          userrealm: document.getElementById('userrealm').value
+        })
+      }).then((response) => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Network response was not ok')
+          window.location.reload()
+        }
+      }).then((data) => {
+         console.log(data)
+         window.location.reload()
+      }).catch((error) => {
+        errorMessage.textContent = 'Error posting. Please try again.'
+        setInterval(() => {
+          errorMessage.textContent = ''
+          window.location.reload()
+        }, 2000)
+      
+        
+      })
+
 })
 
 
@@ -1035,37 +1078,6 @@ const aiContainer = document.getElementById('ai-container')
 
 const submitPostBtn = document.getElementById('post-submit-btn')
 const inputPostElem = document.getElementById('post-input-elem')
-
-textArea.addEventListener('keydown', (e) => {
-     
-     if (e.keyCode === 13) {
-
-        e.preventDefault()
-     }
-})
-
-
-
-
-
-textArea.addEventListener('keyup', () => {
-    if ( textArea.value !== '' ) {
-
-      submitPostBtn.style.display = 'block'
-      const textValue = textArea.value
-      const refined = textValue.replace(/(\r\n|\n|\r)/gm, " ")
-      inputPostElem.value = refined
-
-    } else {
-      submitPostBtn.style.display = 'none'
-      inputPostElem.value =''
-    }
-})
-
-
-
-
-
 
   
   
