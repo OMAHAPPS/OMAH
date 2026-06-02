@@ -115,23 +115,61 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
           <div class="no-post" style="display: block; text-align: center; padding:40px 0; color: rgba(237,232,224,.22); font-size: 13px;">No Posts yet. Be the first to Share a post.</div>
           
- 
-        <% } else { %>
-
           
-          <!-- ! ///// TRIAL POST WITH IMAGE ////// -->
+          <% } else { %>
+            <!-- !video instance structure -->
+            <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
+              <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
+                
+                       <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
-
-
+                       <div style="flex:1">
+                            <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                                     Jeremy 
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                            </div>
+                          
+                            <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'2d ago' · The Dojo</div>
+                      </div>
+                            
+                  </div>
+     
+                  <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px"><%= post.post %></p>
+    
+        
+                    <video id="player" controls preload="auto" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;">
+                        <source src="/uploads/Expressions.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                  
+                        
+                    </video>
+            
+                    
+                
+                  <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                       <button onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
+                            ❤️204
+                       </button>
+                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
+                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
+                       <div style="margin-left:auto">
+                           
+                       </div>
+                     </div>
+             </div> 
           
           <% posts.map((post) => { %>
           
           
           <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
-              <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
-                         
-                   <div style="flex:1">
-                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+
+            <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+              
+              <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+
+              <div style="flex:1">
+                
+                    <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
                                  <%= post.userName %> 
                                  <% if (post.userName == user.userName) { %>
                                    <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
@@ -146,13 +184,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                               <% const minutesPast = Math.floor( (diff / 60000) ) %>
 
                               <% if (daysPast > 0) { %>
-                               <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
+                               <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
                                <% } else if (hoursPast > 0) { %>
-                                 <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
+                                 <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
                                  <% } else if (minutesPast > 0) { %>
-                                   <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
+                                   <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
                                    <% } else if (minutesPast == 0) { %>
-                                     <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
+                                     <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
                                   <% } %>
                   </div>
                         
@@ -167,7 +205,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               <% } %>
 
               <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
-                   <button <% /* eslint-disable-next-line css-propertyvalueexpected */ %> onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
+                   <button<% /* eslint-disable-next-line css-propertyvalueexpected */ %> onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
                         ❤️<%= post.likes %>
                    </button>
                    <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
@@ -197,7 +235,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                
                <!-- ! ELSE MAP MESSAGES -->
                 
-               <button class="messages" style="scroll-snap-align: start; width: 100%; text-align: left; display: flex; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both"> 
+               <a href="/inbox"  class="messages" style="text-decoration: none; scroll-snap-align: start; width: 100%; text-align: left; display: flex; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both"> 
                 
                          <!-- todo //// IF NO PROFILE PIC /// -->
                          <div class="tap" style="position: relative; height: 40px; width: 40px; border-radius: 50%; overflow: hidden;  border: 1px solid rgba(237,232,224,.6); display: none; justify-content: center; align-items: center;">
@@ -211,15 +249,16 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                          <div style="flex: 1; min-width: 0;">
                              <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-                               <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">Malik</span>
+                               <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">Jeremy</span>
                                <span style="font-size:9px;color:rgba(237,232,224,.5)">34min</span>
                              </div>
                              <p style="font-size: 11px; color: rgba(237,232,224,.53); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     <ion-icon name="checkmark-done-outline" style="color: rgb(37, 134, 224); font-size: 13px;"></ion-icon>
                                     where have you been bro inania avnaaoiab fniana Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illum recusandae nemo, assumenda cum deserunt doloremque ratione! Modi fugit omnis temporibus?
-                             </p>         
+                             </p>
+                         </div>            
       
-               </button>   
+                  </a>   
                  
                 
 
@@ -230,7 +269,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      <!-- * /////  ROOMS //////// -->
 
 
-            <button  class="groups-cont" style="display: block; width: 100%; text-align: left; padding: 16px;border-radius:18px;margin-bottom:10px; background: #C8A86E10; border: 1px solid #C8A86E22;animation:emerge .4s ease-out both">
+            <a href="/group"  class="groups-cont" style="text-decoration: none; display: block; width: 100%; text-align: left; padding: 16px;border-radius:18px;margin-bottom:10px; background: #C8A86E10; border: 1px solid #C8A86E22;animation:emerge .4s ease-out both">
                 
                  
                     <div style="font-size:10px;font-weight:bold;color: #C04848; letter-spacing: 2px; margin-bottom: 10px">LIVE GROUPS · ENGAGEMENTS ACTIVE</div>
@@ -243,7 +282,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                         </div>
                                       
                     </div>
-            </button>   
+            </a>   
 
     </section>
 
@@ -318,8 +357,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
  
-<script>
-
+<script> 
 
 const CANVAS = (() => {
   const cv = document.getElementById('cv');
@@ -1048,7 +1086,10 @@ function aiCancel () {
       sendToAitext.textContent = ''
 }
 
+function inbox () {
 
+   window.href = '/inbox'
+}
   
 function back() {
 

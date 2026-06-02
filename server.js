@@ -263,4 +263,13 @@ app.get('/settings', notLoggedInCheck, async (req, res) => {
        res.render('settings', { user: User, totalPosts: totalPosts })
 })
 
+app.get('/inbox', notLoggedInCheck, async (req, res) => {
+
+      res.render('inbox')
+})
+
+app.get('/group', notLoggedInCheck, async (req, res) => {
+
+      res.render('group')
+})
 
