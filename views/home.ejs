@@ -692,7 +692,7 @@ const videoObserver = new IntersectionObserver((entries, observer) => {
             
              video.pause()
              video.removeAttribute('src')
-             video.load()                      // Forces browser to flush the buffer and release memory
+                                            // Forces browser to flush the buffer and release memory
          }
      })
 }, observerOptions)
