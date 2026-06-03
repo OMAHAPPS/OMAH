@@ -105,7 +105,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!--todo ////// FEED  ////// -->
 
-    <section id="scroll-container-posts" class="scroll" style="margin-top: 12px; display: block; height: 92%; width: 100%; flex:1; padding:14px 14px 80px; position: absolute; top: 8%; left: 0; overflow-y: scroll; overflow-x: hidden; transition: .3s ease-in-out;">
+    <section id="scroll-container-posts" class="scroll" style="margin-top: 12px; display: block; height: 92%; width: 100%; flex:1; padding:14px 14px 80px; position: absolute; top: 8%; left: 0; overflow-y: scroll; overflow-x: hidden; scroll-snap-type: y mandatory; scroll-padding-block: 10px; transition: .3s ease-in-out;">
       
                          <!--* ////// POSTS ///// -->
       
@@ -125,7 +125,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                        <div style="flex:1">
                             <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
-                                     Jeremy 
+                                     Gianluigi 
                                      <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                             </div>
                           
@@ -137,8 +137,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   <p style="font-size: 14px; line-height:1.68; color:rgba(237,232,224,.72); margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
     
         
-                    <video id="player" controls preload="auto" style="width: 100%; height: auto; border-radius: 12px; margin-top: 10px;">
-                        <source src="/uploads/Expressions.mp4" type="video/mp4">
+                    <video id="player" controls preload="none" muted playsinline style="width: 100%; height: auto; border-radius: 12px; margin-top: 10px;"
+                           src="/uploads/Expressions.mp4" type="video/mp4" data-src="/uploads/Expressions.mp4">
                         Your browser does not support the video tag.
                   
                         
@@ -148,7 +148,84 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 
                   <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
                        <button onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
-                            ❤️204
+                            ❤️ 2056
+                       </button>
+                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
+                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
+                       <div style="margin-left:auto">
+                           
+                       </div>
+                     </div>
+             </div> 
+
+            <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
+              <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
+                
+                       <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+
+                       <div style="flex:1">
+                            <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                                     Alvin 
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                            </div>
+                          
+                            <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'5d ago' · The Dojo</div>
+                      </div>
+                            
+                  </div>
+     
+                  <p style="font-size: 14px; line-height:1.68; color:rgba(237,232,224,.72); margin-bottom:12px; white-space: pre-wrap;">Declan KusKus In defensive action</p>
+    
+        
+                    <video id="player" controls preload="none" muted playsinline style="width: 100%; height: auto; border-radius: 12px; margin-top: 10px;"
+                        src="/uploads/vitinha.mp4" type="video/mp4" data-src="/uploads/vitinha.mp4">
+                        Your browser does not support the video tag.
+                  
+                        
+                    </video>
+            
+                    
+                
+                  <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                       <button onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
+                            ❤️203
+                       </button>
+                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
+                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
+                       <div style="margin-left:auto">
+                           
+                       </div>
+                     </div>
+             </div> 
+
+            <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
+              <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
+                
+                       <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+
+                       <div style="flex:1">
+                            <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                                     Jeremy 
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                            </div>
+                          
+                            <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'2d ago' · The Dojo</div>
+                      </div>
+                            
+                  </div>
+     
+                  <p style="font-size: 14px; line-height:1.68; color:rgba(237,232,224,.72); margin-bottom:12px; white-space: pre-wrap;">Lee Gunner Ranting about Shit Arsenal players....Hilarious</p>
+    
+        
+                    <video id="player" controls preload="none" muted playsinline style="width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" 
+                           src="/uploads/LeeGunner.mp4" type="video/mp4" data-src="/uploads/LeeGunner.mp4">
+                           Your browser does not support the video tag.
+                    </video>
+            
+                    
+                  <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                       <button onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
+                            ❤️ 42
                        </button>
                        <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
                        <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
@@ -161,7 +238,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <% posts.map((post) => { %>
           
           
-          <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
+          <div class="glass-images" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
 
             <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
               
@@ -626,6 +703,41 @@ function charSVG(realmKey, size=150, speaking=false){
   </svg>`;
 }
 
+
+const observerOptions = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 0.1
+}
+
+const videoObserver = new IntersectionObserver((entries, observer) => {
+
+     entries.forEach(entry => {
+       const container = entry.target
+       const video = container.querySelector('video')
+       const videoUrl = video.getAttribute('data-src')
+  
+         if (entry.isIntersecting) {
+
+             if (!video.src) {
+              video.src = videoUrl
+             }
+
+             video.preload = 'auto'
+            //  video.play().catch(err => console.log('Video play error:', err))
+
+         } else {
+            
+             video.pause()
+             video.removeAttribute('src')
+             video.load()                      // Forces browser to flush the buffer and release memory
+         }
+     })
+}, observerOptions)
+
+document.querySelectorAll('.glass').forEach(container => {
+   videoObserver.observe(container)
+})
 
 const realm = document.getElementById('realmElem').textContent
 const r = REALMS[realm]
