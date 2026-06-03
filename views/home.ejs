@@ -129,7 +129,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                                      <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                             </div>
                           
-                            <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'2d ago' · The Dojo</div>
+                            <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'2d ago' · The Dojo</div>
                       </div>
                             
                   </div>
@@ -171,7 +171,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                                      <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                             </div>
                           
-                            <div style="font-size:9px;color:rgba(237,232,224,.26);margin-top:1px">'2d ago' · The Dojo</div>
+                            <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'2d ago' · The Dojo</div>
                       </div>
                             
                   </div>
@@ -223,13 +223,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                               <% const minutesPast = Math.floor( (diff / 60000) ) %>
 
                               <% if (daysPast > 0) { %>
-                               <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
+                               <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
                                <% } else if (hoursPast > 0) { %>
-                                 <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
+                                 <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
                                  <% } else if (minutesPast > 0) { %>
-                                   <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
+                                   <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
                                    <% } else if (minutesPast == 0) { %>
-                                     <div style="font-size:9px;color:rgba(237,232,224,.46);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
+                                     <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
                                   <% } %>
                   </div>
                         
@@ -692,6 +692,7 @@ const videoObserver = new IntersectionObserver((entries, observer) => {
             
              video.pause()
              video.removeAttribute('src')
+             video.preload = 'none'
                                             // Forces browser to flush the buffer and release memory
          }
      })
