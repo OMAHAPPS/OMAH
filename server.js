@@ -203,7 +203,7 @@ app.post('/post', async (req, res) => {
          userRealm: userrealm,
          image: imagesrc,
          post: poststring
-     }).save().then((post) => {
+     }).save().then((post) => { 
          
          res.redirect('/home')
      }).catch((err) => {
