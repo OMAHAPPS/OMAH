@@ -691,7 +691,7 @@ const videoObserver = new IntersectionObserver((entries, observer) => {
          } else {
             
              video.pause()
-             video.removeAttribute('src')
+             // don't remove src attribute from video
              video.preload = 'none'
                                             // Forces browser to flush the buffer and release memory
          }
