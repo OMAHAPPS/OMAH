@@ -210,19 +210,18 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             modal.style.transition = 'transform 0.3s ease-out'
             modal.style.transform = `translateY(100%)`
             document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0)`
+            setTimeout(() => {
+                    document.getElementById('profile-wrapper').style.display = 'none'
+                    document.querySelector('.overlay').style.display = 'none'
+                    document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0.4)`
+                    modal.style.transform = 'translateY(0)'
+    
+            }, 200)
         } else {
             modal.style.transition = 'transform 0.3s ease-out'
             modal.style.transform = `translateY(0)`
             document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0.4)`
         }
-        setTimeout(() => {
-            if (deltaY > 100) {
-                document.getElementById('profile-wrapper').style.display = 'none'
-                document.querySelector('.overlay').style.display = 'none'
-                document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0.4)`
-                modal.style.transform = 'translateY(0)'
-            }
-        }, 200)
     })
 
     document.querySelector('.overlay').addEventListener('click', () => {
