@@ -139,16 +139,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
               <div style="flex:1; position: relative;">
                 
-                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
                                  <%= post.userName %> 
-                                 <% if (post.userName == user.userName) { %>
-                                   <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                   <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                 <% } %>
+                                 <span style="color: rgba(237,232,224,.42);"> . 51m</span>
                         </div>
 
-                        <h2 style="font-size: 12px; color: rgba(237,232,224,.32);" >@<%= user.userName %></h2>
+                        <h2 style="font-size: 12px; color: rgba(237,232,224,.32);" >Replying to <span style="color: #C04848;">@Gianluigi</span></h2>
 
                         <div class="follow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: #C04848;">
                            <h4 style="color: #050508; font-size: .75rem;">Follow</h4>
@@ -171,11 +167,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      
                      <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
                          <ion-icon name="heart-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 20</span>
+                         <span style="font-size: 12px; color: #C04848; font-weight: 600; margin-left: 3px;"> 20</span>
                      </div>   
                      <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
                          <ion-icon name="barcode-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 204</span>
+                         <span style="font-size: 12px; color: #C04848; font-weight: 600; margin-left: 3px;"> 204</span>
                      </div>   
                      <ion-icon name="share-social-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
                      <ion-icon name="flag-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
@@ -196,23 +192,19 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
                <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div> -->
 
-              <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+              <img src="/uploads/Elon-1780244334063.png" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
               <div style="flex:1; position: relative;">
                 
-                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
                                  <%= post.userName %> 
-                                 <% if (post.userName == user.userName) { %>
-                                   <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                   <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                 <% } %>
+                                 <span style="color: rgba(237,232,224,.42);"> . 2h</span>
                         </div>
 
-                        <h2 style="font-size: 12px; color: rgba(237,232,224,.32);" >@<%= user.userName %></h2>
+                        <h2 style="font-size: 12px; color: rgba(237,232,224,.32);" >Replying to <span style="color: #C04848;">@Alvin</span></h2>
 
-                        <div class="follow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: #C04848;">
-                           <h4 style="color: #050508; font-size: .75rem;">Follow</h4>
+                        <div class="follow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: transparent;">
+                           <h4 style="color: #C04848; font-size: .75rem;">Following</h4>
                         </div>
                              
                   </div>
@@ -222,21 +214,16 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                   <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
 
-                   <% if (post.image !== 'none') { %>
-                     <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } else { %>
-                     <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } %>
-
-                    <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0;">
+                  
+                   <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0;">
                      
                      <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
                          <ion-icon name="heart-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 20</span>
+                         <span style="font-size: 12px; color: #C04848; font-weight: 600; margin-left: 3px;"> 20</span>
                      </div>   
                      <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
                          <ion-icon name="barcode-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 204</span>
+                         <span style="font-size: 12px; color: #C04848; font-weight: 600; margin-left: 3px;"> 204</span>
                      </div>   
                      <ion-icon name="share-social-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
                      <ion-icon name="flag-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
@@ -247,190 +234,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               </div>
 
         </div>
-        <div class="reply-card" style="padding: 16px;">
-
-            <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
-
-              <!-- ! element Placeholders for profile image and user info -->
-               <!-- <div id="poster-username" style="display: none;"><%= post.userName %></div>
-               <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
-               <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
-               <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div> -->
-
-              <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-
-              <div style="flex:1; position: relative;">
-                
-                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
-                                 <%= post.userName %> 
-                                 <% if (post.userName == user.userName) { %>
-                                   <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                   <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                 <% } %>
-                        </div>
-
-                        <h2 style="font-size: 12px; color: rgba(237,232,224,.32);" >@<%= user.userName %></h2>
-
-                        <div class="follow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: #C04848;">
-                           <h4 style="color: #050508; font-size: .75rem;">Follow</h4>
-                        </div>
-                             
-                  </div>
-                        
-              </div>
-              <div class="reply-info-wrapper" style="padding: 5px 0 10px 50px;">
-
-                  <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
-
-                   <% if (post.image !== 'none') { %>
-                     <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } else { %>
-                     <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } %>
-
-                    <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0;">
-                     
-                     <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="heart-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 20</span>
-                     </div>   
-                     <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="barcode-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 204</span>
-                     </div>   
-                     <ion-icon name="share-social-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                     <ion-icon name="flag-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                   
-                   </div>
-
-                  
-              </div>
-
-        </div>
-        <div class="reply-card" style="padding: 16px;">
-
-            <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
-
-              <!-- ! element Placeholders for profile image and user info -->
-               <!-- <div id="poster-username" style="display: none;"><%= post.userName %></div>
-               <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
-               <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
-               <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div> -->
-
-              <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-
-              <div style="flex:1; position: relative;">
-                
-                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
-                                 <%= post.userName %> 
-                                 <% if (post.userName == user.userName) { %>
-                                   <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                   <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                 <% } %>
-                        </div>
-
-                        <h2 style="font-size: 12px; color: rgba(237,232,224,.32);" >@<%= user.userName %></h2>
-
-                        <div class="follow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: #C04848;">
-                           <h4 style="color: #050508; font-size: .75rem;">Follow</h4>
-                        </div>
-                             
-                  </div>
-                        
-              </div>
-              <div class="reply-info-wrapper" style="padding: 5px 0 10px 50px;">
-
-                  <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
-
-                   <% if (post.image !== 'none') { %>
-                     <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } else { %>
-                     <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } %>
-
-                    <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0;">
-                     
-                     <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="heart-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 20</span>
-                     </div>   
-                     <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="barcode-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 204</span>
-                     </div>   
-                     <ion-icon name="share-social-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                     <ion-icon name="flag-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                   
-                   </div>
-
-                  
-              </div>
-
-        </div>
-        <div class="reply-card" style="padding: 16px;">
-
-            <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
-
-              <!-- ! element Placeholders for profile image and user info -->
-               <!-- <div id="poster-username" style="display: none;"><%= post.userName %></div>
-               <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
-               <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
-               <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div> -->
-
-              <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-
-              <div style="flex:1; position: relative;">
-                
-                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
-                                 <%= post.userName %> 
-                                 <% if (post.userName == user.userName) { %>
-                                   <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                   <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                 <% } %>
-                        </div>
-
-                        <h2 style="font-size: 12px; color: rgba(237,232,224,.32);" >@<%= user.userName %></h2>
-
-                        <div class="follow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: #C04848;">
-                           <h4 style="color: #050508; font-size: .75rem;">Follow</h4>
-                        </div>
-                             
-                  </div>
-                        
-              </div>
-              <div class="reply-info-wrapper" style="padding: 5px 0 10px 50px;">
-
-                  <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
-
-                   <% if (post.image !== 'none') { %>
-                     <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } else { %>
-                     <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } %>
-
-                    <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0;">
-                     
-                     <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="heart-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 20</span>
-                     </div>   
-                     <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="barcode-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 12px; color: #C04848; font-weight: 400; margin-left: 3px;"> 204</span>
-                     </div>   
-                     <ion-icon name="share-social-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                     <ion-icon name="flag-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                   
-                   </div>
-
-                  
-              </div>
-
-        </div>
-
+       
+       
 
     </main>
     <div class="sharePost" style="display: block; position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
