@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <title>Post</title>
+    <style>
+/* ── FOUNDATION ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{position: relative; height:100%;overflow:hidden;background:#050508;color:#ede8e0;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased}
+#app{height:100%;position:relative;overflow:hidden}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea{font-family:inherit;border:none;outline:none;background:none;color:inherit}
+::-webkit-scrollbar{width:0;height:0}
+
+/* ── TYPE ── */
+.fd{font-family:'Playfair Display',serif}
+.fs{font-family:'DM Serif Display',serif}
+
+/* ── LAYOUT ── */
+.view{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;overflow:hidden;animation:viewIn .42s cubic-bezier(.22,.61,.36,1) both}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+/* ── INTERACTIONS ── */
+.tap{cursor:pointer;transition:transform .12s ease,opacity .12s ease;user-select:none;-webkit-user-select:none}
+.tap:active{transform:scale(.91)!important;opacity:.72!important}
+
+/* ── ANIMATIONS ── */
+@keyframes viewIn      {from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes emerge      {from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn      {from{opacity:0}to{opacity:1}}
+@keyframes orbIn       {from{opacity:0;transform:scale(.55)}to{opacity:1;transform:scale(1)}}
+@keyframes msgPop      {from{opacity:0;transform:translateY(6px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes throb       {0%,100%{opacity:.42}50%{opacity:1}}
+@keyframes drift       {0%,100%{transform:translateY(0) rotate(0deg)}40%{transform:translateY(-10px) rotate(.6deg)}75%{transform:translateY(4px) rotate(-.3deg)}}
+@keyframes speak       {0%,100%{transform:scale(1.03)}50%{transform:scale(1.15)}}
+@keyframes xpFill      {from{width:0%}}
+@keyframes dotBlink    {0%,80%,100%{transform:scale(0);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes effBurst    {0%{transform:scale(1);opacity:1}60%{transform:scale(1.6);opacity:.5}100%{transform:scale(2.4);opacity:0}}
+@keyframes storyPulse  {0%,100%{box-shadow:0 0 0 0 var(--sc)}50%{box-shadow:0 0 0 4px var(--sc)}}
+@keyframes heartbeat   {0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.06)}}
+@keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
+</style>
+</head>
+<body>
+    
+
+    <header style="position: relative; height: 10%; display: flex; align-items: center; gap: 12px; padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08);">
+        <a href="/home" style="font-size: 30px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+        </a>
+
+        <h2 style="font-size: 20px; font-weight: 600; color: rgba(237,232,224,.85);">Post</h2>
+        
+    </header>
+    <main style="height: 80%; overflow-y: scroll; overflow-x: hidden;">
+
+        <div class="glass-images" style="margin-top: 10px; padding: 16px; border-bottom: 2px solid whitesmoke;"> 
+
+            <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
+
+              <!-- ! element Placeholders for profile image and user info -->
+               <div id="poster-username" style="display: none;"><%= post.userName %></div>
+               <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
+               <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
+               <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
+
+              <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+
+              <div style="flex:1; position: relative;">
+                
+                        <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                                 <%= post.userName %> 
+                                 <% if (post.userName == user.userName) { %>
+                                   <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                   <% } else { %>
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                 <% } %>
+                        </div>
+
+                        <h2 style="font-size: 12px; color: rgba(237,232,224,.32);" >@<%= user.userName %></h2>
+
+                        <div class="follow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: transparent;">
+                           <h4 style="color: #C04848; font-size: .75rem;">Following</h4>
+                        </div>
+                             
+                  </div>
+                        
+              </div>
+ 
+              <p style="font-size: 17px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
+
+              <% if (post.image !== 'none') { %>
+                <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
+                <% } else { %>
+                 <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
+              <% } %>
+
+              <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                   <h2 style="font-size: 15px;color: rgba(237,232,224,.5); display: flex; align-items: center; gap: 4px; font-weight: 400; justify-content: center;">
+                        18:08 <span>.</span> 04 June 26 <span>.</span> <span style="font-weight: bold; color: rgba(245, 245, 245, 0.8); margin-left: 5px;">800</span> Likes
+                   </h2>
+                   
+              </div>
+
+               <div style="display:flex; align-items:center; justify-content: space-around; gap:15px; padding-top:20px;">
+                   
+                   <ion-icon name="chatbubble-outline" style="font-size: 18px; font-weight: bold; color: #C04848;"></ion-icon>
+                   <ion-icon name="heart-outline" style="font-size: 18px; font-weight: bold; color: #C04848;"></ion-icon>
+                   <ion-icon name="share-social-outline" style="font-size: 18px; font-weight: bold; color: #C04848;"></ion-icon>
+                   <ion-icon name="flag-outline" style="font-size: 18px; font-weight: bold; color: #C04848;"></ion-icon>
+                   
+              </div>
+         </div> 
+
+    </main>
+    <div class="sharePost" style="display: block; position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
+         
+      <button id="share-link" class="tap" style="width: 100%; padding: 15px 10px; border-radius: 14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap:10px;">
+          <!-- ! RENDERED IN JAVASCRIPT -->
+      </button>
+
+    </div>
+    
+
+
+
+
+
+<script >
+
+
+const shareAvatarCont = document.querySelector('#share-link')
+
+
+const av=(init,col,sz=32)=>`<div style="width:${sz}px;height:${sz}px;border-radius:50%;flex-shrink:0;background:${col}22;border:1.5px solid ${col}55;display:flex;align-items:center;justify-content:center;font-size:${Math.floor(sz*.36)}px;font-weight:700;color:${col};font-family:'Plus Jakarta Sans',sans-serif">${init}</div>`;
+
+
+shareAvatarCont.innerHTML = `${av('J', '#C04848', sz=32)}
+                              <span id="post-placeholder" style="flex: 1; font-size: 14px; color:rgba(237,232,224,.28); text-align: left;">Add Reply.........</span>
+                              <form action="/post/upload" method="POST" enctype="multipart/form-data" id="file-form" style="display: flex; width: fit-content; justify-content: flex-end;">
+                                <input id="image" type="file" name="image" accept="image/*" style="display: none;">
+                                <label for="image" class="label"><ion-icon name="attach-outline" style="color: #C04848; cursor: pointer; font-size: 32px; display: block;"></ion-icon></label>
+                                <div class="upload-actions" style="display: none; justify-content: center; align-items: center;">
+                                <button type="submit" id="submit-upload" style="padding: 10px 10px; margin-right: 8px; outline: none; border-radius: 10px; background-color: #1ed760; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
+                                  Upload<ion-icon name="arrow-up-outline" style="color: white; font-size: 15px;"></ion-icon>
+                                  </button>
+                                  <button  id="cancel-upload" style="padding: 10px 10px; outline: none; border-radius: 10px; background-color: red; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
+                                  <ion-icon name="trash-outline" style="color: white; font-size: 20px;"></ion-icon>
+                                </button>
+                                </div>
+                              </form> 
+                              `
+</script>
+</body>
+</html>

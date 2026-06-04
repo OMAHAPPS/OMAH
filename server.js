@@ -273,3 +273,13 @@ app.get('/group', notLoggedInCheck, async (req, res) => {
       res.render('group')
 })
 
+app.get('/post', notLoggedInCheck, async (req, res) => {
+    
+    const userid = req.user._id
+    const post = await Post.findOne({ image: { $ne: 'none' } })
+    const user = await Omaruser.findOne({ _id: userid })
+
+
+    res.render('post', { post, user })
+})
+
