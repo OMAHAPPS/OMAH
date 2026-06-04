@@ -11,7 +11,7 @@
     <style>
 /* ── FOUNDATION ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#050508;color:#ede8e0;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased}
+html,body{position: relative; height:100%;overflow:hidden;background:#050508;color:#ede8e0;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased}
 #app{height:100%;position:relative;overflow:hidden}
 canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
@@ -119,9 +119,15 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <% } else { %>
             <!-- !video instance structure -->
             <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
-              <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
-                
-                       <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+
+              <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
+
+                    <div id="poster-username" style="display: none;"><%= post.userName %></div>
+                    <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
+                    <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
+                    <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
+
+                    <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
                        <div style="flex:1">
                             <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
@@ -161,8 +167,14 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
            
 
             <div class="glass" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
-              <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
-                
+
+              <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px">
+                       
+                    <div id="poster-username" style="display: none;"><%= post.userName %></div>
+                    <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
+                    <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
+                    <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
+  
                        <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
                        <div style="flex:1">
@@ -202,9 +214,15 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           
           <div class="glass-images" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
 
-            <div style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
-              
-              <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+            <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+
+              <!-- ! element Placeholders for profile image and user info -->
+               <div id="poster-username" style="display: none;"><%= post.userName %></div>
+               <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
+               <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
+               <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
+
+              <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
               <div style="flex:1">
                 
@@ -393,6 +411,48 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               <div style="text-align:right;font-size:10px;color:rgba(237,232,224,.2)">🔒 Stays within The <%= user.userRealm %></div>
       </div>
   </div>
+
+  <section id="profile-wrapper" style="display: none; position: absolute; top: 0; height: 100%; width: 100%; z-index: 4; gap: 12px; overflow-y: scroll; overflow-x: hidden;">
+
+        <div class="overlay" style="display: none; position: absolute; inset: 0; height: 100%; width: 100%; z-index: 3; background-color: rgba(128, 128, 128, 0.4);"></div>
+
+        <nav class="profile-content" style=" position: absolute; top: 100%; z-index: 4; border-radius: 50px 50px 0 0; width: 100%; height: 50%; background-color: #050508; touch-action: none; will-change: transform;">
+
+                <div class="scroll-icon" style="width: 40px; height: 4px; background-color: #C04848; border-radius: 2px; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);"></div>    
+
+                <div id="profile-info-cont" style="margin-top: 50px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 16px;">
+
+                    <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="100" height="100" style="border-radius: 50%; object-fit: cover;" />
+
+                    <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
+
+                    <p style="font-size: 14px; color: rgba(237,232,224,.45);"></p>
+
+                    <div class="follow-wrapper" style="display: flex; justify-content: space-around; align-items: center; width: 100%; height: 40px;">
+                         
+                         <p style="color: white; font-size: 15px;">500 <span style="color: rgba(237,232,224,.45);">Following</span></p>
+                         <p style="color: white; font-size: 15px;">20 <span style="color: rgba(237,232,224,.45);">Followers</span></p>
+                         <p style="color: white; font-size: 15px;">2K <span style="color: rgba(237,232,224,.45);">Posts</span></p>
+                        
+                    </div>
+
+                    <div class="interact" style="width: 100%; background-color: transparent; margin-top: 10px; display: flex; justify-content: space-evenly; align-items: center;">
+
+                      <a href="/inbox" class="message" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" style="fill: #C04848;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                           <h3 style="font-size: 15px; color: #C04848;">Message</h2>
+                      </a>
+                      <div class="follow-btn" style="display: grid; place-content: center; padding: 20px; height: 50px; width: fit-content; border-radius: 25px; border: 1px solid #C04848; background-color: transparent;">
+                        <h4 style="color: #C04848; font-size: 15px;">Following</h4>
+                      </div>
+
+                    </div>
+
+
+                </div>  
+        </nav>
+        
+    </section>
 
 
  
@@ -660,10 +720,113 @@ function charSVG(realmKey, size=150, speaking=false){
     ${rays}
     ${BODIES[realmKey]||BODIES.Arena}
     ${speaking?`
-      <circle cx="${cx}" cy="${cy}" r="${s*.42}" fill="none" stroke="${c}" stroke-width="1.5" opacity=".3" style="animation:throb 1.2s ease-out infinite"/>
-      <circle cx="${cx}" cy="${cy}" r="${s*.5}" fill="none" stroke="${c2}" stroke-width="1" opacity=".18" style="animation:throb 1.2s .4s ease-out infinite"/>`:''}
-  </svg>`;
-}
+    <circle cx="${cx}" cy="${cy}" r="${s*.42}" fill="none" stroke="${c}" stroke-width="1.5" opacity=".3" style="animation:throb 1.2s ease-out infinite"/>
+    <circle cx="${cx}" cy="${cy}" r="${s*.5}" fill="none" stroke="${c2}" stroke-width="1" opacity=".18" style="animation:throb 1.2s .4s ease-out infinite"/>`:''}
+    </svg>`;
+  }
+  
+  const sharePostBtn = document.querySelector('.sharePost')
+
+   const modal = document.querySelector('.profile-content')
+
+
+    document.querySelectorAll('.info-button').forEach((btn) => {
+
+      btn.addEventListener('click', (e) => {
+          
+          sharePostBtn.style.display = 'none'
+          
+          // Populate modal with profile info (placeholder for now)
+          const profileInfo = {
+              userName: btn.children[0].textContent,
+              userProfilePic: btn.children[4].getAttribute('src'),
+              userBio: "Up and about.",
+              userStats: {
+                  posts: btn.children[3].textContent,
+                  followers: btn.children[1].textContent,
+                  following: btn.children[2].textContent
+              } 
+          }
+
+          const profileContainer = document.querySelector('#profile-info-cont')
+          
+          profileContainer.querySelector('img').src = profileInfo.userProfilePic
+          profileContainer.querySelector('h2').textContent = profileInfo.userName
+          profileContainer.querySelector('p').textContent = profileInfo.userBio
+          
+          document.querySelector('.overlay').style.display = 'block'
+          document.getElementById('profile-wrapper').style.display = 'block'
+          setTimeout(() => {
+              modal.style.transition = 'top 0.3s ease-out'
+              modal.style.top = '50%'
+          }, 75)
+      })
+
+    })
+
+
+    let startY = 0
+    let currentY = 0
+    let dragging = false
+
+    modal.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY
+        dragging = true
+        
+         modal.style.transition = 'none'
+
+    })
+
+    modal.addEventListener('touchmove', (e) => {
+        if (!dragging) return;
+        currentY = e.touches[0].clientY
+        const deltaY = currentY - startY
+
+        // Only drag downward
+        if (deltaY > 0) {
+            modal.style.transform = `translateY(${deltaY}px)`
+
+            // fade background
+            const opacity = 0.4 - deltaY / 500
+            document.querySelector('.overlay').style.background = `rgba(128, 128, 128, ${opacity})`
+        }
+    })
+
+    modal.addEventListener('touchend', (e) => {
+        dragging = false
+        const deltaY = currentY - startY
+
+        if (deltaY > 100) {
+            modal.style.transition = 'transform 0.3s ease-out'
+            modal.style.transform = `translateY(100%)`
+            document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0)`
+            setTimeout(() => {
+                    document.getElementById('profile-wrapper').style.display = 'none'
+                    document.querySelector('.overlay').style.display = 'none'
+                    document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0.4)`
+                    sharePostBtn.style.display = 'block'
+                    modal.style.transform = 'translateY(0)'
+    
+            }, 200)
+        } else {
+            modal.style.transition = 'transform 0.3s ease-out'
+            modal.style.transform = `translateY(0)`
+            document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0.4)`
+        }
+    })
+
+    document.querySelector('.overlay').addEventListener('click', () => {
+        modal.style.transition = 'top 0.3s ease-out'
+        modal.style.top = '100%'
+        document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0)`
+        setTimeout(() => {
+            document.getElementById('profile-wrapper').style.display = 'none'
+            document.querySelector('.overlay').style.display = 'none'
+            document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0.4)`
+            sharePostBtn.style.display = 'block'
+            modal.style.top = '100%'
+        }, 300)
+    })
 
 
 const observerOptions = {
@@ -718,7 +881,6 @@ const navbar = document.querySelector('.navbar')
 const postSubmitPostBtn = document.getElementById('post-submit-btn')
 const postForm = document.getElementById('post-form')
 const shareAvatarCont = document.getElementById('share-link')
-const sharePostBtn = document.querySelector('.sharePost')
 const viewToPostCont = document.getElementById('view-to-post')
 const groupsWrapper = document.getElementById('groups-wrapper')
 const options = ['Feed', 'Messages', 'Groups']

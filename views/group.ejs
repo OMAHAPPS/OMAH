@@ -53,7 +53,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         <a href="/home" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
             <ion-icon name="arrow-back-outline"></ion-icon>
         </a>
-        <div style="font-size: 15px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
+        <div id="info-button" style="font-size: 15px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
 
             <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
              
@@ -165,7 +165,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     const modal = document.querySelector('.profile-content')
 
 
-    document.querySelector('header').addEventListener('click', () => {
+    document.querySelector('#info-button').addEventListener('click', () => {
         document.querySelector('.overlay').style.display = 'block'
         document.getElementById('profile-wrapper').style.display = 'block'
         setTimeout(() => {
