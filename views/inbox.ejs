@@ -49,7 +49,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 </head>
 <body>
 
-   <header style="height: 10%; display: flex; align-items: center; gap: 12px; padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08);">
+   <header style="position: relative; height: 10%; display: flex; align-items: center; gap: 12px; padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08);">
         <a href="/home" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
             <ion-icon name="arrow-back-outline"></ion-icon>
         </a>
@@ -66,8 +66,14 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                    <span style="display: none; font-size: 11px; color: rgba(237,232,224,.45);">Online</span>
                    <span style="font-size: 11px; color: rgba(237,232,224,.45);">Last seen 2h ago</span>
                 </div>
-
+                
             </div>
+            
+            
+        </div>    
+        <div class="follow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: transparent;">
+            <h4 style="color: #C04848; font-size: .75rem;">Following</h4>
+        </div>
             
 
    </header>
