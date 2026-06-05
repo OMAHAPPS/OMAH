@@ -126,6 +126,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
                     <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
                     <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
+                    <div id="poster-userHandle" style="display: none;">@<%= post.userName %></div>
 
                     <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
@@ -152,16 +153,24 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             
                     
                 
-                  <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
-                       <button onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
-                            ❤️ 2056
-                       </button>
-                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
-                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
-                       <div style="margin-left:auto">
-                           
-                       </div>
+                  <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                     <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
+                         <ion-icon name="heart-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                         <span style="font-size: 13px; color: #C04848; font-weight: bold; margin-left: 3px;">20</span>
+                     </div>   
+                     <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
+                       <ion-icon name="chatbubble-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                       <span style="font-size: 13px; color: #C04848; font-weight: bold; margin-left: 3px;">52</span>
                      </div>
+                     <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                         <ion-icon name="barcode-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                         <span style="font-size: 13px; color: #C04848; font-weight: bold; margin-left: 3px;">204</span>
+                     </div> 
+
+                     <ion-icon name="share-social-outline" style="font-size: 20px; font-weight: bold; color: #C04848;"></ion-icon>
+                     <ion-icon name="repeat" style="font-size: 20px; font-weight: bold; color: #C04848;"></ion-icon>
+                   
+                   </div>
              </div> 
 
            
@@ -174,6 +183,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
                     <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
                     <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
+                    <div id="poster-userHandle" style="display: none;">@<%= post.userName %></div>
   
                        <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
@@ -197,17 +207,25 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     </video>
             
                     
-                  <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
-                       <button onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
-                            ❤️ 42
-                       </button>
-                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
-                       <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
-                       <div style="margin-left:auto">
-                           
-                       </div>
+                  <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                     <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
+                         <ion-icon name="heart-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                         <span style="font-size: 13px; color: #C04848; font-weight: bold; margin-left: 3px;">20</span>
+                     </div>   
+                     <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
+                       <ion-icon name="chatbubble-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                       <span style="font-size: 13px; color: #C04848; font-weight: bold; margin-left: 3px;">52</span>
                      </div>
-             </div> 
+                     <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                         <ion-icon name="barcode-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                         <span style="font-size: 13px; color: #C04848; font-weight: bold; margin-left: 3px;">204</span>
+                     </div> 
+
+                     <ion-icon name="share-social-outline" style="font-size: 20px; font-weight: bold; color: #C04848;"></ion-icon>
+                     <ion-icon name="repeat" style="font-size: 20px; font-weight: bold; color: #C04848;"></ion-icon>
+                   
+                   </div>
+            </div> 
           
           <% posts.map((post) => { %>
           
@@ -221,6 +239,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
                <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
                <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
+               <div id="poster-userHandle" style="display: none;">@<%= post.userName %></div>
+
 
               <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
@@ -261,16 +281,24 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                  <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
               <% } %>
 
-              <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
-                   <button<% /* eslint-disable-next-line css-propertyvalueexpected */ %> onclick="toggleLike()" class="tap" style="font-size:12px;color: rgba(237,232,224,.72); display: flex; align-items: center; gap: 4px; font-weight: 400;">
-                        ❤️<%= post.likes %>
-                   </button>
-                   <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">💬 Reply</button>
-                   <button class="tap" style="font-size:12px;color:rgba(237,232,224,.32)">🔁 Share</button>
-                   <div style="margin-left:auto">
-                       
-                   </div>
-                 </div>
+              <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                     <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
+                         <ion-icon name="heart-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                         <span style="font-size: 13px; color: #C04848; font-weight: bold; margin-left: 3px;">20</span>
+                     </div>   
+                     <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
+                       <ion-icon name="chatbubble-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                       <span style="font-size: 13px; color: #C04848; font-weight: bold; margin-left: 3px;">52</span>
+                     </div>
+                     <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                         <ion-icon name="barcode-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                         <span style="font-size: 13px; color: #C04848; font-weight: bold; margin-left: 3px;">204</span>
+                     </div> 
+
+                     <ion-icon name="share-social-outline" style="font-size: 20px; font-weight: bold; color: #C04848;"></ion-icon>
+                     <ion-icon name="repeat" style="font-size: 20px; font-weight: bold; color: #C04848;"></ion-icon>
+                   
+              </div>
          </div> 
                 
                 <% }) %>
@@ -426,13 +454,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                     <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
 
-                    <p style="font-size: 14px; color: rgba(237,232,224,.45);"></p>
+                    <p style="font-size: 16px; color: rgba(237,232,224,.45);"></p>
 
                     <div class="follow-wrapper" style="display: flex; justify-content: space-around; align-items: center; width: 100%; height: 40px;">
                          
-                         <p style="color: white; font-size: 15px;">500 <span style="color: rgba(237,232,224,.45);">Following</span></p>
-                         <p style="color: white; font-size: 15px;">20 <span style="color: rgba(237,232,224,.45);">Followers</span></p>
-                         <p style="color: white; font-size: 15px;">2K <span style="color: rgba(237,232,224,.45);">Posts</span></p>
+                         <p style="color: white; font-size: 16px; font-weight: bold;">500 <span style="color: rgba(237,232,224,.45);">Following</span></p>
+                         <p style="color: white; font-size: 16px; font-weight: bold;">20 <span style="color: rgba(237,232,224,.45);">Followers</span></p>
+                         <p style="color: white; font-size: 16px; font-weight: bold;">2K <span style="color: rgba(237,232,224,.45);">Posts</span></p>
                         
                     </div>
 
@@ -739,8 +767,8 @@ function charSVG(realmKey, size=150, speaking=false){
           // Populate modal with profile info (placeholder for now)
           const profileInfo = {
               userName: btn.children[0].textContent,
-              userProfilePic: btn.children[4].getAttribute('src'),
-              userBio: "Up and about.",
+              userProfilePic: btn.children[5].getAttribute('src'),
+              userHandle: btn.children[4].textContent,
               userStats: {
                   posts: btn.children[3].textContent,
                   followers: btn.children[1].textContent,
@@ -752,7 +780,7 @@ function charSVG(realmKey, size=150, speaking=false){
           
           profileContainer.querySelector('img').src = profileInfo.userProfilePic
           profileContainer.querySelector('h2').textContent = profileInfo.userName
-          profileContainer.querySelector('p').textContent = profileInfo.userBio
+          profileContainer.querySelector('p').textContent = profileInfo.userHandle
           
           document.querySelector('.overlay').style.display = 'block'
           document.getElementById('profile-wrapper').style.display = 'block'
