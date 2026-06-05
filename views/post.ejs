@@ -238,13 +238,66 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
        
 
     </main>
-    <div class="sharePost" style="display: block; position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
+        <!--TODO ////// SHARE REPLY CONTAINER ////  -->
+      <div class="sharePost" style="display: block; position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
          
       <button id="share-link" class="tap" style="width: 100%; padding: 15px 10px; border-radius: 14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap:10px;">
           <!-- ! RENDERED IN JAVASCRIPT -->
       </button>
 
     </div>
+    
+    <!-- TODO ///////  VIEW POST REPLY /////// -->
+
+    <div class="view" id="view-to-post" style="display: none; background:rgba(5,5,8,.92)">
+
+      <div style="padding: 13px 16px;border-bottom:1px solid rgba(255,255,255,.05); display: flex; align-items:center; gap:10px; flex-shrink:0">
+
+          <button onclick="back()" class="back" style="padding: 7px 14px; border-radius: 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.6)">
+            ✕ Cancel
+          </button>
+          <div class="fd" style="flex:1;font-size:16px;font-weight:700;color:rgba(237,232,224,.8)">
+            Reply
+          </div>
+      
+          <form id="post-form" action="/post" method="post">
+            <input id="userid" name="userid" value="<%= user._id %>" type="text" style="display: none;">
+            <input id="userrealm" name="userrealm" value="<%= user.userRealm %>" type="text" style="display: none;">
+            <input id="post-input-elem" name="poststring" type="text" style="display: none;">
+            <input id="post-image-input" name="imagesrc" type="text" style="display: none;" value="none" />
+             
+          <button type="submit" id="post-submit-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="tap" style="display: block; padding: 8px 20px;border-radius:12px;font-size:12px;font-weight:600;background: <%= user.userColor %>18;border: 1px solid <%= user.userColor %>52;color: <%= user.userColor %>;">Share</button>
+          </form>
+      </div>
+      <div style="height: 78%; padding: 18px 16px; flex:1; display:flex; flex-flow: column nowrap; gap: 14px;">
+        
+              <div style="height: 8%; padding: 10px; display: flex; align-items: center; gap:10px;">
+                 <div>
+                    <div style="font-size:15px;font-weight:600;color:rgba(237,232,224,.8)">
+                       <%= user.userName %>
+                    </div>
+                    <div style="font-size:12px;color:#C04848;">
+                      Replying to @<%= user.userName %>
+                    </div>
+                 </div>
+              </div>
+      
+              <div class="post-box" style="height: 88%; display: flex; flex-flow: column nowrap; overflow-x: hidden; overflow-y: scroll;">
+ 
+                  <textarea id="post-body" placeholder="Add Caption..." maxlength="500" style="padding: 16px; border-radius: 18px 18px 0 0; font-size: 15px; line-height: 1.72; color:rgba(237,232,224,.82); background:rgba(255,255,255,.02); border: 2px solid rgba(255,255,255,.07); flex-grow: 1;"></textarea>
+                
+                   <!--! ///// IMAGE TO BE RENDERED IN JS AFTER MULTER UPLOAD ////  -->
+                  <article id="image-article" style="width: clamp(350px, 100%, 600px); height: 60%; border-radius: 0 0 18px 18px; display: none;">
+
+                  </article>
+
+        
+              </div>   
+
+              <div style="text-align:right;font-size:10px;color:rgba(237,232,224,.2)">🔒 Stays within The <%= user.userRealm %></div>
+      </div>
+  </div>
+    
     
 
 
@@ -257,10 +310,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 const shareAvatarCont = document.querySelector('#share-link')
 
 
-const av=(init,col,sz=32)=>`<div style="width:${sz}px;height:${sz}px;border-radius:50%;flex-shrink:0;background:${col}22;border:1.5px solid ${col}55;display:flex;align-items:center;justify-content:center;font-size:${Math.floor(sz*.36)}px;font-weight:700;color:${col};font-family:'Plus Jakarta Sans',sans-serif">${init}</div>`;
-
-
-shareAvatarCont.innerHTML = `${av('J', '#C04848', sz=32)}
+ shareAvatarCont.innerHTML = `<img src="/uploads/mwatiJS-1780147920696.jpeg" width="32" height="32" style="border-radius: 50%;"/>
                               <span id="post-placeholder" style="flex: 1; font-size: 14px; color:rgba(237,232,224,.28); text-align: left;">Add Reply.........</span>
                               <form action="/post/upload" method="POST" enctype="multipart/form-data" id="file-form" style="display: flex; width: fit-content; justify-content: flex-end;">
                                 <input id="image" type="file" name="image" accept="image/*" style="display: none;">
@@ -275,6 +325,7 @@ shareAvatarCont.innerHTML = `${av('J', '#C04848', sz=32)}
                                 </div>
                               </form> 
                               `
+                              
 </script>
 </body>
 </html>
