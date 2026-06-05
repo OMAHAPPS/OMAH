@@ -7,6 +7,7 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     
+    
 
     <title>AI</title>
     <style>
@@ -115,9 +116,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   </div>
                   <div style="padding:12px 16px;border-radius:4px 16px 16px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07)">
 
-                      <div style="display:flex; flex-wrap: wrap; gap:4px;">
-                         <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width:6px;height:6px;border-radius:50%;background: <%= user.userColor %>; animation: dotBlink 1.2s 1.2s ease-in-out infinite"></div>
-                         <span id="input-to-dis-result" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 16px; color: <%= user.userColor %>;"></span>
+                      <div style="display:flex; flex-wrap: wrap; gap:4px; padding-bottom: 10px;">
+                         <div class="dot-blink" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width:6px;height:6px;border-radius:50%;background: <%= user.userColor %>; animation: dotBlink 1.2s 1.2s ease-in-out infinite"></div>
+                         <span id="input-to-dis-result" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 16px; color: <%= user.userColor %>; white-space: pre-wrap;"></span>
 
                       </div>
                   </div>
@@ -370,7 +371,21 @@ inputToAi.addEventListener('keyup', () => {
    
 })
 
+ function parseMarkdown (text) {
 
+    text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');   // convert to h3
+
+    text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');   //  convert to h2
+
+    text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');    // convert to h1
+
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');  // convert to bold
+
+    text = text.replace(/^\* (.*$)/gim, '<li>$1</li>');  // order lists
+
+    return text
+    
+  }
 
 
 
@@ -396,19 +411,27 @@ fetch('/generate', {
     return data
   }).then((info) => {
 
-  const data = info
- 
+  console.log(info)
+
+  let currentText = ''
   let index = 0
+
   const interval = setInterval(() => {
-      
-      spanResult.innerHTML += data[index]
 
-          index ++
-          if(index >= data.length) {
-              clearInterval(interval)
-          }
+      currentText += info[index]
+      spanResult.innerHTML = parseMarkdown(currentText)
 
-        }, 5)
+      index++
+       
+       if (index >= info.length) {
+        document.querySelector('.dot-blink').style.display = 'none'
+        clearInterval(interval)
+       }
+
+  }, 2)
+
+
+  document.querySelector('.dot-blink').style.display = 'none'
         
     })
     .catch((err) => {
