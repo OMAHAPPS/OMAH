@@ -983,7 +983,7 @@ postSubmitPostBtn.addEventListener('click', (e) => {
 labelFileInput.addEventListener('click', () => {
      
      submitActionsCont.style.display = 'flex'
-     postPlaceholder.textContent = 'Image Attached'
+     postPlaceholder.textContent = 'Attaching Image..'
      labelFileInput.style.display = 'none'
 })
 
@@ -991,7 +991,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
      
      e.preventDefault()
      submitActionsCont.style.display = 'none'
-     postPlaceholder.textContent = 'Write something real...'
+     postPlaceholder.textContent = 'Add new Post...'
      labelFileInput.style.display = 'block'
      submitUploadBtn.disabled = false
      submitUploadBtn.style.backgroundColor = '#1ed760'
@@ -1004,6 +1004,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
    e.preventDefault()
    
    submitUploadBtn.disabled = true
+   cancelUploadBtn.style.display = 'none'
    submitUploadBtn.style.backgroundColor = '#121212'
    submitUploadBtn.textContent = 'Uploading...'
 
@@ -1016,6 +1017,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
           submitActionsCont.style.display = 'none'
           labelFileInput.style.display = 'block'
           submitUploadBtn.disabled = false
+          cancelUploadBtn.style.display = 'flex'
           submitUploadBtn.style.backgroundColor = '#1ed760'
           submitUploadBtn.textContent = 'Upload'
           return;
@@ -1030,6 +1032,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
             submitActionsCont.style.display = 'none'
             labelFileInput.style.display = 'block'
             submitUploadBtn.disabled = false
+            cancelUploadBtn.style.display = 'flex'
             submitUploadBtn.style.backgroundColor = '#1ed760'
             submitUploadBtn.textContent = 'Upload'
             return;
@@ -1053,6 +1056,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
                       }, 2000)
                       throw new Error('Network response was not ok')
                       submitUploadBtn.disabled = false
+                      cancelUploadBtn.style.display = 'flex'
                       submitUploadBtn.style.backgroundColor = '#1ed760'
                       submitUploadBtn.textContent = 'Upload'
                     }
@@ -1067,7 +1071,9 @@ cancelUploadBtn.addEventListener('click', (e) => {
                 imageArticle.innerHTML = image
                 imageArticle.style.display = 'block'
                 viewToPostCont.style.display = 'block'
-                sharePostBtn.style.display = 'none'
+                //sharePostBtn.style.display = 'none'
+                submitUploadBtn.textContent = 'Success'
+                cancelUploadBtn.style.display = 'none'
                 
           
             }).catch((error) => {
@@ -1321,7 +1327,7 @@ const inputPostElem = document.getElementById('post-input-elem')
 postPlaceholder.addEventListener('click', () => {
 
     viewToPostCont.style.display = 'flex' 
-    sharePostBtn.style.display = 'none' 
+    // sharePostBtn.style.display = 'none' 
   })
   
 
@@ -1353,6 +1359,8 @@ function back() {
     imageArticle.style.display = 'none'
     submitUploadBtn.style.backgroundColor = '#1ed760'
     submitUploadBtn.textContent = 'Upload'
+    postPlaceholder.textContent = 'Add new Post...'
+    cancelUploadBtn.style.display = 'flex'
     submitUploadBtn.disabled = false
     
     const imageSource = document.getElementById('filepath').textContent;
