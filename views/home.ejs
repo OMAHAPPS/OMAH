@@ -1046,6 +1046,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
           labelFileInput.style.display = 'block'
           submitUploadBtn.disabled = false
           cancelUploadBtn.style.display = 'flex'
+          postPlaceholder.textContent = 'Add new post...'
           submitUploadBtn.style.backgroundColor = '#1ed760'
           submitUploadBtn.textContent = 'Upload'
           return;
@@ -1061,6 +1062,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
             labelFileInput.style.display = 'block'
             submitUploadBtn.disabled = false
             cancelUploadBtn.style.display = 'flex'
+            postPlaceholder.textContent = 'Add new Post...'
             submitUploadBtn.style.backgroundColor = '#1ed760'
             submitUploadBtn.textContent = 'Upload'
             return;
@@ -1085,6 +1087,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
                       throw new Error('Network response was not ok')
                       submitUploadBtn.disabled = false
                       cancelUploadBtn.style.display = 'flex'
+                      postPlaceholder.textContent = 'Add new Post...'
                       submitUploadBtn.style.backgroundColor = '#1ed760'
                       submitUploadBtn.textContent = 'Upload'
                     }
@@ -1100,6 +1103,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
                 imageArticle.style.display = 'block'
                 viewToPostCont.style.display = 'block'
                 //sharePostBtn.style.display = 'none'
+                postPlaceholder.textContent = '<< Image Attached >>'
                 submitUploadBtn.textContent = 'Success'
                 cancelUploadBtn.style.display = 'none'
                 
@@ -1112,6 +1116,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
                  submitActionsCont.style.display = 'none'
                  labelFileInput.style.display = 'block'
                  submitUploadBtn.disabled = false
+                 postPlaceholder.textContent = 'Add new post...'
                  submitUploadBtn.style.backgroundColor = '#1ed760'
                  submitUploadBtn.textContent = 'Upload'
           })
