@@ -52,16 +52,24 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
    <header style="position: relative; height: 10%; display: flex; align-items: center; gap: 12px; padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08);">
         <a href="/home" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
             <ion-icon name="arrow-back-outline"></ion-icon>
-        </a>
-        <div style="font-size: 15px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
+        </a>     
+        
+        <div id="prof" onclick="displayNav()" style=" font-size: 15px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px; flex: 1;">
 
-            <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+             <!-- ! element Placeholders for profile image and user info -->
+               <div id="poster-username" style="display: none;">Jeremy</div>
+               <div id="poster-followers" style="display: none;">553</div>
+               <div id="poster-following" style="display: none;">234</div>
+               <div id="poster-posts-length" style="display: none;">3000</div>
+               <div id="poster-user-handle" style="display: none;">@Vinntonae</div>
 
-            <div class="name-cont" style="display: flex; flex-direction: column; gap:4px">
+            <img onclick="displayNav()" src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
-                <h2 style="font-size: 15px; font-weight: 600; color: rgba(237,232,224,.85);">Jeremy</h2>
+            <div onclick="displayNav()" class="name-cont" style="display: flex; flex-direction: column; gap:4px">
 
-                <div style="display: flex; align-items: center; gap:4px">
+                <h2 onclick="displayNav()" style="font-size: 15px; font-weight: 600; color: rgba(237,232,224,.85);">Jeremy</h2>
+
+                <div onclick="displayNav()" style="display: flex; align-items: center; gap:4px">
                    <div style="display: none; width: 6px; height: 6px; border-radius: 50%; background: #1ed760; box-shadow:0 0 6px #1ed760; animation: throb 1.8s ease-in-out infinite;"></div>
                    <span style="display: none; font-size: 11px; color: rgba(237,232,224,.45);">Online</span>
                    <span style="font-size: 11px; color: rgba(237,232,224,.45);">Last seen 2h ago</span>
@@ -71,6 +79,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             
             
         </div>    
+
         <div class="follow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: transparent;">
             <h4 style="color: #C04848; font-size: .75rem;">Following</h4>
         </div>
@@ -144,6 +153,48 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         </div>
     </footer>    
 
+   <section id="single-profile-wrapper" style="display: none; position: absolute; top: 0; height: 100%; width: 100%; z-index: 4; gap: 12px; overflow-y: scroll; overflow-x: hidden;">
+
+        <div class="overlay-single" style="display: none; position: absolute; inset: 0; height: 100%; width: 100%; z-index: 3; background-color: rgba(128, 128, 128, 0.4);"></div>
+
+        <nav class="single-profile-content" style=" position: absolute; top: 100%; z-index: 4; border-radius: 50px 50px 0 0; width: 100%; height: 50%; background-color: #050508; touch-action: none; will-change: transform;">
+
+                <div class="scroll-icon" style="width: 40px; height: 4px; background-color: #C04848; border-radius: 2px; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);"></div>    
+
+                <div id="single-profile-info-cont" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 16px;">
+
+                    <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="100" height="100" style="border-radius: 50%; object-fit: cover;" />
+
+                    <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
+
+                    <p style="font-size: 14px; color: rgba(237,232,224,.45);"></p>
+
+                    <div class="follow-wrapper" style="display: flex; justify-content: space-around; align-items: center; width: 100%; height: 40px;">
+                         
+                         <p style="color: white; font-size: 15px;">500 <span style="color: rgba(237,232,224,.45);">Following</span></p>
+                         <p style="color: white; font-size: 15px;">20 <span style="color: rgba(237,232,224,.45);">Followers</span></p>
+                         <p style="color: white; font-size: 15px;">2K <span style="color: rgba(237,232,224,.45);">Posts</span></p>
+                        
+                    </div>
+
+                    <div class="interact" style="width: 100%; background-color: transparent; margin-top: 10px; display: flex; justify-content: space-evenly; align-items: center;">
+
+                      <a href="/inbox" class="message" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: #C04848;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                           <h3 style="font-size: .9rem; color: #C04848;">Message</h2>
+                      </a>
+                      <div class="follow-btn" style="display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid #C04848; background-color: transparent;">
+                        <h4 style="color: #C04848; font-size: .9rem;">Following</h4>
+                      </div>
+
+                    </div>
+
+
+                </div>  
+        </nav>
+        
+    </section>
+
 
 
     
@@ -165,6 +216,105 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             textArea.value = textArea.value.trimStart()
         }
     })
+ 
+
+    const modalSingle = document.querySelector('.single-profile-content')
+
+    const profileHeader = document.querySelector('#prof')
+
+    function displayNav () {
+          
+          // Populate modal with profile info (placeholder for now)
+          const profileInfo = {
+              userName: profileHeader.children[0].textContent,
+              userProfilePic: profileHeader.children[5].getAttribute('src'),
+              userHandle: profileHeader.children[4].textContent,
+              userStats: {
+                  posts: profileHeader.children[3].textContent,
+                  followers: profileHeader.children[1].textContent,
+                  following: profileHeader.children[2].textContent
+              } 
+          }
+        
+          const singleProfileContainer = document.querySelector('#single-profile-info-cont')
+          
+          singleProfileContainer.querySelector('img').src = profileInfo.userProfilePic
+          singleProfileContainer.querySelector('h2').textContent = profileInfo.userName
+          singleProfileContainer.querySelector('p').textContent = profileInfo.userHandle
+          
+          document.querySelector('.overlay-single').style.display = 'block'
+          document.getElementById('single-profile-wrapper').style.display = 'block'
+          setTimeout(() => {
+              modalSingle.style.transition = 'top 0.3s ease-out'
+              modalSingle.style.top = '50%'
+          }, 75)
+      }
+
+    
+
+
+    let singlestartY = 0
+    let singlecurrentY = 0
+    let singledragging = false
+
+    modalSingle.addEventListener('touchstart', (e) => {
+        singlestartY = e.touches[0].clientY
+        singledragging = true
+        
+         modalSingle.style.transition = 'none'
+
+    })
+
+    modalSingle.addEventListener('touchmove', (e) => {
+        if (!singledragging) return;
+        singlecurrentY = e.touches[0].clientY
+        const deltaY = singlecurrentY - singlestartY
+
+        // Only drag downward
+        if (deltaY > 0) {
+            modalSingle.style.transform = `translateY(${deltaY}px)`
+
+            // fade background
+            const opacity = 0.4 - deltaY / 500
+            document.querySelector('.overlay-single').style.background = `rgba(128, 128, 128, ${opacity})`
+        }
+    })
+
+    modalSingle.addEventListener('touchend', (e) => {
+        singledragging = false
+        const deltaY = singlecurrentY - singlestartY
+
+        if (deltaY > 100) {
+            modalSingle.style.transition = 'transform 0.3s ease-out'
+            modalSingle.style.transform = `translateY(100%)`
+            document.querySelector('.overlay-single').style.background = `rgba(128, 128, 128, 0)`
+            setTimeout(() => {
+                    document.getElementById('single-profile-wrapper').style.display = 'none'
+                    document.querySelector('.overlay-single').style.display = 'none'
+                    document.querySelector('.overlay-single').style.background = `rgba(128, 128, 128, 0.4)`
+                    modalSingle.style.transform = 'translateY(0)'
+    
+            }, 200)
+        } else {
+            modalSingle.style.transition = 'transform 0.3s ease-out'
+            modalSingle.style.transform = `translateY(0)`
+            document.querySelector('.overlay-single').style.background = `rgba(128, 128, 128, 0.4)`
+        }
+    })
+
+    document.querySelector('.overlay-single').addEventListener('click', () => {
+        modalSingle.style.transition = 'top 0.3s ease-out'
+        modalSingle.style.top = '100%'
+        document.querySelector('.overlay-single').style.background = `rgba(128, 128, 128, 0)`
+        setTimeout(() => {
+            document.getElementById('single-profile-wrapper').style.display = 'none'
+            document.querySelector('.overlay-single').style.display = 'none'
+            document.querySelector('.overlay-single').style.background = `rgba(128, 128, 128, 0.4)`
+            modalSingle.style.top = '100%'
+        }, 300)
+    })
+
+
 
 </script>    
 </body>
