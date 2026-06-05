@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <title>UserInfo</title>
+
+      <style>
+/* ── FOUNDATION ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{position: relative; height:100%;overflow:hidden;background:#050508;color:#ede8e0;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased}
+#app{height:100%;position:relative;overflow:hidden}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea{font-family:inherit;border:none;outline:none;background:none;color:inherit}
+::-webkit-scrollbar{width:0;height:0}
+
+/* ── TYPE ── */
+.fd{font-family:'Playfair Display',serif}
+.fs{font-family:'DM Serif Display',serif}
+
+/* ── LAYOUT ── */
+.view{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;overflow:hidden;animation:viewIn .42s cubic-bezier(.22,.61,.36,1) both}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+/* ── INTERACTIONS ── */
+.tap{cursor:pointer;transition:transform .12s ease,opacity .12s ease;user-select:none;-webkit-user-select:none}
+.tap:active{transform:scale(.91)!important;opacity:.72!important}
+
+/* ── ANIMATIONS ── */
+@keyframes viewIn      {from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes emerge      {from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn      {from{opacity:0}to{opacity:1}}
+@keyframes orbIn       {from{opacity:0;transform:scale(.55)}to{opacity:1;transform:scale(1)}}
+@keyframes msgPop      {from{opacity:0;transform:translateY(6px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes throb       {0%,100%{opacity:.42}50%{opacity:1}}
+@keyframes drift       {0%,100%{transform:translateY(0) rotate(0deg)}40%{transform:translateY(-10px) rotate(.6deg)}75%{transform:translateY(4px) rotate(-.3deg)}}
+@keyframes speak       {0%,100%{transform:scale(1.03)}50%{transform:scale(1.15)}}
+@keyframes xpFill      {from{width:0%}}
+@keyframes dotBlink    {0%,80%,100%{transform:scale(0);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes effBurst    {0%{transform:scale(1);opacity:1}60%{transform:scale(1.6);opacity:.5}100%{transform:scale(2.4);opacity:0}}
+@keyframes storyPulse  {0%,100%{box-shadow:0 0 0 0 var(--sc)}50%{box-shadow:0 0 0 4px var(--sc)}}
+@keyframes heartbeat   {0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.06)}}
+@keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
+</style>
+</head>
+<body>
+
+     <header style="height: 20%; padding: 5px 5px; border-bottom: 1px solid rgba(255,255,255,.08);">
+
+           <div class="links-wrapper" style="height: 35%; width: 100%; display: flex; align-items: center; justify-content: space-between;">
+               <a href="/home" style="padding: 10px; display: flex; justify-content: center; align-items: center; border: .05px solid rgba(255, 255, 255, .08); border-radius: 50%; background-color: rgba(0, 0, 0, 0.623);">
+                   <ion-icon name="arrow-back-outline" style="font-size: 20px; color: #C04848;"></ion-icon>
+               </a>
+               <div class="follow-mgs" style="display: flex; align-items: center; justify-content: center;">
+                <a href="/inbox" class="message" style="text-decoration: none; margin-right: 15px; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" style="fill: #C04848;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                </a>
+                <div class="follow-btn" style="display: grid; place-content: center; padding: 15px; height: 20px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: transparent;">
+                           <h4 style="color: #C04848; font-size: .75rem;">Following</h4>
+                 </div>
+               </div>
+
+           </div>
+           <section style="position: relative; height: 65%; width: 100%; display: flex; align-items: center; justify-content: space-between;">
+               
+                 <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px; padding: 16px; width: 100%;">
+
+             
+                        <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="60" height="60" style="border-radius: 50%; object-fit: cover;" />
+
+                        <div style="flex:1; position: relative; width: 100%;">
+                
+                            <div style="margin-bottom: 5px; display: flex; align-items: center; justify-content: flex-start; font-size: 18px; font-weight: 600; color: rgba(237,232,224,.85)">
+                                 Alvin 
+                                 <h2 style="margin-left: 5px; font-size: 16px; color: #C04848; font-weight: 600;" >@VinnTonae</h2>      
+                            </div>
+                            <div class="follow-info" style="display: flex; align-items: center; justify-content: flex-start;">
+
+                                <h2 style="font-size: 15px; color: rgba(237,232,224,.32); margin-right: 10px;" ><span style="color: rgba(237,232,224,.75);">556</span> Following</h2> 
+                                <h2 style="font-size: 15px; color: rgba(237,232,224,.32); margin-right: 10px;" ><span style="color: rgba(237,232,224,.75);">20K</span> Followers</h2> 
+                                <h2 style="font-size: 15px; color: rgba(237,232,224,.32);" ><span style="color: rgba(237,232,224,.75);">5K</span> Posts</h2> 
+                            </div>
+                                
+
+                             
+                        </div>
+                        
+              </div>
+
+              <div class="post-text" style="display: grid; place-content: center; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-bottom: 2px solid #C04848; padding: 5px;">
+                    <h2 style="color: #C04848; font-size: 14px;">Posts</h2>
+              </div>
+
+           </section>
+
+     </header>
+     <main style="height: 80%; width: 100%; overflow-x: hidden; overflow-y: scroll; scroll-snap-type: y mandatory;">
+
+         <% posts.map((post) => { %>
+
+            <div class="glass-images" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32); scroll-snap-align: start;"> 
+   
+              <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+   
+                <!-- ! element Placeholders for profile image and user info -->
+                 <div id="poster-username" style="display: none;"><%= post.userName %></div>
+                 <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
+                 <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
+                 <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
+   
+                <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+   
+                <div style="flex:1">
+                  
+                      <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                                   <%= post.userName %> 
+                                   <% if (post.userName == user.userName) { %>
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                     <% } else { %>
+                                       <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                   <% } %>
+                          </div>
+                                <% const timestamp = post.createdAt %>
+                                <% const diff = new Date() - new Date(timestamp) %>
+                                <% const daysPast = Math.floor( (diff / 86400000) ) %>
+                                <% const hoursPast = Math.floor( (diff / 3600000) ) %>
+                                <% const minutesPast = Math.floor( (diff / 60000) ) %>
+   
+                                <% if (daysPast > 0) { %>
+                                 <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
+                                 <% } else if (hoursPast > 0) { %>
+                                   <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
+                                   <% } else if (minutesPast > 0) { %>
+                                     <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
+                                     <% } else if (minutesPast == 0) { %>
+                                       <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
+                                    <% } %>
+                    </div>
+                          
+                </div>
+   
+                <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
+   
+                <% if (post.image !== 'none') { %>
+                  <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
+                  <% } else { %>
+                   <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
+                <% } %>
+   
+                <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+                     <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
+                         <ion-icon name="heart-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
+                         <span style="font-size: 13px; color: #C04848; font-weight: 600; margin-left: 3px;">20</span>
+                     </div>   
+                     <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                         <ion-icon name="barcode-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
+                         <span style="font-size: 13px; color: #C04848; font-weight: 600; margin-left: 3px;">204</span>
+                     </div>  
+                     <ion-icon name="share-social-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
+                     <ion-icon name="repeat" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
+                   
+                   </div>
+           </div> 
+
+         <% }) %>
+
+
+     </main>
+    
+</body>
+</html>

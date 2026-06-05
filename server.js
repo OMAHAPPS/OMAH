@@ -283,3 +283,11 @@ app.get('/post', notLoggedInCheck, async (req, res) => {
     res.render('post', { post, user })
 })
 
+app.get('/user', notLoggedInCheck,  async (req, res) => {
+    
+    const userid = req.user._id
+    const user = await Omaruser.findOne({ _id: userid })
+    const posts = await Post.find() 
+
+    res.render('userposts', { posts, user } )
+})
