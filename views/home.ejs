@@ -1065,41 +1065,12 @@ cancelUploadBtn.addEventListener('click', (e) => {
           return;
      } else {
 
-<<<<<<< HEAD
-       const selectedFiles = inputFile.files
+
+       
        
        const selectedFile = inputFile.files[0]
-   
-        // if (!selectedFile.type.startsWith('image/')) {
-        //     errorMessage.textContent = 'Selected file is not an image...'
-        //     setInterval(() => {
-        //       errorMessage.textContent = ''
-        //     }, 2000)
-        //     submitActionsCont.style.display = 'none'
-        //     labelImagesInput.style.display = 'block'
-        //     submitUploadBtn.disabled = false
-        //     cancelUploadBtn.style.display = 'flex'
-        //     submitUploadBtn.style.backgroundColor = '#1ed760'
-        //     submitUploadBtn.textContent = 'Upload'
-        //     return;
-
-        // formData.append('image', selectedFile)
-=======
-        if (!selectedFile.type.startsWith('image/')) {
-            errorMessage.textContent = 'Selected file is not an image...'
-            setInterval(() => {
-              errorMessage.textContent = ''
-            }, 2000)
-            submitActionsCont.style.display = 'none'
-            labelFileInput.style.display = 'block'
-            submitUploadBtn.disabled = false
-            cancelUploadBtn.style.display = 'flex'
-            postPlaceholder.textContent = 'Add new Post...'
-            submitUploadBtn.style.backgroundColor = '#1ed760'
-            submitUploadBtn.textContent = 'Upload'
-            return;
-        } else {
->>>>>>> 3b13ba5002fefa70c14b22a3ddb162e8383a6e8e
+  
+        
 
           const formData = new FormData()
 
@@ -1133,7 +1104,6 @@ cancelUploadBtn.addEventListener('click', (e) => {
                     }
                   }).then((data) => {
 
-<<<<<<< HEAD
                     if (data.success === false) {
 
                          errorMessage.textContent = data.error
@@ -1180,15 +1150,14 @@ cancelUploadBtn.addEventListener('click', (e) => {
             
                       submitUploadBtn.textContent = 'Success'
                       cancelUploadBtn.style.display = 'none'
-=======
-                imageArticle.innerHTML = image
+
+                      imageArticle.innerHTML = image
                 imageArticle.style.display = 'block'
                 viewToPostCont.style.display = 'block'
                 //sharePostBtn.style.display = 'none'
                 postPlaceholder.textContent = '<< Image Attached >>'
                 submitUploadBtn.textContent = 'Success'
                 cancelUploadBtn.style.display = 'none'
->>>>>>> 3b13ba5002fefa70c14b22a3ddb162e8383a6e8e
                 
           
             }).catch((error) => {
