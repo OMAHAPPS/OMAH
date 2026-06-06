@@ -424,13 +424,14 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                  </div>
               </div>
       
-              <div class="post-box" style="height: 88%; display: flex; flex-flow: column nowrap; overflow-x: hidden; overflow-y: scroll;">
+              <div class="post-box" style="height: 88%; display: flex; flex-flow: column nowrap;">
  
                   <textarea id="post-body" placeholder="Add Caption..." maxlength="500" style="padding: 16px; border-radius: 18px 18px 0 0; font-size: 15px; line-height: 1.72; color:rgba(237,232,224,.82); background:rgba(255,255,255,.02); border: 2px solid rgba(255,255,255,.07); flex-grow: 1;"></textarea>
                 
                    <!--! ///// IMAGE TO BE RENDERED IN JS AFTER MULTER UPLOAD ////  -->
-                  <article id="image-article" style="width: clamp(350px, 100%, 600px); height: 60%; border-radius: 0 0 18px 18px; display: none;">
-
+                  <article id="image-article" style="width: clamp(350px, 100%, 600px); height: 60%; display: flex; overflow-x: scroll; overflow-y: hidden; border-radius: 0 0 18px 18px; scroll-snap-type: inline mandatory;">
+                            
+                            
                   </article>
 
         
@@ -923,9 +924,16 @@ const letter = document.getElementById('letter-upp').textContent
  shareAvatarCont.innerHTML = `${av(letter, r.col, sz=32)}
                               <span id="post-placeholder" style="flex: 1; font-size: 14px; color:rgba(237,232,224,.28); text-align: left;">Add new Post.........</span>
                               <form action="/post/upload" method="POST" enctype="multipart/form-data" id="file-form" style="display: flex; width: fit-content; justify-content: flex-end;">
-                                <input id="image" type="file" name="image" accept="image/*" style="display: none;">
-                                <label for="image" class="label"><ion-icon name="attach-outline" style="color: ${r.col}; cursor: pointer; font-size: 32px; display: block;"></ion-icon></label>
+
+                                <input id="image" type="file" name="images" multiple accept="image/*" style="display: none;">
+                                <label for="image" class="label-images"><ion-icon name="image" style="color: ${r.col}; cursor: pointer; font-size: 30px; display: block;"></ion-icon></label>
+                                
+                                <input id="video" type="file" name="video" accept="video/*" style="display: none;"/>
+                                <label for="video" class="label-video"><ion-icon name="videocam" style="color: ${r.col}; cursor: pointer; font-size: 30px; display: block; margin-left: 18px;"></ion-icon></label>
+
+
                                 <div class="upload-actions" style="display: none; justify-content: center; align-items: center;">
+
                                 <button type="submit" id="submit-upload" style="padding: 10px 10px; margin-right: 8px; outline: none; border-radius: 10px; background-color: #1ed760; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
                                   Upload<ion-icon name="arrow-up-outline" style="color: white; font-size: 15px;"></ion-icon>
                                   </button>
@@ -943,7 +951,8 @@ const letter = document.getElementById('letter-upp').textContent
 
 
 const submitActionsCont = document.querySelector('.upload-actions')
-const labelFileInput = document.querySelector('.label')
+const labelImagesInput = document.querySelector('.label-images')
+const labelVideoInput = document.querySelector('.label-video')
 const fileForm = document.getElementById('file-form')
 const postPlaceholder = document.getElementById('post-placeholder')
 const inputFile = document.getElementById('image')
@@ -1008,11 +1017,13 @@ postSubmitPostBtn.addEventListener('click', (e) => {
 })
 
 
-labelFileInput.addEventListener('click', () => {
+labelImagesInput.addEventListener('click', () => {
      
      submitActionsCont.style.display = 'flex'
      postPlaceholder.textContent = 'Attaching Image..'
-     labelFileInput.style.display = 'none'
+     labelImagesInput.style.display = 'none'
+     labelVideoInput.style.display = 'none'
+
 })
 
 cancelUploadBtn.addEventListener('click', (e) => {
@@ -1020,7 +1031,8 @@ cancelUploadBtn.addEventListener('click', (e) => {
      e.preventDefault()
      submitActionsCont.style.display = 'none'
      postPlaceholder.textContent = 'Add new Post...'
-     labelFileInput.style.display = 'block'
+     labelImagesInput.style.display = 'block'
+     labelVideoInput.style.display = 'block'
      submitUploadBtn.disabled = false
      submitUploadBtn.style.backgroundColor = '#1ed760'
      submitUploadBtn.textContent = 'Upload'
@@ -1038,37 +1050,46 @@ cancelUploadBtn.addEventListener('click', (e) => {
 
      
      if (inputFile.files.length === 0) {
-          errorMessage.textContent = 'No Image Selected...'
+          errorMessage.textContent = 'No Images Selected...'
           setInterval(() => {
             errorMessage.textContent = ''
           }, 2000)
           submitActionsCont.style.display = 'none'
-          labelFileInput.style.display = 'block'
+          labelImagesInput.style.display = 'block'
+          labelVideoInput.style.display = 'block'
           submitUploadBtn.disabled = false
           cancelUploadBtn.style.display = 'flex'
           submitUploadBtn.style.backgroundColor = '#1ed760'
           submitUploadBtn.textContent = 'Upload'
           return;
      } else {
-       const selectedFile = inputFile.files[0]
 
-        if (!selectedFile.type.startsWith('image/')) {
-            errorMessage.textContent = 'Selected file is not an image...'
-            setInterval(() => {
-              errorMessage.textContent = ''
-            }, 2000)
-            submitActionsCont.style.display = 'none'
-            labelFileInput.style.display = 'block'
-            submitUploadBtn.disabled = false
-            cancelUploadBtn.style.display = 'flex'
-            submitUploadBtn.style.backgroundColor = '#1ed760'
-            submitUploadBtn.textContent = 'Upload'
-            return;
-        } else {
+       const selectedFiles = inputFile.files
+       
+       const selectedFile = inputFile.files[0]
+   
+        // if (!selectedFile.type.startsWith('image/')) {
+        //     errorMessage.textContent = 'Selected file is not an image...'
+        //     setInterval(() => {
+        //       errorMessage.textContent = ''
+        //     }, 2000)
+        //     submitActionsCont.style.display = 'none'
+        //     labelImagesInput.style.display = 'block'
+        //     submitUploadBtn.disabled = false
+        //     cancelUploadBtn.style.display = 'flex'
+        //     submitUploadBtn.style.backgroundColor = '#1ed760'
+        //     submitUploadBtn.textContent = 'Upload'
+        //     return;
+
+        // formData.append('image', selectedFile)
 
           const formData = new FormData()
-          
-          formData.append('image', selectedFile)
+
+          for (const file of selectedFiles) {
+
+              formData.append("files", file)
+          }
+
           
           fetch('/post/upload', {
             method: 'POST',
@@ -1084,33 +1105,72 @@ cancelUploadBtn.addEventListener('click', (e) => {
                       }, 2000)
                       throw new Error('Network response was not ok')
                       submitUploadBtn.disabled = false
+                      submitActionsCont.style.display = 'none'
+                      labelImagesInput.style.display = 'block'
+                      labelVideoInput.style.display = 'block'
                       cancelUploadBtn.style.display = 'flex'
                       submitUploadBtn.style.backgroundColor = '#1ed760'
                       submitUploadBtn.textContent = 'Upload'
                     }
                   }).then((data) => {
-                    
-                    // console.log(data)
-                    
-               document.getElementById('filepath').textContent = data.filename
-               const image = `<img src=/uploads/${data.filename} alt="" style="width: 100%; height: 100%;" />`
-               imagePostInput.value = data.filename
 
-                imageArticle.innerHTML = image
-                imageArticle.style.display = 'block'
-                viewToPostCont.style.display = 'block'
-                //sharePostBtn.style.display = 'none'
-                submitUploadBtn.textContent = 'Success'
-                cancelUploadBtn.style.display = 'none'
+                    if (data.success === false) {
+
+                         errorMessage.textContent = data.error
+                            setInterval(() => {
+                              errorMessage.textContent = ''
+                            }, 2000)
+                         submitActionsCont.style.display = 'none'
+                         labelImagesInput.style.display = 'block'
+                         labelVideoInput.style.display = 'block'
+                         submitUploadBtn.disabled = false
+                         submitUploadBtn.style.backgroundColor = '#1ed760'
+                         submitUploadBtn.textContent = 'Upload'
+
+                    }
+                    
+                    //  console.log(data)
+
+
+                    
+                    const filePathsArray = []
+
+                    data.files.forEach((file, index) => {
+                          
+                        const imageCard = document.createElement('img')
+                        imageCard.setAttribute('src', `/uploads/${file.filename}`)
+                        imageCard.style.width = '90%'
+                        imageCard.style.height = '100%'
+                        imageCard.style.objectFit = 'contain'
+                        imageCard.style.marginInline = '10px'
+                        imageCard.style.borderRadius = '15px'
+                        imageCard.style.scrollSnapAlign = 'start'
+                      
+
+                        imageArticle.appendChild(imageCard)
+                        
+                        filePathsArray.push(file.filename) 
+                      })
+                      
+                      
+                      localStorage.setItem('newFileNames', JSON.stringify(filePathsArray))
+             
+                      imageArticle.style.display = 'flex'
+                      viewToPostCont.style.display = 'block'
+            
+                      submitUploadBtn.textContent = 'Success'
+                      cancelUploadBtn.style.display = 'none'
                 
           
             }).catch((error) => {
-                errorMessage.textContent = 'Error uploading image. Please try again.'
+                //  console.log(error)
+                errorMessage.textContent = 'Upload Failed Validation Metrics.'
                 setInterval(() => {
                   errorMessage.textContent = ''
                 }, 2000)
                  submitActionsCont.style.display = 'none'
-                 labelFileInput.style.display = 'block'
+                 labelImagesInput.style.display = 'block'
+                 labelVideoInput.style.display = 'block'
                  submitUploadBtn.disabled = false
                  submitUploadBtn.style.backgroundColor = '#1ed760'
                  submitUploadBtn.textContent = 'Upload'
@@ -1120,8 +1180,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
         }
 
 
-     }
- })
+     })
 
 
 
@@ -1382,7 +1441,8 @@ function back() {
     inputPostElem.value = ''
     imageArticle.innerHTML = ''
     submitActionsCont.style.display = 'none'
-    labelFileInput.style.display = 'block'
+    labelImagesInput.style.display = 'block'
+    labelVideoInput.style.display = 'block'
     submitUploadBtn.disabled = false
     imageArticle.style.display = 'none'
     submitUploadBtn.style.backgroundColor = '#1ed760'
@@ -1391,15 +1451,17 @@ function back() {
     cancelUploadBtn.style.display = 'flex'
     submitUploadBtn.disabled = false
     
-    const imageSource = document.getElementById('filepath').textContent;
-  
+    // const imageSource = document.getElementById('filepath').textContent;
+    
+    const imagespaths = localStorage.getItem('newFileNames')
+    const parsedImgArray = JSON.parse(imagespaths)
 
     fetch('/post/cancel', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ filepath: imageSource })
+      body: JSON.stringify({ filepaths: parsedImgArray })
      }).then((response) => {
         if (response.ok) {
           document.getElementById('filepath').textContent = ''

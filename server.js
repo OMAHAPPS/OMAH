@@ -160,32 +160,84 @@ const storage = multer.diskStorage({
     }
 })
 
-const upload = multer({storage: storage })
+const upload = multer({storage: storage, limits : { fileSize: 10 * 1024 * 1024, files: 10 } }).array('files')
 
-app.post('/post/upload', upload.single('image'), (req, res) => {
+app.post('/post/upload', (req, res) => {
+       
+         upload(req, res, function (err) {
+        
+        // Check if the error was triggered by Multer limits/filters
+        if (err instanceof multer.MulterError) {
+            
+            // Map the specific error code to a readable response
+            switch (err.code) {
+                case 'LIMIT_FILE_SIZE':
+                    return res.status(400).json({ 
+                        success: false, 
+                        error: 'Size Per File exceeded.. (10MB each File)', 
+                        message: 'One or more files are larger than the allowed 10MB limit.' 
+                    });
+                    
+                case 'LIMIT_FILE_COUNT':
+                    return res.status(400).json({ 
+                        success: false, 
+                        error: 'Too many files.. (LIMIT 10 files)', 
+                        message: 'You cannot upload more than 10 files at once.' 
+                    });
+                    
+                default:
+                    return res.status(400).json({ 
+                        success: false, 
+                        error: 'Upload error.. Try Again', 
+                        message: err.message 
+                    });
+            }
+            
+        } else if (err) {
+            // This catches non-multer errors (like standard code syntax failures)
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Server Error..', 
+                message: 'An unexpected error occurred during processing.' 
+            });
+        }
 
-     // console.log(req.file)
-        res.json(req.file)
-})
+        // If no errors occurred, the code continues here safely
+        res.status(200).json({
+            success: true,
+            message: 'All files successfully validated and uploaded!',
+            filesCount: req.files.length,
+            files: req.files
+        });
+    });
+});
+      
+
 
 
 app.post('/post/cancel', (req, res) => {
      
-      const { filepath } = req.body
+      const { filepaths } = req.body
 
-  //      console.log(filepath)
+      console.log(filepaths)
 
-      fs.unlink(`./public/uploads/${filepath}`, (err) => {
-            if (err) {
-                console.log('No file to delete')
-                res.json({ success: false})
-                return;
-            } else {
-                res.json({ success: true })
-                console.log('File deleted successfully')
-            }
-      })
- 
+      filepaths.forEach((filepath) => {
+
+
+            fs.unlink(`./public/uploads/${filepath}`, (err) => {
+                  if (err) {
+                      console.log('No file to delete')
+                    //   res.json({ success: false})
+                      return;
+                  } else {
+                      console.log(`${filepath} deleted successfully`)
+                    }
+                })
+                
+                
+            })
+            res.json({ success: true })
+
 })
 
 
