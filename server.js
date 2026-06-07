@@ -145,10 +145,43 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
 
     const allPosts = await Post.find()
 
-    const targetPost = allPosts[1]
+    const allUsers = await Omaruser.find()
+
+    const postDataArray = []
+
+    allPosts.forEach((post) => {
+
+        const userId = post.userId
+
+        const posterInfoArray = allUsers.filter((user) => user.id == userId )
+         const posterInfo = posterInfoArray[0]
+
+        const newPostObject = {
+            videoUrl: post.videoUrl,
+            images: post.images,
+            likes: post.likes,
+            interactions: post.interactions,
+            replies: post.replies,
+            userHandle: post.userHandle,
+            post: post.post,
+            userName: post.userName,
+            poster: {
+                totalFollowers: posterInfo.totalFollowers,
+                totalFollowing: posterInfo.totalFollowing,
+                totalPosts: posterInfo.totalPosts,
+                userDP: posterInfo.userDP
+            }
+
+        }
+
+         postDataArray.push(newPostObject)
+        
+    })
+    // console.log(postDataArray)
 
 
-     res.render('home', { user: userData, posts: allPosts, post: targetPost, messages: req.flash('error') })
+
+     res.render('home', { user: userData, posts: postDataArray, messages: req.flash('error') })
 })
 
 const storage = multer.diskStorage({
@@ -253,7 +286,8 @@ app.post('/post', async (req, res) => {
          userId: userid,
          userName: username,
          userRealm: userrealm,
-         image: imagesrc,
+         userHandle: 'none',
+         images: imagesrc,
          post: poststring
      }).save().then((post) => { 
          
