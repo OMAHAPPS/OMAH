@@ -907,6 +907,7 @@ postSubmitPostBtn.addEventListener('click', (e) => {
       const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n') 
       const imagesArray = localStorage.getItem('newFileNames')
       const parsedImgArray = JSON.parse(imagesArray) 
+      localStorage.setItem('newFileNames', JSON.stringify([]))
       
       fetch('/post', {
         method: 'POST',
@@ -932,8 +933,7 @@ postSubmitPostBtn.addEventListener('click', (e) => {
          imagessrc = []
          document.getElementById('userid').value = ''
          document.getElementById('userrealm').value = ''
-         const historyFiles = []
-         localStorage.setItem('newFileNames', JSON.stringify(historyFiles))
+         
          window.location.reload()
       }).catch((error) => {
         errorMessage.textContent = 'Error posting. Please try again.'
