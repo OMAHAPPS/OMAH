@@ -932,7 +932,8 @@ postSubmitPostBtn.addEventListener('click', (e) => {
          imagessrc = []
          document.getElementById('userid').value = ''
          document.getElementById('userrealm').value = ''
-         localStorage.setItem('newFileNames', JSON.stringify([]))
+         const historyFiles = []
+         localStorage.setItem('newFileNames', JSON.stringify(historyFiles))
          window.location.reload()
       }).catch((error) => {
         errorMessage.textContent = 'Error posting. Please try again.'
