@@ -928,6 +928,10 @@ postSubmitPostBtn.addEventListener('click', (e) => {
         }
       }).then((data) => {
          console.log(data)
+         textArea.value = ''
+         imagessrc = []
+         document.getElementById('userid').value = ''
+         document.getElementById('userrealm').value = ''
          window.location.reload()
       }).catch((error) => {
         errorMessage.textContent = 'Error posting. Please try again.'
