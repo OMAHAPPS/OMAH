@@ -889,7 +889,7 @@ const imageArticle = document.getElementById('image-article')
 const imagePostInput = document.getElementById('post-image-input')
 
 textArea.addEventListener('keyup', () => {
-  if (textArea.value.trim() !== '' && imageArticle.children.length === 0 ) {
+  if (textArea.value.trim() !== '' && imageArticle.children.length !== 0 ) {
     postSubmitPostBtn.disabled = false
     postSubmitPostBtn.style.display = 'block'
   } else {
