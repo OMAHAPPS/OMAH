@@ -889,7 +889,7 @@ const imageArticle = document.getElementById('image-article')
 const imagePostInput = document.getElementById('post-image-input')
 
 textArea.addEventListener('keyup', () => {
-  if (textArea.value.trim() !== '') {
+  if (textArea.value.trim() !== '' && imageArticle.children.length === 0 ) {
     postSubmitPostBtn.disabled = false
     postSubmitPostBtn.style.display = 'block'
   } else {
@@ -906,7 +906,12 @@ postSubmitPostBtn.addEventListener('click', (e) => {
       postSubmitPostBtn.textContent = 'Posting...'
       const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n') 
       const imagesArray = localStorage.getItem('newFileNames')
-      const parsedImgArray = localStorage.parse(imagesArray)
+
+      if (!imagesArray) {
+         const parsedImgArray = []
+      } else {
+        const parsedImgArray = JSON.parse(imagesArray)
+      }
     
   
       fetch('/post', {
@@ -928,9 +933,9 @@ postSubmitPostBtn.addEventListener('click', (e) => {
           window.location.reload()
         }
       }).then((data) => {
+         localStorage.removeItem('newFileNames')
          console.log(data)
          textArea.value = ''
-         imagessrc = []
          document.getElementById('userid').value = ''
          document.getElementById('userrealm').value = ''
          window.location.reload()
