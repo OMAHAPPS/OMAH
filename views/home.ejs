@@ -176,7 +176,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             
 
                   
-                 <% } else { %>
+                 <% } else if (post.images.length === 0) { %>
+
+                    <article style="width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
+                  </article
+
+                        <% } else { %>
 
                   <article style="width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
 
