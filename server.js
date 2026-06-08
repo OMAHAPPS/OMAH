@@ -282,18 +282,30 @@ app.post('/post', async (req, res) => {
      
      const userData = await Omaruser.findOne({ _id: userid })
      const username = userData.userName
-     
-     
-     const post =  new Post({
+
+     if (imagesrc.length === 0) {
+           const postObject = {
+                 userId: userid,
+                 userName: username,
+                 userRealm: userrealm,
+                 userHandle: 'none',
+                 post: poststring
+           }
+     } else {
+           const postObject = {
                  userId: userid,
                  userName: username,
                  userRealm: userrealm,
                  images: imagesrc,
                  userHandle: 'none',
                  post: poststring
-     }).save().then((post) => { 
+     }
+     }
+     
+     
+     const post =  new Post(postObject).save().then((post) => { 
          
-         res.redirect('/home')
+         res.json({ success: true })
      }).catch((err) => {
 
          req.flash('error', 'Sorry...You cannot send Posts now')
