@@ -157,6 +157,7 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
          const posterInfo = posterInfoArray[0]
 
         const newPostObject = {
+            createdAt: post.createdAt,  
             videoUrl: post.videoUrl,
             images: post.images,
             likes: post.likes,
