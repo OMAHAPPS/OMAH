@@ -153,13 +153,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                               <% const minutesPast = Math.floor( (diff / 60000) ) %>
 
                               <% if (daysPast > 0) { %>
-                               <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:10px;color: <%= user.userColor %>;margin-top:2px;"><%= daysPast %>d ago</div>
+                               <div style="font-size:10px;color: rgba(237, 232, 224, .65);margin-top:2px;"><%= daysPast %>d ago</div>
                                <% } else if (hoursPast > 0) { %>
-                                 <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:10px;color: <%= user userColor %>;margin-top: 2px;"><%= hoursPast %>h ago</div>
+                                 <div style="font-size:10px;color: rgba(237,232,224,.65);margin-top: 2px;"><%= hoursPast %>h ago</div>
                                  <% } else if (minutesPast > 0) { %>
-                                   <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:10px;color: <%= user.userColor %>;margin-top:2px;"><%= minutesPast %>m ago</div>
+                                   <div style="font-size:10px;color: rgba(237,232,224,.65);margin-top:2px;"><%= minutesPast %>m ago</div>
                                    <% } else if (minutesPast == 0) { %>
-                                     <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:10px;color: <%= user.userColor %>;margin-top:2px;">Just now</div>
+                                     <div style="font-size:10px;color: rgba(237,232,224,.65);margin-top:2px;">Just now</div>
                                   <% } %>
                   </div>
                         
