@@ -1083,7 +1083,6 @@ cancelUploadBtn.addEventListener('click', (e) => {
                         filePathsArray.push(file.filename) 
                       })
                       
-                      localStorage.removeItem('newFileNames')
 
                       localStorage.setItem('newFileNames', JSON.stringify(filePathsArray))
              
