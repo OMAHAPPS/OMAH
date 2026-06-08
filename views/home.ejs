@@ -1120,6 +1120,7 @@ humanoidContainer.innerHTML = `
 `
 
 window.addEventListener('load', () => {
+    localStorage.removeItem('newFileNames')
     setTimeout(() => {
         
        document.getElementById('ai-icon').style.opacity = '0'
