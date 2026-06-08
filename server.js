@@ -283,16 +283,7 @@ app.post('/post', async (req, res) => {
      const userData = await Omaruser.findOne({ _id: userid })
      const username = userData.userName
 
-     if (imagesrc.length === 0) {
-           const postObject = {
-                 userId: userid,
-                 userName: username,
-                 userRealm: userrealm,
-                 userHandle: 'none',
-                 post: poststring
-           }
-     } else {
-           const postObject = {
+     const postObject = {
                  userId: userid,
                  userName: username,
                  userRealm: userrealm,
