@@ -906,31 +906,20 @@ postSubmitPostBtn.addEventListener('click', (e) => {
       postSubmitPostBtn.textContent = 'Posting...'
       const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n') 
       const imagesArray = localStorage.getItem('newFileNames')
-      if (!imagesArray) {
-         const bodyObject = {
-             poststring: formatTextValue,
-             userid: document.getElementById('userid').value,
-             userrealm: document.getElementById('userrealm').value 
-         }
-      } else {
-         const parsedImgArray = JSON.parse(imagesArray)
-         const bodyObject = {
-             poststring: formatTextAreaValue,
-             imagesrc: parsedImgArray,
-             userid: document.getElementById('userid').value,
-             userrealm: document.getElementById('userrealm').value
-        
-         }
-      }
+      const parsedImgArray = localStorage.parse(imagesArray)
     
-
-      
+  
       fetch('/post', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(bodyObject)
+        body: JSON.stringify({
+                poststring: formatTextAreaValue,
+                imagesrc: parsedImgArray,
+                userid: document.getElementById('userid').value,
+                userrealm: document.getElementById('userrealm').value
+        })
       }).then((response) => {
         if (response.ok) {
           return response.json()
