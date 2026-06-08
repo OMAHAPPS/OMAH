@@ -923,8 +923,7 @@ postSubmitPostBtn.addEventListener('click', (e) => {
          }
       }
     
-    
-      localStorage.removeItem('newFileNames')
+
       
       fetch('/post', {
         method: 'POST',
@@ -945,7 +944,7 @@ postSubmitPostBtn.addEventListener('click', (e) => {
          imagessrc = []
          document.getElementById('userid').value = ''
          document.getElementById('userrealm').value = ''
-         
+         localStorage.removeItem('newFileNames')
          window.location.reload()
       }).catch((error) => {
         errorMessage.textContent = 'Error posting. Please try again.'
