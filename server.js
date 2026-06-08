@@ -291,7 +291,7 @@ app.post('/post', async (req, res) => {
                  userHandle: 'none',
                  post: poststring
      }
-     }
+     
      
      
      const post =  new Post(postObject).save().then((post) => { 
