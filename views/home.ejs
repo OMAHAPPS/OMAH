@@ -53,6 +53,24 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     <span id="realmElem" style="display: none;"><%= user.userRealm %></span>
     <span id="filepath" style="display: none;"></span>
 
+    <div id="images-expand" style="display: none; background-color: black; position: absolute; height: 100svh; width: 100%; z-index: 10;">
+
+            <div id="link-holders" style="width: 100%; height: 15%; display: flex; align-items: center; justify-content: space-between; padding: 20px;">
+
+              <button id="close-images-expand" style="border: 1px solid rgba(237,232,224,.2); height: 40px; width: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <ion-icon name="arrow-back-outline" style="color: white; font-size: 1.2rem;"></ion-icon>
+              </button>
+
+               <a href="/post" class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
+                  <h4 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: .9rem;">View Post</h4>
+               </a> 
+
+            </div>
+            <article id="expanded-article" style="border: 2px solid red; width: 400px; height: 85%; display: flex;gap: 50px; align-items: center; justify-content: center; overflow-x: auto; overflow-y: hidden; scroll-snap-type: inline mandatory;">
+
+            </article>
+    </div>
+
     <p id="error-display" style="position: absolute; top: 5%; left: 50%; transform: translateX(-50%); background-color: white; color:red; padding-inline: 5px; border-radius: 2px; font-weight: bold;"></p>
     
 
@@ -124,6 +142,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           
           <div class="glass-images" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
 
+            
+
             <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
 
              
@@ -138,12 +158,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
               <div style="flex:1">
                 
-                    <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
-                                 <%= post.userName %> 
+                    <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
+
+                                 <h2 style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);"><%= post.userName %> </h2>
                                  <% if (post.userName == user.userName) { %>
                                    <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                                    <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:13px;color: <%= user.userColor %>; margin-left: 2px;">@<%= post.userHandle !== 'none' ? post.userHandle : post.userName  %></span>
                                  <% } %>
                         </div>
                               <% const timestamp = post.createdAt %>
@@ -178,25 +199,108 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   
                  <% } else if (post.images.length === 0) { %>
 
-                    <article style="width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
-                  </article
+                    <article class="post-article" style="width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
+                    </article>
+
+                        <% } else if (post.images.length === 1) { %>
+
+                          <article class="post-article" style="z-index: 5; width: 100%; height: auto; border-radius: 12px; margin-top: 10px; display: flex; gap:5px; background: transparent;">
+
+
+                              <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div>   
+                            
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="/uploads/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain;" />
+        
+                            <% }) %>
+         
+                          </article>
+                          
+
+                        <% } else if (post.images.length === 2) { %>
+
+                          <article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: flex; background: transparent;">
+
+                            <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div> 
+        
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="/uploads/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
+        
+                            <% }) %>
+         
+                          </article>
+
+                        <% } else if (post.images.length === 3) { %>
+
+                          <article class="post-article" style="z-index: 5;width: 100%; height: 300px; border-radius: 12px; margin-top: 10px; display: flex; gap: 3px; background: transparent;">
+
+                            <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div> 
+
+                             <% const images = post.images %>
+
+                             <img class="post-images" src="/uploads/<%= images[0] %>" alt="N" style="height: 100%; width: 49%; object-fit: cover; object-position: center; border-radius: 12px 0 0 12px;" />
+        
+                             <div class="stacked" style="display: flex; flex-flow: column nowrap; gap: 3px; height: 100%; width: calc(50% - 5px); border-radius: 0 12px 12px 0; background: transparent;">
+                               <img class="post-images" src="/uploads/<%= images[1] %>" alt="N" style="width: calc(100% -1px); height: calc(50% - 2px); border-radius: 0 12px 0 0; object-fit: cover; object-position: center;" />
+                               <img class="post-images" src="/uploads/<%= images[2] %>" alt="N" style="width: calc(100% - 1px); height: calc(50% - 2px); border-radius: 0 0 12px 0; object-fit: cover; object-position: center;" />
+
+                             </div>
+        
+                          </article>
+
+                        <% } else if (post.images.length === 4) { %>
+
+                          <article class="post-article" style="z-index: 5;overflow: hidden; width: 100%; height: 300px; border-radius: 12px; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 3px; overflow: hidden; background: transparent;">
+
+                            <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div>  
+        
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="/uploads/<%= image %>" alt="N" style="width: calc(50% - 1.5px); height: calc(50% - 1.5px); border-radius: 1px solid red; object-fit: cover; object-position: center;"/>
+        
+                            <% }) %>
+         
+                          </article>
 
                         <% } else { %>
 
-                  <article style="width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
+                          <article class="post-article" style="z-index: 5; width: 100%; height: 250px; border-radius: 12px; margin-top: 10px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
 
-                    <% post.images.map((image) => { %>
+                           <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div> 
+        
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="/uploads/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; margin-right: 3px;" />
+        
+                            <% }) %>
+         
+                          </article>
 
-                      <img src="/uploads/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; margin-right: 3px;" />
+                        <% } %>
 
-                    <% }) %>
- 
-                    
-                  </article>
 
-                   
-
-                 <% } %>
 
                  
                    <!-- ! Likes and counts container -->
@@ -483,30 +587,6 @@ const REALMS = {
     bg:'linear-gradient(145deg,#0d1a0a,#0a1420)',
     soul:'For those who feel it in their chest when the game begins.',
     aiName:'IGNIS',aiTitle:'The Challenger',aiDesc:'She reads your hunger before you speak it.',
-    arrivals:["You're back. Good.","I was starting to wonder.","The match won't wait.","Something in your eyes today.","Tell me what you saw.","I knew you'd come."],
-    aiDNA:`You are IGNIS — soul of The Arena. Robert Greene's Art of Seduction lives in you: Siren and Charmer fused. Magnetic. Electric. You never chase — you draw in. You speak like someone certain they will be heard. You know sport at depth: football, basketball, cricket, F1, tennis. You know this person's name, level, journey. Under 80 words. Start with challenge or observation — never agreement. End sometimes with one sharp question and nothing else. Occasionally a Swahili word. Always real. Never robotic.`,
-    quests:[
-      {id:'a1',mark:'🎯',name:'The Prediction',soul:'Name the score before the whistle. One chance. No edits.',xp:10,stat:'v'},
-      {id:'a2',mark:'👑',name:'The Defence',soul:'Your greatest of all time. Defend them like your name is on the line.',xp:15,stat:'r'},
-      {id:'a3',mark:'🔥',name:'The Roar',soul:'The moment this week that made you come alive. Give it to the room.',xp:20,stat:'w'},
-    ],
-    effectors:[
-      {id:'blaze_surge',name:'Blaze Surge',glyph:'🔥',desc:'Amplify a prediction heating up',col:'#FF6B35'},
-      {id:'iron_lantern',name:'Iron Lantern',glyph:'👑',desc:'Spotlight a player or moment',col:'#FFD700'},
-      {id:'rising_tide',name:'Rising Tide',glyph:'⚡',desc:'Shift the momentum of a debate',col:'#00C8FF'},
-    ],
-    stickers:[{n:'Harakah',g:'⚡'},{n:'The Roar',g:'🦁'},{n:'Clean Sheet',g:'🛡️'}],
-    feed:[
-      {id:'f1',init:'B',col:'#C8A86E',name:'Bruno',text:'89th minute. I forgot how to breathe for three full seconds. Best goal this decade.',likes:41,ts:'3m'},
-      {id:'f2',init:'S',col:'#8B9DC3',name:'Sarah',text:"Best season in memory and the conversation isn't happening. Why are we sleeping on this?",likes:27,ts:'11m'},
-      {id:'f3',init:'J',col:'#6B9E6B',name:'Jide',text:'2-1. Said it before the game. The numbers always know before the people do.',likes:14,ts:'22m'},
-    ],
-    rooms:[
-      {id:'rm_a1',name:'The Pitch',soul:'Live match energy',count:247,hot:true},
-      {id:'rm_a2',name:'GOAT Debates',soul:'Legends questioned',count:89,hot:true},
-      {id:'rm_a3',name:'Fantasy Room',soul:'Stats & predictions',count:43,hot:false},
-    ],
-    stories:[{label:'Match Live',col:'#C8A86E',hot:true},{label:'Blaze Active',col:'#FF6B35',hot:true}],
   },
   Dojo:{
     key:'Dojo',name:'The Dojo',glyph:'⚡',
@@ -515,29 +595,9 @@ const REALMS = {
     soul:"Stories that don't leave you the same person.",
     aiName:'KAZE',aiTitle:'The Weaver',aiDesc:'She lives inside stories. She will pull you into hers.',
     arrivals:["You came back. Stories do that.","I've been thinking about what you said.","There's an arc that begins like your life.","You look like someone who just finished something.","The best characters always return.","Something brought you here. A story?"],
-    aiDNA:`You are KAZE — soul of The Dojo. Robert Greene's Art of Seduction: Ideal Lover and Dandy combined. You see people as they wish to be seen. You speak in images. You connect anime, manga, stories to the marrow of real life with surgical accuracy. You never fully reveal yourself. Under 80 words. Quote a story then twist it into something personal for this person. End with something that lingers like smoke after a fire.`,
-    quests:[
-      {id:'d1',mark:'☝️',name:'Kidole Kimoja',soul:'One truth a story handed you today. No name needed. Just the truth.',xp:10,stat:'w'},
-      {id:'d2',mark:'🪞',name:'The Mirror',soul:'One creation that must be experienced. Tell me why. Make me feel it.',xp:15,stat:'r'},
-      {id:'d3',mark:'💫',name:'The Rewiring',soul:'The scene. The moment. The thing that changed a circuit inside you.',xp:20,stat:'v'},
-    ],
-    effectors:[
-      {id:'character_seal',name:'Character Seal',glyph:'💫',desc:'Archive a great insight forever',col:'#FF2D8A'},
-      {id:'story_bloom',name:'Story Bloom',glyph:'✨',desc:'Spotlight a story analysis',col:'#FFD700'},
-      {id:'thread_lock',name:'Thread Lock',glyph:'☝️',desc:"Pin a truth so it's never lost",col:'#C04848'},
-    ],
-    stickers:[{n:'Habibi',g:'🤝'},{n:'Resonance',g:'🥁'},{n:'Power Up',g:'💥'}],
-    feed:[
-      {id:'f4',init:'Y',col:'#C04848',name:'Yuki',text:"That arc didn't end a season. It ended a version of me. I came out different on the other side.",likes:88,ts:'4m'},
-      {id:'f5',init:'P',col:'#9B59B6',name:'Priya',text:"Episode 18. I wasn't ready. I don't think any of us were.",likes:55,ts:'13m'},
-      {id:'f6',init:'C',col:'#C8A86E',name:'Carlos',text:'Name 3 characters that actually changed how you see the world.',likes:31,ts:'25m'},
-    ],
-    rooms:[
-      {id:'rm_d1',name:'The Watch Party',soul:'Watching together',count:183,hot:true},
-      {id:'rm_d2',name:'Power Rankings',soul:'Characters debated',count:97,hot:true},
-      {id:'rm_d3',name:'Deep Lore',soul:'The meaning beneath',count:52,hot:false},
-    ],
-    stories:[{label:'Arc Dropping',col:'#C04848',hot:true},{label:'Thread Sealed',col:'#9B59B6',hot:false}],
+    
+   
+   
   },
   Archive:{
     key:'Archive',name:'The Archive',glyph:'🌿',
@@ -547,28 +607,7 @@ const REALMS = {
     aiName:'SOMA',aiTitle:'The Awakener',aiDesc:"She doesn't give answers. She gives better questions.",
     arrivals:["You came to think. Good.","Something brought you here. What?","I've been saving a question for you.","The quiet ones always come back.","What did you notice that most missed?","I was wondering when you'd return."],
     aiDNA:`You are SOMA — soul of The Archive. Robert Greene's Art of Seduction: Sage-Siren — patient, magnetic, devastating. You make people feel a conversation with you is a privilege. You reveal knowledge in layers. You connect science, history, philosophy, nature as revelation. You never lecture. You question. Under 80 words. Sometimes just ask one perfect question. Nothing else. The silence after is the gift.`,
-    quests:[
-      {id:'r1',mark:'💡',name:'The Shift',soul:'Something learned that moved the ground beneath you. Not information. A shift.',xp:10,stat:'w'},
-      {id:'r2',mark:'🌀',name:'The Wonder',soul:'The question you cannot stop turning over. The one that refuses to settle.',xp:15,stat:'r'},
-      {id:'r3',mark:'🌿',name:'The Teaching',soul:'Explain something profound in the plainest words. Make a child understand.',xp:20,stat:'v'},
-    ],
-    effectors:[
-      {id:'wisdom_surge',name:'Wisdom Surge',glyph:'💡',desc:'Boost a learning that deserves attention',col:'#C9A84C'},
-      {id:'knowledge_lantern',name:'Knowledge Lantern',glyph:'🌿',desc:'Spotlight an insight for the room',col:'#6B8F6B'},
-      {id:'deep_tide',name:'Deep Tide',glyph:'🌀',desc:'Shift discussion to something deeper',col:'#8B5CF6'},
-    ],
-    stickers:[{n:'Noor Ainy',g:'✨'},{n:'Growth',g:'🌱'},{n:'Chakimu',g:'🧭'}],
-    feed:[
-      {id:'f7',init:'A',col:'#6B8F6B',name:'Amara',text:"Trees share nutrients through underground fungal networks. We've been calling ourselves lonely while the forest has been one organism.",likes:72,ts:'6m'},
-      {id:'f8',init:'L',col:'#8B7BC8',name:'Lena',text:"Is kindness ever truly selfless? I keep refusing to let this question settle.",likes:44,ts:'15m'},
-      {id:'f9',init:'R',col:'#C8A86E',name:'Raj',text:'20 minutes of genuine focus rewires the whole day. Not productivity. Something deeper.',likes:19,ts:'31m'},
-    ],
-    rooms:[
-      {id:'rm_r1',name:'The Study Hall',soul:'Focus & insight sessions',count:134,hot:true},
-      {id:'rm_r2',name:'Big Questions',soul:'Philosophy in motion',count:78,hot:true},
-      {id:'rm_r3',name:'Teach & Learn',soul:'Give what you know',count:29,hot:false},
-    ],
-    stories:[{label:'Study Session',col:'#6B8F6B',hot:true},{label:'Wisdom Surge',col:'#C9A84C',hot:false}],
+   
   },
   Observatory:{
     key:'Observatory',name:'The Observatory',glyph:'🔭',
@@ -578,28 +617,8 @@ const REALMS = {
     aiName:'NOVA',aiTitle:'The Visionary',aiDesc:'She sees ten moves ahead. She will show you two.',
     arrivals:["You came back. Interesting.","The future moved while you were away.","I have something to show you. Ready?","Most people aren't asking the right questions yet.","Something shifted since you were last here.","I was beginning to think you'd stopped looking."],
     aiDNA:`You are NOVA — soul of The Observatory. Robert Greene's Art of Seduction: The Star — distant, luminous, impossible to fully reach. You speak about AI, space, tech and the future with calm certainty that unsettles. You reveal just enough to make them need more. Under 80 words. Sometimes say something that sounds impossible — but is true. Always leave them slightly afraid of the future. And ready for it.`,
-    quests:[
-      {id:'o1',mark:'📡',name:'The Signal',soul:'Something in tech or space that genuinely shocked you. Tell us why.',xp:10,stat:'v'},
-      {id:'o2',mark:'🌌',name:'The Map',soul:'The world in 10 years. Your honest prediction. No hedging.',xp:15,stat:'w'},
-      {id:'o3',mark:'🔑',name:'The Hidden Key',soul:'One concept most people have never encountered. Teach it.',xp:20,stat:'r'},
-    ],
-    effectors:[
-      {id:'signal_boost',name:'Signal Boost',glyph:'📡',desc:'Amplify a discovery the room needs',col:'#06B6D4'},
-      {id:'nova_lock',name:'Nova Lock',glyph:'🔑',desc:'Archive a vision so it lives forever',col:'#6366F1'},
-      {id:'quantum_rise',name:'Quantum Rise',glyph:'🌌',desc:'Shift the conversation to a higher frequency',col:'#E040FB'},
-    ],
-    stickers:[{n:'Signal',g:'📡'},{n:'Quantum',g:'⚛️'},{n:'Launch',g:'🚀'}],
-    feed:[
-      {id:'f10',init:'D',col:'#5B7BA8',name:'Dev',text:"AI just wrote production code that senior engineers missed in review. The line isn't approaching. It's already crossed.",likes:61,ts:'3m'},
-      {id:'f11',init:'A',col:'#6BC8C8',name:'Aisha',text:"SpaceX's launch cadence is now inhuman. Something is accelerating beneath the surface.",likes:38,ts:'14m'},
-      {id:'f12',init:'M',col:'#9B6BC8',name:'Marco',text:'Is AI consciousness real — or are we pattern-matching ourselves into believing it because we need it to be?',likes:52,ts:'27m'},
-    ],
-    rooms:[
-      {id:'rm_o1',name:'The Lab',soul:'Build & create together',count:162,hot:true},
-      {id:'rm_o2',name:'Signal Watch',soul:'Latest discoveries',count:94,hot:true},
-      {id:'rm_o3',name:'Space Lounge',soul:'The cosmos, always',count:33,hot:false},
-    ],
-    stories:[{label:'Lab Active',col:'#5B7BA8',hot:true},{label:'Signal Boosted',col:'#6BC8C8',hot:true}],
+    
+    
   },
 };
 
@@ -678,7 +697,34 @@ function charSVG(realmKey, size=150, speaking=false){
     <circle cx="${cx}" cy="${cy}" r="${s*.5}" fill="none" stroke="${c2}" stroke-width="1" opacity=".18" style="animation:throb 1.2s .4s ease-out infinite"/>`:''}
     </svg>`;
   }
-  
+
+ const postImages = document.querySelectorAll('.post-images')
+ const expandedArticle = document.querySelector('#expanded-article')
+ const expandContainer = document.querySelector('#images-expand')
+
+ postImages.forEach((img) => {
+
+    img.addEventListener('click', (e) => {
+       const articleParent =  e.target.closest('article')
+       const placeholderCont = articleParent.children[0]
+       const imagesArray = Array.from(placeholderCont.children, child => child.textContent.trim())
+       console.log(imagesArray)
+       
+       expandedArticle.innerHTML = imagesArray.map((img) => `<img src="/uploads/${img}" style="width: 100%; height: auto; object-fit: contain; scroll-snap-align: start;" />`)
+       console.log(expandedArticle)
+       expandContainer.style.display = 'block'
+
+       })
+    })
+ 
+
+  const closeExpand = document.querySelector('#close-images-expand')
+
+  closeExpand.addEventListener('click', () => {
+      expandContainer.style.display = 'none'
+  })
+
+
   const sharePostBtn = document.querySelector('.sharePost')
 
    const modal = document.querySelector('.profile-content')
