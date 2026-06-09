@@ -53,7 +53,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     <span id="realmElem" style="display: none;"><%= user.userRealm %></span>
     <span id="filepath" style="display: none;"></span>
 
-    <div id="images-expand" style="display: none; background-color: black; position: absolute; height: 100svh; width: 100%; z-index: 10;">
+    <div id="images-expand" style="display: none; background-color: black; position: absolute; top: 0; height: 100%; width: 100%; z-index: 10;">
 
             <div id="link-holders" style="width: 100%; height: 15%; display: flex; align-items: center; justify-content: space-between; padding: 20px;">
 
@@ -101,7 +101,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     <!-- ! RENDERED BY JAVASCRIPT -->
                   </div>
 
-                  <div style="display: flex; gap: 6px; align-items: center;">
+                  <div le="display: flex; gap: 6px; align-items: center;">
                       
                        <% const userName = user.userName %>
                        <% const letter = userName.slice(0,1) %>
