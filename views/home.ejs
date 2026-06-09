@@ -153,13 +153,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                               <% const minutesPast = Math.floor( (diff / 60000) ) %>
 
                               <% if (daysPast > 0) { %>
-                               <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:10px;color: <%= user.userColor %>;margin-top:2px;"><%= daysPast %>d ago</div>
+                               <div style="font-size:12px;color: rgba(237, 232, 224, .65);margin-top:2px;"><%= daysPast %>d</div>
                                <% } else if (hoursPast > 0) { %>
-                                 <div <% /* eslint-diable-next-line css-propertyvalueexpected */ %> style="font-size:10px;color: <%= user.userColor %>;margin-top: 2px;"><%= hoursPast %>h ago</div>
+                                 <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top: 2px;"><%= hoursPast %>h</div>
                                  <% } else if (minutesPast > 0) { %>
-                                   <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:10px;color: <%= user.userColor %>;margin-top:2px;"><%= minutesPast %>min ago</div>
+                                   <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;"><%= minutesPast %>m</div>
                                    <% } else if (minutesPast == 0) { %>
-                                     <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:10px;color: <%= user.userColor %>;margin-top:2px">Just now</div>
+                                     <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;">Just now</div>
                                   <% } %>
                   </div>
                         
@@ -176,13 +176,18 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             
 
                   
-                 <% } else { %>
+                 <% } else if (post.images.length === 0) { %>
 
-                  <article style="width: 100%; height: auto; border-radius: 12px; margin-top: 10px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent; scroll-snap-type: inline mandatory;">
+                    <article style="width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
+                  </article
+
+                        <% } else { %>
+
+                  <article style="width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
 
                     <% post.images.map((image) => { %>
 
-                      <img src="/uploads/<%= image %>" alt="N" style="min-width: 95%; height: auto; object-fit: contain; border-radius: 12px; flex-grow: 1; scroll-snap-align: start;" />
+                      <img src="/uploads/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; margin-right: 3px;" />
 
                     <% }) %>
  
@@ -889,7 +894,7 @@ const imageArticle = document.getElementById('image-article')
 const imagePostInput = document.getElementById('post-image-input')
 
 textArea.addEventListener('keyup', () => {
-  if (textArea.value.trim() !== '') {
+  if (textArea.value.trim() !== '' || imageArticle.children.length !== 0 ) {
     postSubmitPostBtn.disabled = false
     postSubmitPostBtn.style.display = 'block'
   } else {
@@ -905,19 +910,20 @@ postSubmitPostBtn.addEventListener('click', (e) => {
       postSubmitPostBtn.disabled = true
       postSubmitPostBtn.textContent = 'Posting...'
       const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n') 
-      const imagesArray = localStorage.getItem('newFileNames')
-      const parsedImgArray = JSON.parse(imagesArray) 
-      
+      const imagesArray = localStorage.getItem('newFileNames')      
+      const parsedImgArray = JSON.parse(imagesArray)
+    
+  
       fetch('/post', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          poststring: formatTextAreaValue,
-          imagesrc: parsedImgArray,
-          userid: document.getElementById('userid').value,
-          userrealm: document.getElementById('userrealm').value
+                poststring: formatTextAreaValue,
+                imagesrc: parsedImgArray,
+                userid: document.getElementById('userid').value,
+                userrealm: document.getElementById('userrealm').value
         })
       }).then((response) => {
         if (response.ok) {
@@ -928,6 +934,9 @@ postSubmitPostBtn.addEventListener('click', (e) => {
         }
       }).then((data) => {
          console.log(data)
+         textArea.value = ''
+         document.getElementById('userid').value = ''
+         document.getElementById('userrealm').value = ''
          window.location.reload()
       }).catch((error) => {
         errorMessage.textContent = 'Error posting. Please try again.'
@@ -1067,7 +1076,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
                         filePathsArray.push(file.filename) 
                       })
                       
-                      
+
                       localStorage.setItem('newFileNames', JSON.stringify(filePathsArray))
              
                       imageArticle.style.display = 'flex'
@@ -1116,6 +1125,7 @@ humanoidContainer.innerHTML = `
 `
 
 window.addEventListener('load', () => {
+    localStorage.setItem('newFileNames', JSON.stringify([]))
     setTimeout(() => {
         
        document.getElementById('ai-icon').style.opacity = '0'
