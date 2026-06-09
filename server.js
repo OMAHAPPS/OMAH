@@ -157,6 +157,7 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
          const posterInfo = posterInfoArray[0]
 
         const newPostObject = {
+            createdAt: post.createdAt,  
             videoUrl: post.videoUrl,
             images: post.images,
             likes: post.likes,
@@ -282,16 +283,20 @@ app.post('/post', async (req, res) => {
      const userData = await Omaruser.findOne({ _id: userid })
      const username = userData.userName
 
-     const post =  new Post({
-         userId: userid,
-         userName: username,
-         userRealm: userrealm,
-         userHandle: 'none',
-         images: imagesrc,
-         post: poststring
-     }).save().then((post) => { 
+     const postObject = {
+                 userId: userid,
+                 userName: username,
+                 userRealm: userrealm,
+                 images: imagesrc,
+                 userHandle: 'none',
+                 post: poststring
+     }
+     
+     
+     
+     const post =  new Post(postObject).save().then((post) => { 
          
-         res.redirect('/home')
+         res.json({ success: true })
      }).catch((err) => {
 
          req.flash('error', 'Sorry...You cannot send Posts now')
