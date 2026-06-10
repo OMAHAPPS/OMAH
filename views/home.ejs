@@ -710,9 +710,7 @@ function charSVG(realmKey, size=150, speaking=false){
        const articleParent =  e.target.closest('article')
        const placeholderCont = articleParent.children[0]
        const imagesArray = Array.from(placeholderCont.children, child => child.textContent)
-       const targetImageSrc = imagesArray.find(image => e.target.src == image)
-       expandedArticle.innerHTML = `<img src="/uploads/${targetImageSrc}" style="width: 100%; height: auto; scroll-snap-align: start; object-fit: contain;" />`
-       imagesArray.pop(targetImageSrc)
+
        console.log(imagesArray)
        
        imagesArray.forEach((img) => {
