@@ -712,10 +712,10 @@ function charSVG(realmKey, size=150, speaking=false){
        const imagesArray = Array.from(placeholderCont.children, child => child.textContent)
        const targetImageSrc = imagesArray.find(image => img.src == image)
        expandedArticle.innerHTML = `<img src="/uploads/${targetImageSrc}" style="width: 100%; height: auto; object-fit: contain; scroll-snap-align: start;" />`
-       imagesArray.pop(targetImageSrc)
-       console.log(imagesArray)
+       const newimagesArray = imagesArray.pop(targetImageSrc)
+       console.log(newimagesArray)
        
-       imagesArray.forEach((img) => {
+       newimagesArray.forEach((img) => {
            const image = document.createElement('img')
            image.src = `/uploads/${img}`
            image.style.width = '100%'
