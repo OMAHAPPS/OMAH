@@ -430,6 +430,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                       writing to The <%= user.userRealm %>
                     </div>
                  </div>
+                 <div class="progress-wrapper" style="height: 100%; display: flex; flex-flow: column nowrap; align-items: center; justify-content: center; flex-grow: 1;">
+                  <h3 style="font-size: 15px; color: white; font-style: italic; font-weight: 600; width: 90%; text-align: start;">Uploading Files...</h3>     
+                  <div class="prog-wrapper" style="margin-top: 2px; width: 90%; display: flex; align-items: center; justify-content: center;">
+                    <progress id="overallProgress" style="width: 100%; border-radius: 50%; background-color: #1ed760;" value="75" max="100"></progress>
+                    <p style="color: white; margin-left: 2px; font-size: .75rem;">20%</p>
+                  </div>
+                 </div>
               </div>
       
               <div class="post-box" style="height: 88%; display: flex; flex-flow: column nowrap;">
@@ -964,52 +971,6 @@ textArea.addEventListener('keyup', () => {
 })
 
 
-postSubmitPostBtn.addEventListener('click', (e) => {
-      e.preventDefault()
-      postSubmitPostBtn.disabled = true
-      postSubmitPostBtn.textContent = 'Posting...'
-      const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n') 
-      const imagesArray = localStorage.getItem('newFileNames')      
-      const parsedImgArray = JSON.parse(imagesArray)
-    
-  
-      fetch('/post', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-                poststring: formatTextAreaValue,
-                imagesrc: parsedImgArray,
-                userid: document.getElementById('userid').value,
-                userrealm: document.getElementById('userrealm').value
-        })
-      }).then((response) => {
-        if (response.ok) {
-          return response.json()
-        } else {
-          throw new Error('Network response was not ok')
-          window.location.reload()
-        }
-      }).then((data) => {
-         console.log(data)
-         textArea.value = ''
-         document.getElementById('userid').value = ''
-         document.getElementById('userrealm').value = ''
-         window.location.reload()
-      }).catch((error) => {
-        errorMessage.textContent = 'Error posting. Please try again.'
-        setInterval(() => {
-          errorMessage.textContent = ''
-          window.location.reload()
-        }, 2000)
-      
-        
-      })
-
-})
-
-
 labelImagesInput.addEventListener('click', () => {
      
      submitActionsCont.style.display = 'flex'
@@ -1039,7 +1000,8 @@ cancelUploadBtn.addEventListener('click', (e) => {
    submitUploadBtn.disabled = true
    cancelUploadBtn.style.display = 'none'
    submitUploadBtn.style.backgroundColor = '#121212'
-   submitUploadBtn.textContent = 'Uploading...'
+   submitUploadBtn.textContent = 'Uploading Preview...'
+   
 
      
      if (inputFile.files.length === 0) {
@@ -1054,122 +1016,314 @@ cancelUploadBtn.addEventListener('click', (e) => {
           cancelUploadBtn.style.display = 'flex'
           postPlaceholder.textContent = 'Add new post...'
           submitUploadBtn.style.backgroundColor = '#1ed760'
-          submitUploadBtn.textContent = 'Upload'
+          submitUploadBtn.textContent = 'Upload Preview'
           return;
      } else {
 
-
-       
-       
-       const selectedFiles = inputFile.files
+       imageArticle.innerHTML = ''
   
-        
+       const selectedFiles = inputFile.files
 
-          const formData = new FormData()
+       Array.from(selectedFiles).forEach((file) => {
+        // create local, temporary browser URL ( ELIMINATE SERVER NEEDS)
+           const localObjectURL = URL.createObjectURL(file)
+           const img = document.createElement('img')
+           img.src = localObjectURL
+           img.style.width = '90%'
+           img.style.height = '100%'
+           img.style.objectFit = 'contain'
+           img.style.marginInline = '10px'
+           img.style.borderRadius = '15px'
+           img.style.scrollSnapAlign = 'start'
 
-          for (const file of selectedFiles) {
+          //  free up memory once image safely loaded
 
-              formData.append("files", file)
+          img.onload = () => {
+            URL.revokeObjectURL(localObjectURL)
           }
 
-          
-          fetch('/post/upload', {
-            method: 'POST',
-            body: formData
-          }).then((response) => {
-            if (response.ok) {
+          imageArticle.appendChild(img)
 
-                      return response.json()
-                    } else {
-                      errorMessage.textContent = 'Uploading currently unavailable...'
-                      setInterval(() => {
-                        errorMessage.textContent = ''
-                      }, 2000)
-                      throw new Error('Network response was not ok')
-                      submitUploadBtn.disabled = false
-                      submitActionsCont.style.display = 'none'
-                      labelImagesInput.style.display = 'block'
-                      labelVideoInput.style.display = 'block'
-                      cancelUploadBtn.style.display = 'flex'
-                      postPlaceholder.textContent = 'Add new Post...'
-                      submitUploadBtn.style.backgroundColor = '#1ed760'
-                      submitUploadBtn.textContent = 'Upload'
-                    }
-                  }).then((data) => {
-
-                    if (data.success === false) {
-
-                         errorMessage.textContent = data.error
-                            setInterval(() => {
-                              errorMessage.textContent = ''
-                            }, 2000)
-                         submitActionsCont.style.display = 'none'
-                         labelImagesInput.style.display = 'block'
-                         labelVideoInput.style.display = 'block'
-                         submitUploadBtn.disabled = false
-                         submitUploadBtn.style.backgroundColor = '#1ed760'
-                         submitUploadBtn.textContent = 'Upload'
-
-                    }
-                    
-                    //  console.log(data)
-
-
-                    
-                    const filePathsArray = []
-
-                    data.files.forEach((file, index) => {
-                          
-                        const imageCard = document.createElement('img')
-                        imageCard.setAttribute('src', `/uploads/${file.filename}`)
-                        imageCard.style.width = '90%'
-                        imageCard.style.height = '100%'
-                        imageCard.style.objectFit = 'contain'
-                        imageCard.style.marginInline = '10px'
-                        imageCard.style.borderRadius = '15px'
-                        imageCard.style.scrollSnapAlign = 'start'
-                      
-
-                        imageArticle.appendChild(imageCard)
-                        
-                        filePathsArray.push(file.filename) 
-                      })
-                      
-
-                      localStorage.setItem('newFileNames', JSON.stringify(filePathsArray))
-             
-                      imageArticle.style.display = 'flex'
-                      viewToPostCont.style.display = 'block'
+          imageArticle.style.display = 'flex'
+          viewToPostCont.style.display = 'block'
             
-                      submitUploadBtn.textContent = 'Success'
-                      cancelUploadBtn.style.display = 'none'
+          submitUploadBtn.textContent = 'Success'
+          cancelUploadBtn.style.display = 'none'
+          postPlaceholder.textContent = '<< Image/s Attached >>'
+          submitUploadBtn.textContent = 'Success'
+          cancelUploadBtn.style.display = 'none'
 
-                      postPlaceholder.textContent = '<< Image Attached >>'
-                      submitUploadBtn.textContent = 'Success'
-                      cancelUploadBtn.style.display = 'none'
+          postSubmitPostBtn.style.display = 'block'
+          postSubmitPostBtn.disabled = false
+
+       })
+
+        // ///////////  MULTER INSTANCE MUTED TO UPDATE TO URLcreateObjectURL API LOGIC /////
+          // const formData = new FormData()
+
+          // for (const file of selectedFiles) {
+
+          //     formData.append("files", file)
+          // }
+
+          
+          // fetch('/post/upload', {
+          //   method: 'POST',
+          //   body: formData
+          // }).then((response) => {
+          //   if (response.ok) {
+
+          //             return response.json()
+          //           } else {
+          //             errorMessage.textContent = 'Uploading currently unavailable...'
+          //             setInterval(() => {
+          //               errorMessage.textContent = ''
+          //             }, 2000)
+          //             throw new Error('Network response was not ok')
+          //             submitUploadBtn.disabled = false
+          //             submitActionsCont.style.display = 'none'
+          //             labelImagesInput.style.display = 'block'
+          //             labelVideoInput.style.display = 'block'
+          //             cancelUploadBtn.style.display = 'flex'
+          //             postPlaceholder.textContent = 'Add new Post...'
+          //             submitUploadBtn.style.backgroundColor = '#1ed760'
+          //             submitUploadBtn.textContent = 'Upload'
+          //           }
+          //         }).then((data) => {
+
+          //           if (data.success === false) {
+
+          //                errorMessage.textContent = data.error
+          //                   setInterval(() => {
+          //                     errorMessage.textContent = ''
+          //                   }, 2000)
+          //                submitActionsCont.style.display = 'none'
+          //                labelImagesInput.style.display = 'block'
+          //                labelVideoInput.style.display = 'block'
+          //                submitUploadBtn.disabled = false
+          //                submitUploadBtn.style.backgroundColor = '#1ed760'
+          //                submitUploadBtn.textContent = 'Upload'
+
+          //           }
+                    
+          //           //  console.log(data)
+
+
+                    
+          //           const filePathsArray = []
+
+          //           data.files.forEach((file, index) => {
+                          
+          //               const imageCard = document.createElement('img')
+          //               imageCard.setAttribute('src', `/uploads/${file.filename}`)
+          //               imageCard.style.width = '90%'
+          //               imageCard.style.height = '100%'
+          //               imageCard.style.objectFit = 'contain'
+          //               imageCard.style.marginInline = '10px'
+          //               imageCard.style.borderRadius = '15px'
+          //               imageCard.style.scrollSnapAlign = 'start'
+                      
+
+          //               imageArticle.appendChild(imageCard)
+                        
+          //               filePathsArray.push(file.filename) 
+          //             })
+                      
+
+          //             localStorage.setItem('newFileNames', JSON.stringify(filePathsArray))
+             
+          //             imageArticle.style.display = 'flex'
+          //             viewToPostCont.style.display = 'block'
+            
+          //             submitUploadBtn.textContent = 'Success'
+          //             cancelUploadBtn.style.display = 'none'
+
+          //             postPlaceholder.textContent = '<< Image Attached >>'
+          //             submitUploadBtn.textContent = 'Success'
+          //             cancelUploadBtn.style.display = 'none'
                 
           
-            }).catch((error) => {
-                //  console.log(error)
-                errorMessage.textContent = 'Upload Failed Validation Metrics.'
-                setInterval(() => {
-                  errorMessage.textContent = ''
-                }, 2000)
-                 submitActionsCont.style.display = 'none'
-                 labelImagesInput.style.display = 'block'
-                 labelVideoInput.style.display = 'block'
-                 submitUploadBtn.disabled = false
-                 postPlaceholder.textContent = 'Add new post...'
-                 submitUploadBtn.style.backgroundColor = '#1ed760'
-                 submitUploadBtn.textContent = 'Upload'
-          })
-
+          //   }).catch((error) => {
+          //       //  console.log(error)
+          //       errorMessage.textContent = 'Upload Failed Validation Metrics.'
+          //       setInterval(() => {
+          //         errorMessage.textContent = ''
+          //       }, 2000)
+          //        submitActionsCont.style.display = 'none'
+          //        labelImagesInput.style.display = 'block'
+          //        labelVideoInput.style.display = 'block'
+          //        submitUploadBtn.disabled = false
+          //        postPlaceholder.textContent = 'Add new post...'
+          //        submitUploadBtn.style.backgroundColor = '#1ed760'
+          //        submitUploadBtn.textContent = 'Upload'
+          // })
+        // //////////// MULTER INSTANCE MUTED TO UPDATE TO URLPREVIEW IN BROWSER ///////
 
         }
 
 
      })
 
+
+postSubmitPostBtn.addEventListener('click', async (e) => {
+      e.preventDefault()
+
+      postSubmitPostBtn.disabled = true
+      postSubmitPostBtn.textContent = 'Posting...'
+      const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n') 
+
+      const files = inputFile.files   // returns FILELIST NOT AN ACTUAL ARRAY OF FILES
+      
+      
+      if (!files.length) {
+          postSubmitPostBtn.disabled = false
+          postSubmitPostBtn.textContent = 'Share'
+          imageArticle.style.display = 'none'
+          submitActionsCont.style.display = 'none'
+          submitUploadBtn.disabled = false
+      
+          labelImagesInput.style.display = 'block'
+          labelVideoInput.style.display = 'block'
+          cancelUploadBtn.style.display = 'flex'
+          postPlaceholder.textContent = 'Add new Post(No files selected)...'
+          submitUploadBtn.style.backgroundColor = '#1ed760'
+          submitUploadBtn.textContent = 'Upload Preview'
+
+      } else {
+
+          const filesConverted = Array.from(files)
+
+          const fileData = filesConverted.map((file) => {
+
+              return {
+                 name: file.name,
+                 type: file.type
+              }
+          })
+
+          // console.log(fileData)
+
+          //  REQUEST SIGNED URLS
+
+          try {
+            
+            const response = await fetch("/gen-upload-urls", {
+              method: 'POST',
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({files: fileData})
+            })
+  
+            const uploadUrls = await response.json()    // server sends objects [{keys,signedUrl,filename,publicurl}, {..}, {..}]
+  
+            // UPLOAD FILES IN PARALLEL  /MAP THE RESULT TO EXCTRACT SUCCCESSFUL UPLOADS
+
+            const uploadedKeys = await Promise.all(uploadUrls.map((uploadinfo, index) => {
+                      return  uploadSingleFile(files[index], uploadinfo)
+
+                  }))     
+             
+             console.log(uploadedKeys)     
+            
+
+             const wrapper = document.querySelector('.progress-wrapper')
+             const progress = document.createElement('progress')
+    
+
+            function uploadSingleFile (file, uploadInfo) {
+                // CREATE UI and track successful and failed file uploads
+                return new Promise((resolve, reject) => {
+
+                  // const text = document.createElement('div')
+                  // progress.max = 100
+                  // progress.value = 0
+                  // text.textContent = file.name
+  
+                  // wrapper.appendChild(text)
+                  // wrapper.appendChild(progress)
+  
+                  // CREATE XHR
+  
+                  const xhr = new XMLHttpRequest()
+  
+                  xhr.open("PUT", uploadInfo.signedUrl, true)
+  
+                  // Match Content-type used in SIGNED URL
+  
+                  xhr.setRequestHeader("Content-Type", file.type)
+  
+                  // PROGRESS
+  
+                  xhr.upload.onprogress = (event) => {
+  
+                      if (event.lengthComputable) {
+  
+                        const percent = Math.round( (event.loaded / event.total ) * 100 )
+                        progress.value = percent
+                        text.textContent = `${file.name} - ${percent}`
+  
+                      }
+                  }
+  
+                  // SUCCESS
+                  
+                  xhr.onload = async () => {
+                     
+                      if (xhr.status === 200) {
+  
+                         text.textContent = `${file.name} - Upload Complete`
+                         
+                         resolve(uploadInfo.key)     // MAPS THE SUCCESSFULL FILE UPLOAD TO THE ARRAY
+
+                         console.log("Stored key:", uploadInfo.key)
+                      } else {
+
+                        text.textContent = `${file.name} - Upload Failed`
+                        
+                        reject(uploadInfo.key)
+
+                        console.error(xhr.responseText)
+                      }
+                  }
+  
+                  // ERROR
+  
+                  xhr.onerror = () => {
+  
+                      text.textContent = `${file.name} - Network error`
+
+                      reject(uploadInfo.key)
+                  }
+  
+                  // SEND FILE
+  
+                  xhr.send(file)
+                })
+            
+            }
+
+            
+
+          } catch (error) {
+            // UPDATE UI AND THROW MESSAGE OF FAILED TO REACH CLOUDFLARE R2, UPLOAD URL FAILED
+            console.log(error)
+            //  errorMessage.textContent = 'POST FAILED..try again later.'
+            //  setInterval(() => {
+            //     errorMessage.textContent = ''
+            //     window.location.reload()
+            //   }, 2000)
+        
+          }
+
+
+
+
+      }
+
+     
+
+})
 
 
 
@@ -1488,6 +1642,80 @@ const spanResult = document.getElementById('input-to-dis-result')
 
 
 
+  // try {
+        
+      //   const completePost = await fetch('/post', {
+      //               method: 'POST',
+      //               headers: {
+      //                 'Content-Type': 'application/json'
+      //               },
+      //               body: JSON.stringify({
+      //                        poststring: formatTextAreaValue,
+      //                        imagesrc: uploadedKeys,
+      //                        userid: document.getElementById('userid').value,
+      //                        userrealm: document.getElementById('userrealm').value
+      //               })
+      //             })
+  
+      //   const responseFromPost = await completePost.json()          
+      //   console.log(responseFromPost)
+      //   textArea.value = 'Success '
+      //   document.getElementById('userid').value = ''
+      //   document.getElementById('userrealm').value = ''
+      //   window.location.reload()
+
+      //   console.log(uploadedKeys)
+
+
+      // } catch (error) {
+
+      //    errorMessage.textContent = 'POST FAILED..try again later.'
+      //    setInterval(() => {
+      //      errorMessage.textContent = ''
+      //      window.location.reload()
+      //   }, 2000)
+        
+      // }      
+
+
+       // /////// OLD SUBMIT POST LOGIC
+      // const imagesArray = localStorage.getItem('newFileNames')      
+      // const parsedImgArray = JSON.parse(imagesArray)
+      
+  
+      // fetch('/post', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //           poststring: formatTextAreaValue,
+      //           imagesrc: parsedImgArray,
+      //           userid: document.getElementById('userid').value,
+      //           userrealm: document.getElementById('userrealm').value
+      //   })
+      // }).then((response) => {
+      //   if (response.ok) {
+      //     return response.json()
+      //   } else {
+      //     throw new Error('Network response was not ok')
+      //     window.location.reload()
+      //   }
+      // }).then((data) => {
+      //    console.log(data)
+      //    textArea.value = 'Success '
+      //    document.getElementById('userid').value = ''
+      //    document.getElementById('userrealm').value = ''
+      //    window.location.reload()
+      // }).catch((error) => {
+      //   errorMessage.textContent = 'Error posting. Please try again.'
+      //   setInterval(() => {
+      //     errorMessage.textContent = ''
+      //     window.location.reload()
+      //   }, 2000)
+      
+        
+      // })
 
     </script>
 </body>

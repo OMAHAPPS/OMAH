@@ -8,8 +8,11 @@ const cookieSession = require('cookie-session')
 const methodOverride = require('method-override')
 const flash = require('connect-flash')
 const multer = require('multer')
+const cors = require('cors')
 const path = require('path')
 const fs = require('fs')
+const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
 const passportSetup = require('./config/passport-config')
 
@@ -38,6 +41,7 @@ app.use(express.static('public'))
 app.use(express.static('public/uploads'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(cors())
 app.set('view engine', 'ejs')
 
 app.use(cookieSession({
@@ -196,55 +200,101 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage, limits : { fileSize: 10 * 1024 * 1024, files: 10 } }).array('files')
 
-app.post('/post/upload', (req, res) => {
+// app.post('/post/upload', (req, res) => {
        
-         upload(req, res, function (err) {
+//          upload(req, res, function (err) {
         
-        // Check if the error was triggered by Multer limits/filters
-        if (err instanceof multer.MulterError) {
+//         // Check if the error was triggered by Multer limits/filters
+//         if (err instanceof multer.MulterError) {
             
-            // Map the specific error code to a readable response
-            switch (err.code) {
-                case 'LIMIT_FILE_SIZE':
-                    return res.status(400).json({ 
-                        success: false, 
-                        error: 'Size Per File exceeded.. (10MB each File)', 
-                        message: 'One or more files are larger than the allowed 10MB limit.' 
-                    });
+//             // Map the specific error code to a readable response
+//             switch (err.code) {
+//                 case 'LIMIT_FILE_SIZE':
+//                     return res.status(400).json({ 
+//                         success: false, 
+//                         error: 'Size Per File exceeded.. (10MB each File)', 
+//                         message: 'One or more files are larger than the allowed 10MB limit.' 
+//                     });
                     
-                case 'LIMIT_FILE_COUNT':
-                    return res.status(400).json({ 
-                        success: false, 
-                        error: 'Too many files.. (LIMIT 10 files)', 
-                        message: 'You cannot upload more than 10 files at once.' 
-                    });
+//                 case 'LIMIT_FILE_COUNT':
+//                     return res.status(400).json({ 
+//                         success: false, 
+//                         error: 'Too many files.. (LIMIT 10 files)', 
+//                         message: 'You cannot upload more than 10 files at once.' 
+//                     });
                     
-                default:
-                    return res.status(400).json({ 
-                        success: false, 
-                        error: 'Upload error.. Try Again', 
-                        message: err.message 
-                    });
-            }
+//                 default:
+//                     return res.status(400).json({ 
+//                         success: false, 
+//                         error: 'Upload error.. Try Again', 
+//                         message: err.message 
+//                     });
+//             }
             
-        } else if (err) {
-            // This catches non-multer errors (like standard code syntax failures)
-            return res.status(500).json({ 
-                success: false, 
-                error: 'Server Error..', 
-                message: 'An unexpected error occurred during processing.' 
-            });
-        }
+//         } else if (err) {
+//             // This catches non-multer errors (like standard code syntax failures)
+//             return res.status(500).json({ 
+//                 success: false, 
+//                 error: 'Server Error..', 
+//                 message: 'An unexpected error occurred during processing.' 
+//             });
+//         }
 
-        // If no errors occurred, the code continues here safely
-        res.status(200).json({
-            success: true,
-            message: 'All files successfully validated and uploaded!',
-            filesCount: req.files.length,
-            files: req.files
-        });
-    });
-});
+//         // If no errors occurred, the code continues here safely
+//         res.status(200).json({
+//             success: true,
+//             message: 'All files successfully validated and uploaded!',
+//             filesCount: req.files.length,
+//             files: req.files
+//         });
+//     });
+// });
+
+const s3 = new S3Client({
+       region: "auto",  // required by aws sdk not by R2  
+       endpoint: process.env.S3CLIENT_ENDPOINT,
+       credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID,
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY
+       }
+})
+
+// Request PRESIGNED URLS
+
+app.post('/gen-upload-urls', async (req, res) => {
+
+      const files = req.body.files
+
+      try {
+
+        const uploadData = await Promise.all(files.map( async (file) => {
+
+               const uniqueKey = `feed-images/${Date.now()}-${file.name}`
+               const command = new PutObjectCommand({
+                 Bucket: process.env.R2_BUCKET_NAME,
+                 Key: uniqueKey,
+                 ContentType: file.type
+               })
+               const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 })
+            
+
+               return {
+                  filename: file.name,
+                  key: uniqueKey,
+                  signedUrl: signedUrl,
+                  publicUrl: `${process.env.R2_PUBLIC_BASE_URL}/${uniqueKey}`
+               }
+        }))
+
+        res.json(uploadData)
+        
+        
+      } catch (error) {
+          
+         console.log(error)
+         res.status(500).json({ error: 'Failed to Generate Urls' })
+      }
+})
       
 
 

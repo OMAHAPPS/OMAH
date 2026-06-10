@@ -16,6 +16,7 @@
     "@google/genai": "^2.4.0",
     "connect-flash": "^0.1.1",
     "cookie-session": "^2.1.1",
+    "cors": "^2.8.6",
     "ejs": "^5.0.2",
     "express": "^5.2.1",
     "method-override": "^3.0.0",
