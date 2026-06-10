@@ -96,8 +96,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
  
               <p style="font-size: 16px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
 
-              <% if (post.image !== 'none') { %>
-                <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
+              <% if (post.images.length !== 0) { %>
+                <img src="<%= R2BASE %>/<%= post.images[0] %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
                 <% } else { %>
                  <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
               <% } %>
@@ -157,8 +157,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                   <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
 
-                   <% if (post.image !== 'none') { %>
-                     <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
+                   <% if (post.images.length !== 0) { %>
+                     <img src="<%= R2BASE %>/<%= post.images[0] %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
                    <% } else { %>
                      <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
                    <% } %>

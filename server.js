@@ -184,9 +184,9 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
     })
     // console.log(postDataArray)
 
+    const R2BaseUrl = process.env.R2_PUBLIC_BASE_URL 
 
-
-     res.render('home', { user: userData, posts: postDataArray, messages: req.flash('error') })
+     res.render('home', { user: userData, posts: postDataArray, R2BASE: R2BaseUrl, messages: req.flash('error') })
 })
 
 const storage = multer.diskStorage({
@@ -417,11 +417,13 @@ app.get('/group', notLoggedInCheck, async (req, res) => {
 app.get('/post', notLoggedInCheck, async (req, res) => {
     
     const userid = req.user._id
-    const post = await Post.findOne({ image: { $ne: 'none' } })
+    const allposts = await Post.find()
     const user = await Omaruser.findOne({ _id: userid })
-
-
-    res.render('post', { post, user })
+    const post = allposts[0]
+  
+    const R2BASE = process.env.R2_PUBLIC_BASE_URL
+   
+    res.render('post', { post, user, R2BASE })
 })
 
 app.get('/user', notLoggedInCheck,  async (req, res) => {

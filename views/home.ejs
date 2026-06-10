@@ -144,11 +144,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 
                     <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
 
-                                 <h2 style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);"><%= post.userName %> </h2>
+                                 <h2 style="font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);"><%= post.userName %> </h2>
                                  <% if (post.userName == user.userName) { %>
                                    <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                                    <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:13px;color: <%= user.userColor %>; margin-left: 2px;">@<%= post.userHandle !== 'none' ? post.userHandle : post.userName  %></span>
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; margin-left: 2px;">@<%= post.userHandle !== 'none' ? post.userHandle : post.userName  %></span>
                                  <% } %>
                         </div>
                               <% const timestamp = post.createdAt %>
@@ -170,11 +170,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                         
               </div>
  
-              <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
+              <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
 
                  <%  if (post.videoUrl !== 'none') { %>
 
-                  <video id="player" controls preload="none" style="display: block; width: 100%; height: auto; border-radius: 12px; margin-top: 10px;"
+                  <video id="player" controls preload="none" style="display: block; width: 100%; height: auto; border-radius: 12px; margin-top: 13px;"
                            src="/uploads/Expressions.mp4" type="video/mp4" data-src="/uploads/Expressions.mp4">
                         Your browser does not support the video tag. 
                     </video>
@@ -183,12 +183,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   
                  <% } else if (post.images.length === 0) { %>
 
-                    <article class="post-article" style="width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
+                    <article class="post-article" style="width: 100%; height: 200px; border-radius: 12px; margin-top: 13px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
                     </article>
 
                         <% } else if (post.images.length === 1) { %>
 
-                          <article class="post-article" style="z-index: 5; width: 100%; height: auto; border-radius: 12px; margin-top: 10px; display: flex; gap:5px; background: transparent;">
+                          <article class="post-article" style="z-index: 5; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; background: transparent;">
 
 
                               <div class="placeholder-cont" style="display: none;">
@@ -199,7 +199,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                             
                             <% post.images.map((image) => { %>
         
-                              <img class="post-images" src="/uploads/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain;" />
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain;" />
         
                             <% }) %>
          
@@ -208,7 +208,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                         <% } else if (post.images.length === 2) { %>
 
-                          <article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; margin-top: 10px; display: flex; background: transparent;">
+                          <article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; margin-top: 13px; display: flex; background: transparent;">
 
                             <div class="placeholder-cont" style="display: none;">
                                   <% post.images.map((image, key) => { %>
@@ -218,7 +218,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
                             <% post.images.map((image) => { %>
         
-                              <img class="post-images" src="/uploads/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
         
                             <% }) %>
          
@@ -226,7 +226,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                         <% } else if (post.images.length === 3) { %>
 
-                          <article class="post-article" style="z-index: 5;width: 100%; height: 300px; border-radius: 12px; margin-top: 10px; display: flex; gap: 3px; background: transparent;">
+                          <article class="post-article" style="z-index: 5;width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; gap: 3px; background: transparent;">
 
                             <div class="placeholder-cont" style="display: none;">
                                   <% post.images.map((image, key) => { %>
@@ -236,11 +236,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                              <% const images = post.images %>
 
-                             <img class="post-images" src="/uploads/<%= images[0] %>" alt="N" style="height: 100%; width: 49%; object-fit: cover; object-position: center; border-radius: 12px 0 0 12px;" />
+                             <img class="post-images" src="<%= R2BASE %>/<%= images[0] %>" alt="N" style="height: 100%; width: 49%; object-fit: cover; object-position: center; border-radius: 12px 0 0 12px;" />
         
                              <div class="stacked" style="display: flex; flex-flow: column nowrap; gap: 3px; height: 100%; width: calc(50% - 5px); border-radius: 0 12px 12px 0; background: transparent;">
-                               <img class="post-images" src="/uploads/<%= images[1] %>" alt="N" style="width: calc(100% -1px); height: calc(50% - 2px); border-radius: 0 12px 0 0; object-fit: cover; object-position: center;" />
-                               <img class="post-images" src="/uploads/<%= images[2] %>" alt="N" style="width: calc(100% - 1px); height: calc(50% - 2px); border-radius: 0 0 12px 0; object-fit: cover; object-position: center;" />
+                               <img class="post-images" src="<%= R2BASE %>/<%= images[1] %>" alt="N" style="width: calc(100% -1px); height: calc(50% - 2px); border-radius: 0 12px 0 0; object-fit: cover; object-position: center;" />
+                               <img class="post-images" src="<%= R2BASE %>/<%= images[2] %>" alt="N" style="width: calc(100% - 1px); height: calc(50% - 2px); border-radius: 0 0 12px 0; object-fit: cover; object-position: center;" />
 
                              </div>
         
@@ -248,7 +248,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                         <% } else if (post.images.length === 4) { %>
 
-                          <article class="post-article" style="z-index: 5;overflow: hidden; width: 100%; height: 300px; border-radius: 12px; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 3px; overflow: hidden; background: transparent;">
+                          <article class="post-article" style="z-index: 5;overflow: hidden; width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; flex-wrap: wrap; gap: 3px; overflow: hidden; background: transparent;">
 
                             <div class="placeholder-cont" style="display: none;">
                                   <% post.images.map((image, key) => { %>
@@ -258,7 +258,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
                             <% post.images.map((image) => { %>
         
-                              <img class="post-images" src="/uploads/<%= image %>" alt="N" style="width: calc(50% - 1.5px); height: calc(50% - 1.5px); border-radius: 1px solid red; object-fit: cover; object-position: center;"/>
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1.5px); height: calc(50% - 1.5px); border-radius: 1px solid red; object-fit: cover; object-position: center;"/>
         
                             <% }) %>
          
@@ -266,7 +266,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                         <% } else { %>
 
-                          <article class="post-article" style="z-index: 5; width: 100%; height: 250px; border-radius: 12px; margin-top: 10px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
+                          <article class="post-article" style="z-index: 5; width: 100%; height: 250px; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
 
                            <div class="placeholder-cont" style="display: none;">
                                   <% post.images.map((image, key) => { %>
@@ -276,7 +276,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
                             <% post.images.map((image) => { %>
         
-                              <img class="post-images" src="/uploads/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; margin-right: 3px;" />
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; margin-right: 3px;" />
         
                             <% }) %>
          
@@ -289,7 +289,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                  
                    <!-- ! Likes and counts container -->
 
-              <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
+              <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px; margin-top: 5px;">
                      <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
                          <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
                          <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="font-size: 13px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.likes %></span>
@@ -430,11 +430,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                       writing to The <%= user.userRealm %>
                     </div>
                  </div>
-                 <div class="progress-wrapper" style="height: 100%; display: flex; flex-flow: column nowrap; align-items: center; justify-content: center; flex-grow: 1;">
-                  <h3 style="font-size: 15px; color: white; font-style: italic; font-weight: 600; width: 90%; text-align: start;">Uploading Files...</h3>     
-                  <div class="prog-wrapper" style="margin-top: 2px; width: 90%; display: flex; align-items: center; justify-content: center;">
+                 <div class="progress-wrapper" style="height: 100%; display: none; flex-flow: column nowrap; align-items: center; justify-content: center; flex-grow: 1;">
+                  <h3 id="upload-status" style="font-size: 15px; color: white; width: 90%; text-align: start;">Uploading Files...</h3>     
+                  <div class="prog-wrapper" style="margin-top: 5px; width: 90%; display: flex; align-items: center; justify-content: center;">
                     <progress id="overallProgress" style="width: 100%; border-radius: 50%; background-color: #1ed760;" value="75" max="100"></progress>
-                    <p style="color: white; margin-left: 2px; font-size: .75rem;">20%</p>
+                    <p class="progress-text" style="color: white; margin-left: 4px; font-size: .75rem;"></p>
                   </div>
                  </div>
               </div>
@@ -721,7 +721,7 @@ function charSVG(realmKey, size=150, speaking=false){
        
        imagesArray.forEach((img) => {
            const image = document.createElement('img')
-           image.src = `/uploads/${img}`
+           image.src = `<%= R2BASE %>/${img}`
            image.style.width = '98%'
            image.style.marginInline = '3px'
            image.style.height = 'auto'
@@ -1201,6 +1201,11 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
               }
           })
 
+          const fileProgress = {}
+          const totalBytes = filesConverted.reduce((sum, file) => {
+                     return sum + file.size     
+                  }, 0)     
+
           // console.log(fileData)
 
           //  REQUEST SIGNED URLS
@@ -1218,30 +1223,18 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             const uploadUrls = await response.json()    // server sends objects [{keys,signedUrl,filename,publicurl}, {..}, {..}]
   
             // UPLOAD FILES IN PARALLEL  /MAP THE RESULT TO EXCTRACT SUCCCESSFUL UPLOADS
-
-            const uploadedKeys = await Promise.all(uploadUrls.map((uploadinfo, index) => {
-                      return  uploadSingleFile(files[index], uploadinfo)
-
-                  }))     
-             
-             console.log(uploadedKeys)     
+            const wrapper = document.querySelector('.progress-wrapper')   // display flex - none
+            const progress = document.querySelector('#overallProgress')
+            const text = document.querySelector('.progress-text')
+            const status = document.querySelector('#upload-status')
             
+            let uploadedBytes = 0
 
-             const wrapper = document.querySelector('.progress-wrapper')
-             const progress = document.createElement('progress')
-    
-
-            function uploadSingleFile (file, uploadInfo) {
+        function uploadSingleFile (file, uploadInfo, index, fileProgress, totalBytes,progress, text) {
                 // CREATE UI and track successful and failed file uploads
                 return new Promise((resolve, reject) => {
 
-                  // const text = document.createElement('div')
-                  // progress.max = 100
-                  // progress.value = 0
-                  // text.textContent = file.name
-  
-                  // wrapper.appendChild(text)
-                  // wrapper.appendChild(progress)
+                              
   
                   // CREATE XHR
   
@@ -1258,11 +1251,23 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                   xhr.upload.onprogress = (event) => {
   
                       if (event.lengthComputable) {
+                        
+                        wrapper.style.display = 'flex'
+                        fileProgress[index] = event.loaded
+                        const totalUploaded = Object.values(fileProgress).reduce((a, b) => a + b , 0)
   
-                        const percent = Math.round( (event.loaded / event.total ) * 100 )
+                        const percent = Math.round( (totalUploaded / totalBytes ) * 100 )
                         progress.value = percent
-                        text.textContent = `${file.name} - ${percent}`
+                        text.textContent = `${percent}%`
+                        if (percent == 100) {
+                          status.textContent = 'Complete'
+                          status.style.color = '#1ed760'
+                          text.style.color = '#1ed760'
+                         
+                        }
   
+                      } else {
+                        return;
                       }
                   }
   
@@ -1272,14 +1277,12 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                      
                       if (xhr.status === 200) {
   
-                         text.textContent = `${file.name} - Upload Complete`
                          
                          resolve(uploadInfo.key)     // MAPS THE SUCCESSFULL FILE UPLOAD TO THE ARRAY
 
                          console.log("Stored key:", uploadInfo.key)
                       } else {
 
-                        text.textContent = `${file.name} - Upload Failed`
                         
                         reject(uploadInfo.key)
 
@@ -1305,14 +1308,45 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
 
             
 
+            const uploadedKeys = await Promise.all(uploadUrls.map((uploadinfo, index) => {
+                      return  uploadSingleFile(files[index], uploadinfo, index, fileProgress, totalBytes, progress, text)
+
+                  }))     
+             
+             console.log(uploadedKeys)     
+            
+
+
+             const completePost = await fetch('/post', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                             poststring: formatTextAreaValue,
+                             imagesrc: uploadedKeys,
+                             userid: document.getElementById('userid').value,
+                             userrealm: document.getElementById('userrealm').value
+                    })
+                  })
+  
+        const responseFromPost = await completePost.json()          
+        console.log(responseFromPost)
+        textArea.value = 'Success '
+        document.getElementById('userid').value = ''
+        document.getElementById('userrealm').value = ''
+        window.location.reload()
+
+        
+
           } catch (error) {
             // UPDATE UI AND THROW MESSAGE OF FAILED TO REACH CLOUDFLARE R2, UPLOAD URL FAILED
             console.log(error)
-            //  errorMessage.textContent = 'POST FAILED..try again later.'
-            //  setInterval(() => {
-            //     errorMessage.textContent = ''
-            //     window.location.reload()
-            //   }, 2000)
+             errorMessage.textContent = 'POST FAILED..try again later.'
+             setInterval(() => {
+                errorMessage.textContent = ''
+                window.location.reload()
+              }, 2000)
         
           }
 
