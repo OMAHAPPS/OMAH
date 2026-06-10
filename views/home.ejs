@@ -496,7 +496,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
     </section>
 
-    <div id="images-expand" style="display: none; background-color: black; position: absolute; top: 0; height: 100%; width: 100%; z-index: 6; overflow-x: scroll;">
+    <div id="images-expand" style="display: none; background-color: black; position: absolute; top: 0; height: 100%; width: 100%; border: 2px solid red; z-index: 6; overflow-x: scroll;">
 
             <div id="link-holders" style="width: 100%; height: 15%; display: flex; align-items: center; justify-content: space-between; padding: 20px;">
 
@@ -710,19 +710,20 @@ function charSVG(realmKey, size=150, speaking=false){
        const articleParent =  e.target.closest('article')
        const placeholderCont = articleParent.children[0]
        const imagesArray = Array.from(placeholderCont.children, child => child.textContent)
-       console.log(imagesArray)
+     
        
        imagesArray.forEach((img) => {
            const image = document.createElement('img')
            image.src = `/uploads/${img}`
-           image.style.width = '100%'
+           image.style.width = '98%'
+           image.style.marginInline = '3px'
            image.style.height = 'auto'
            image.style.scrollSnapAlign = 'start'
            image.style.objectFit = 'contain'
            expandedArticle.appendChild(image)
        })
        
-       console.log(expandedArticle)
+       
        expandContainer.style.display = 'block'
 
        })
