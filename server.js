@@ -298,31 +298,31 @@ app.post('/gen-upload-urls', async (req, res) => {
       
 
 
-
-app.post('/post/cancel', (req, res) => {
+//  MULTER UNLINK FILES LOGIC ///
+// app.post('/post/cancel', (req, res) => {
      
-      const { filepaths } = req.body
+//       const { filepaths } = req.body
 
-      console.log(filepaths)
+//       console.log(filepaths)
 
-      filepaths.forEach((filepath) => {
+//       filepaths.forEach((filepath) => {
 
 
-            fs.unlink(`./public/uploads/${filepath}`, (err) => {
-                  if (err) {
-                      console.log('No file to delete')
-                    //   res.json({ success: false})
-                      return;
-                  } else {
-                      console.log(`${filepath} deleted successfully`)
-                    }
-                })
+//             fs.unlink(`./public/uploads/${filepath}`, (err) => {
+//                   if (err) {
+//                       console.log('No file to delete')
+//                     //   res.json({ success: false})
+//                       return;
+//                   } else {
+//                       console.log(`${filepath} deleted successfully`)
+//                     }
+//                 })
                 
                 
-            })
-            res.json({ success: true })
+//             })
+//             res.json({ success: true })
 
-})
+// })
 
 
 
@@ -348,9 +348,8 @@ app.post('/post', async (req, res) => {
          
          res.json({ success: true })
      }).catch((err) => {
-
-         req.flash('error', 'Sorry...You cannot send Posts now')
-         res.redirect('/home')
+         console.log(err)
+         res.json({ success: false })
      })
      
 

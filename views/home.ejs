@@ -56,7 +56,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
    
          
 
-    <p id="error-display" style="position: absolute; top: 5%; left: 50%; transform: translateX(-50%); background-color: white; color:red; padding-inline: 5px; border-radius: 2px; font-weight: bold;"></p>
+    <p class="fs" id="error-display" style="position: absolute; top: 5%; left: 50%; transform: translateX(-50%); max-width: 100%; background-color: white; color:red; padding-inline: 5px; border-radius: 2px; font-weight: bold; z-index: 100;"></p>
     
 
     <% if (locals.messages) { %>
@@ -444,7 +444,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   <textarea id="post-body" placeholder="Add Caption..." maxlength="500" style="padding: 16px; border-radius: 18px 18px 0 0; font-size: 15px; line-height: 1.72; color:rgba(237,232,224,.82); background:rgba(255,255,255,.02); border: 2px solid rgba(255,255,255,.07); flex-grow: 1;"></textarea>
                 
                    <!--! ///// IMAGE TO BE RENDERED IN JS AFTER MULTER UPLOAD ////  -->
-                  <article id="image-article" style="width: clamp(350px, 100%, 600px); height: 60%; display: flex; overflow-x: scroll; overflow-y: hidden; border-radius: 0 0 18px 18px; scroll-snap-type: inline mandatory;">
+                  <article id="image-article" style="width: clamp(350px, 100%, 600px); height: 60%; display: none; overflow-x: scroll; overflow-y: hidden; border-radius: 0 0 18px 18px; scroll-snap-type: inline mandatory;">
                             
                             
                   </article>
@@ -929,7 +929,7 @@ const letter = document.getElementById('letter-upp').textContent
                                 <div class="upload-actions" style="display: none; justify-content: center; align-items: center;">
 
                                 <button type="submit" id="submit-upload" style="padding: 10px 10px; margin-right: 8px; outline: none; border-radius: 10px; background-color: #1ed760; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
-                                  Upload<ion-icon name="arrow-up-outline" style="color: white; font-size: 15px;"></ion-icon>
+                                  Upload Preview<ion-icon name="arrow-up-outline" style="color: white; font-size: 15px;"></ion-icon>
                                   </button>
                                   <button  id="cancel-upload" style="padding: 10px 10px; outline: none; border-radius: 10px; background-color: red; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
                                   <ion-icon name="trash-outline" style="color: white; font-size: 20px;"></ion-icon>
@@ -989,7 +989,7 @@ cancelUploadBtn.addEventListener('click', (e) => {
      labelVideoInput.style.display = 'block'
      submitUploadBtn.disabled = false
      submitUploadBtn.style.backgroundColor = '#1ed760'
-     submitUploadBtn.textContent = 'Upload'
+     submitUploadBtn.textContent = 'Upload Preview'
      inputFile.value = ''
 })
 
@@ -1008,10 +1008,11 @@ cancelUploadBtn.addEventListener('click', (e) => {
           errorMessage.textContent = 'No Images Selected...'
           setInterval(() => {
             errorMessage.textContent = ''
-          }, 2000)
+          }, 3000)
           submitActionsCont.style.display = 'none'
           labelImagesInput.style.display = 'block'
           labelVideoInput.style.display = 'block'
+          imageArticle.style.display = 'none'
           submitUploadBtn.disabled = false
           cancelUploadBtn.style.display = 'flex'
           postPlaceholder.textContent = 'Add new post...'
@@ -1024,7 +1025,56 @@ cancelUploadBtn.addEventListener('click', (e) => {
   
        const selectedFiles = inputFile.files
 
-       Array.from(selectedFiles).forEach((file) => {
+       const MAX_FILES = 10
+       const MAX_FILE_SIZE = 6 * 1024 * 1024
+
+       const FilesArray = Array.from(selectedFiles)     // CONVERT FROM FILELIST
+
+      //  CHECK UPLOAD LIMITS BEFORE UPLOADING PREVIEW
+
+      if ( FilesArray.length > MAX_FILES ) {
+
+        errorMessage.textContent = 'MAX of 10 files Allowed...'
+          setInterval(() => {
+            errorMessage.textContent = ''
+          }, 3000)
+          submitActionsCont.style.display = 'none'
+          labelImagesInput.style.display = 'block'
+          labelVideoInput.style.display = 'block'
+          imageArticle.style.display = 'none'
+          submitUploadBtn.disabled = false
+          cancelUploadBtn.style.display = 'flex'
+          postPlaceholder.textContent = 'Add new post...'
+          submitUploadBtn.style.backgroundColor = '#1ed760'
+          submitUploadBtn.textContent = 'Upload Preview'
+          return;
+
+      }
+
+      for (const file of FilesArray) {
+
+        if (file.size > MAX_FILE_SIZE) {
+
+          errorMessage.textContent = 'FILE/(s) Exceeded 6MB limit per File...'
+          setInterval(() => {
+            errorMessage.textContent = ''
+          }, 3000)
+          submitActionsCont.style.display = 'none'
+          labelImagesInput.style.display = 'block'
+          labelVideoInput.style.display = 'block'
+          imageArticle.style.display = 'none'
+          submitUploadBtn.disabled = false
+          cancelUploadBtn.style.display = 'flex'
+          postPlaceholder.textContent = 'Add new post...'
+          submitUploadBtn.style.backgroundColor = '#1ed760'
+          submitUploadBtn.textContent = 'Upload Preview'
+          return;
+
+        }
+
+      }
+
+       FilesArray.forEach((file) => {
         // create local, temporary browser URL ( ELIMINATE SERVER NEEDS)
            const localObjectURL = URL.createObjectURL(file)
            const img = document.createElement('img')
@@ -1171,13 +1221,15 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
       postSubmitPostBtn.disabled = true
       postSubmitPostBtn.textContent = 'Posting...'
       const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n') 
-
+      
       const files = inputFile.files   // returns FILELIST NOT AN ACTUAL ARRAY OF FILES
       
+      const filesConverted = Array.from(files)
       
-      if (!files.length) {
-          postSubmitPostBtn.disabled = false
+      if (!filesConverted.length && !formatTextAreaValue) {
+          postSubmitPostBtn.disabled = true
           postSubmitPostBtn.textContent = 'Share'
+          postSubmitPostBtn.style.display = 'none'
           imageArticle.style.display = 'none'
           submitActionsCont.style.display = 'none'
           submitUploadBtn.disabled = false
@@ -1189,9 +1241,41 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
           submitUploadBtn.style.backgroundColor = '#1ed760'
           submitUploadBtn.textContent = 'Upload Preview'
 
+      } else if (!filesConverted.length && formatTextAreaValue) {
+          // PERFORM pOSTING oNLY STRING VALUE LOGIC HERE
+        postPlaceholder.textContent = 'NO FILE/(S) Attached..'
+        postSubmitPostBtn.textContent = 'Posting'
+
+        const completePostStringOnly = await fetch('/post', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                             poststring: formatTextAreaValue,
+                             imagesrc: [],
+                             userid: document.getElementById('userid').value,
+                             userrealm: document.getElementById('userrealm').value
+                    })
+                  })
+        const responseStringOnly = await completePostStringOnly.json()
+
+        if (responseStringOnly.success == true) {
+
+             errorMessage.style.color = '#1ed760'
+             errorMessage.textContent = 'Success'
+             setInterval(() => {
+                errorMessage.textContent = ''
+             }, 3000)
+             textArea.value = 'Success'
+             document.getElementById('userid').value = ''
+             document.getElementById('userrealm').value = ''
+             window.location.reload()
+
+        }          
+
       } else {
 
-          const filesConverted = Array.from(files)
 
           const fileData = filesConverted.map((file) => {
 
@@ -1221,6 +1305,27 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             })
   
             const uploadUrls = await response.json()    // server sends objects [{keys,signedUrl,filename,publicurl}, {..}, {..}]
+
+            // CHECK IF ALL SUCCESSFUL PRESIGNED URLS WERE GENERATED IF NOT THEN
+
+            if (uploadUrls.error) {
+
+                errorMessage.textContent = uploadUrls.error
+                setInterval(() => {
+                   errorMessage.textContent = ''
+                }, 3000)
+                postPlaceholder.textContent = 'NO FILE/(S) Attached..'
+                imageArticle.style.display = 'none'
+                submitActionsCont.style.display = 'none'
+                submitUploadBtn.disabled = false
+      
+                labelImagesInput.style.display = 'block'
+                labelVideoInput.style.display = 'block'
+                cancelUploadBtn.style.display = 'flex'
+                postPlaceholder.textContent = 'Add new Post(No files selected)...'
+                submitUploadBtn.style.backgroundColor = '#1ed760'
+                submitUploadBtn.textContent = 'Upload Preview'
+            }
   
             // UPLOAD FILES IN PARALLEL  /MAP THE RESULT TO EXCTRACT SUCCCESSFUL UPLOADS
             const wrapper = document.querySelector('.progress-wrapper')   // display flex - none
@@ -1230,12 +1335,10 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             
             let uploadedBytes = 0
 
-        function uploadSingleFile (file, uploadInfo, index, fileProgress, totalBytes,progress, text) {
+        function uploadSingleFile (file, uploadInfo, index, fileProgress, totalBytes, progress, text, wrapper) {
                 // CREATE UI and track successful and failed file uploads
                 return new Promise((resolve, reject) => {
 
-                              
-  
                   // CREATE XHR
   
                   const xhr = new XMLHttpRequest()
@@ -1264,6 +1367,9 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                           status.style.color = '#1ed760'
                           text.style.color = '#1ed760'
                          
+                        } else {
+                          status.style.color = '#FFAE42'
+                          progress.style.backgroundColor = '#FFAE42'
                         }
   
                       } else {
@@ -1309,7 +1415,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             
 
             const uploadedKeys = await Promise.all(uploadUrls.map((uploadinfo, index) => {
-                      return  uploadSingleFile(files[index], uploadinfo, index, fileProgress, totalBytes, progress, text)
+                      return  uploadSingleFile(files[index], uploadinfo, index, fileProgress, totalBytes, progress, text, wrapper)
 
                   }))     
              
@@ -1331,11 +1437,17 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                   })
   
         const responseFromPost = await completePost.json()          
-        console.log(responseFromPost)
-        textArea.value = 'Success '
-        document.getElementById('userid').value = ''
-        document.getElementById('userrealm').value = ''
-        window.location.reload()
+
+             errorMessage.style.color = '#1ed760'
+             errorMessage.textContent = 'Success'
+             console.log(responseFromPost)
+             textArea.value = 'Success'
+             document.getElementById('userid').value = ''
+             document.getElementById('userrealm').value = ''
+             setInterval(() => {
+                errorMessage.textContent = ''
+                window.location.reload()
+             }, 3000)
 
         
 
@@ -1590,8 +1702,7 @@ const inputPostElem = document.getElementById('post-input-elem')
   
 postPlaceholder.addEventListener('click', () => {
 
-    viewToPostCont.style.display = 'flex' 
-    // sharePostBtn.style.display = 'none' 
+    viewToPostCont.style.display = 'block'  
   })
   
 
@@ -1616,6 +1727,7 @@ function back() {
     viewToPostCont.style.display = 'none'
     textArea.value = ''
     inputPostElem.value = ''
+    inputFile.value = ''
     imageArticle.innerHTML = ''
     submitActionsCont.style.display = 'none'
     labelImagesInput.style.display = 'block'
@@ -1623,7 +1735,7 @@ function back() {
     submitUploadBtn.disabled = false
     imageArticle.style.display = 'none'
     submitUploadBtn.style.backgroundColor = '#1ed760'
-    submitUploadBtn.textContent = 'Upload'
+    submitUploadBtn.textContent = 'Upload Preview.'
     postPlaceholder.textContent = 'Add new Post...'
     cancelUploadBtn.style.display = 'flex'
     submitUploadBtn.disabled = false
@@ -1633,22 +1745,22 @@ function back() {
     const imagespaths = localStorage.getItem('newFileNames')
     const parsedImgArray = JSON.parse(imagespaths)
 
-    fetch('/post/cancel', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ filepaths: parsedImgArray })
-     }).then((response) => {
-        if (response.ok) {
-          document.getElementById('filepath').textContent = ''
-          console.log('Post cancelled successfully');
-        } else {
-          console.error('Failed to cancel post');
-        }
-      }).catch((error) => {
-        console.error('Error cancelling post:', error);
-      });
+    // fetch('/post/cancel', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({ filepaths: parsedImgArray })
+    //  }).then((response) => {
+    //     if (response.ok) {
+    //       document.getElementById('filepath').textContent = ''
+    //       console.log('Post cancelled successfully');
+    //     } else {
+    //       console.error('Failed to cancel post');
+    //     }
+    //   }).catch((error) => {
+    //     console.error('Error cancelling post:', error);
+    //   });
     
 
 
