@@ -124,7 +124,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <% posts.map((post) => { %>
           
           
-          <div class="glass-images" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
+          <div  class="<%= post.videoUrl !== 'none' ? 'glass' : 'glass-images'  %>" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
 
             
 
