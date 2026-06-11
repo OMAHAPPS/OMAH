@@ -124,7 +124,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <% posts.map((post) => { %>
           
           
-          <div  class="<%= post.videoUrl !== 'none' ? 'glass' : 'glass-images'  %>" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
+        <a href="/post/<%= post.postId %>"  class="<%= post.videoUrl !== 'none' ? 'glass' : 'glass-images'  %>" style="text-decoration: none; margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
 
             
 
@@ -136,9 +136,10 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                <div id="poster-following" style="display: none;"><%= post.poster.totalFollowing %></div>
                <div id="poster-posts-length" style="display: none;"><%= post.poster.totalPosts %></div>
                <div id="poster-userHandle" style="display: none;">@<%= post.userHandle == 'none' ? post.userName : post.userHandle %></div>
-
+               
 
               <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+              <div id="post-id" style="display: none;"><%= post.postId %></div>
 
               <div style="flex:1">
                 
@@ -307,7 +308,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
                    
               </div>
-         </div> 
+        </a> 
                 
                 <% }) %>
                         
@@ -511,7 +512,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 <ion-icon name="arrow-back-outline" style="color: white; font-size: 1.2rem;"></ion-icon>
               </button>
 
-               <a href="/post" class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="text-decoration: none; display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
+               <a id="link-to-post" href="" class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="text-decoration: none; display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
                   <h4 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: .9rem;">View Post</h4>
                </a> 
 
@@ -710,15 +711,24 @@ function charSVG(realmKey, size=150, speaking=false){
  const postImages = document.querySelectorAll('.post-images')
  const expandedArticle = document.querySelector('#expanded-article')
  const expandContainer = document.querySelector('#images-expand')
+ const linkToPost = document.getElementById('link-to-post')
 
  postImages.forEach((img) => {
 
     img.addEventListener('click', (e) => {
+      
+       e.preventDefault();
+       e.stopPropagation();
+       
        const articleParent =  e.target.closest('article')
+       const wholePost = e.target.closest('a')
+       const postLink = wholePost.children[0].children[6].textContent
        const placeholderCont = articleParent.children[0]
        const imagesArray = Array.from(placeholderCont.children, child => child.textContent)
 
-       
+       linkToPost.href = `/post/${postLink}` 
+     
+           
        imagesArray.forEach((img) => {
            const image = document.createElement('img')
            image.src = `<%= R2BASE %>/${img}`

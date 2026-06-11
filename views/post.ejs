@@ -59,7 +59,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         <h2 style="font-size: 20px; font-weight: 600; color: rgba(237,232,224,.85);">Post</h2>
         
     </header>
-    <main style="height: 80%; overflow-y: scroll; overflow-x: hidden;">
+    <main style="height: 80%; width: 100%; overflow-y: scroll; overflow-x: hidden;">
 
         <div class="glass-images" style="margin-top: 10px; padding: 16px; border-bottom: 0.05px solid gray;"> 
 
@@ -96,11 +96,28 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
  
               <p style="font-size: 16px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
 
-              <% if (post.images.length !== 0) { %>
-                <img src="<%= R2BASE %>/<%= post.images[0] %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                <% } else { %>
-                 <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-              <% } %>
+                     <% if (post.images.length !== 0) { %>
+
+                     <article class="post-article" style="width: 100%; max-height: 600px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; align-items: center; justify-content: flex-start; background: transparent; scroll-snap-type: inline mandatory;">
+
+                            
+                          
+                            <% post.images.map((image) => { %>
+        
+                              <img  src="<%= R2BASE %>/<%= image %>" alt="N" style="margin-inline: 3px; width: 98%; height: auto; object-fit: cover; object-position: center; border-radius: inherit; scroll-snap-align: start;" />
+        
+                            <% }) %>
+         
+                          </article>
+
+                   <% } else { %>
+
+                    <article class="post-article" style="width: 100%; height: 350px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: none; background: transparent;">
+         
+                          </article>
+
+                   <% } %> 
+
 
               <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
                    <h2 style="font-size: 15px;color: rgba(237,232,224,.5); display: flex; align-items: center; gap: 4px; font-weight: 400; justify-content: center;">
@@ -158,11 +175,38 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
 
                    <% if (post.images.length !== 0) { %>
-                     <img src="<%= R2BASE %>/<%= post.images[0] %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } else { %>
-                     <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                   <% } %>
 
+                     <article class="post-article" style="width: 100%; height: 350px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; background: transparent; scroll-snap-type: inline mandatory;">
+
+                            
+                          
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 98%; height: 100%; object-fit: cover; object-position: center; border-radius: inherit; scroll-snap-align: start;" />
+        
+                            <% }) %>
+         
+                          </article>
+
+                   <% } else { %>
+
+                    <article class="post-article" style="width: 100%; height: 350px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: none; background: transparent;">
+
+                            
+                          
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
+        
+                            <% }) %>
+         
+                          </article>
+
+                   <% } %> 
+
+                   
+                   
+                  
                     <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0;">
                      
                      <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">

@@ -161,6 +161,7 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
          const posterInfo = posterInfoArray[0]
 
         const newPostObject = {
+            postId: post._id,
             createdAt: post.createdAt,  
             videoUrl: post.videoUrl,
             images: post.images,
@@ -180,6 +181,8 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
         }
 
          postDataArray.push(newPostObject)
+
+        
         
     })
     // console.log(postDataArray)
@@ -445,12 +448,13 @@ app.get('/group', notLoggedInCheck, async (req, res) => {
       res.render('group')
 })
 
-app.get('/post', notLoggedInCheck, async (req, res) => {
+app.get('/post/:id', notLoggedInCheck, async (req, res) => {
     
+    const postId = req.params.id
     const userid = req.user._id
-    const allposts = await Post.find()
+    const post = await Post.findOne({ _id: postId })
     const user = await Omaruser.findOne({ _id: userid })
-    const post = allposts[0]
+    
   
     const R2BASE = process.env.R2_PUBLIC_BASE_URL
    
