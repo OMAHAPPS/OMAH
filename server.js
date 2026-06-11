@@ -295,6 +295,37 @@ app.post('/gen-upload-urls', async (req, res) => {
          res.status(500).json({ error: 'Failed to Generate Urls' })
       }
 })
+app.post('/gen-upload-url-video', async (req, res) => {
+
+    const file = req.body.file
+    const userId = req.user._id
+
+    try {
+
+        const uniqueKey = `feed-images/videos/${userId}/${Date.now()}-${file.name}`
+        const command = new PutObjectCommand({
+            Bucket: process.env.R2_BUCKET_NAME,
+            Key: uniqueKey,
+            ContentType: file.type
+        })
+        const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 })
+
+        const uploadData =  {
+                     filename: file.name,
+                     key: uniqueKey,
+                     signedUrl: signedUrl,
+                     publicUrl: `${process.env.R2_PUBLIC_BASE_URL}/${uniqueKey}`
+                    }
+
+           res.json(uploadData)
+        
+    } catch (error) {
+
+        res.status(500).json({ error: 'Failed to Generate Urls' })
+        
+    }
+
+})
       
 
 
@@ -328,7 +359,7 @@ app.post('/gen-upload-urls', async (req, res) => {
 
 app.post('/post', async (req, res) => {
 
-     const { userid, userrealm, poststring, imagesrc } = req.body
+     const { userid, userrealm, poststring, imagesrc, video } = req.body
      
      const userData = await Omaruser.findOne({ _id: userid })
      const username = userData.userName
@@ -337,6 +368,7 @@ app.post('/post', async (req, res) => {
                  userId: userid,
                  userName: username,
                  userRealm: userrealm,
+                 videoUrl: video,
                  images: imagesrc,
                  userHandle: 'none',
                  post: poststring

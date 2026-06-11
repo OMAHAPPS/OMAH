@@ -175,7 +175,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                  <%  if (post.videoUrl !== 'none') { %>
 
                   <video id="player" controls preload="none" style="display: block; width: 100%; height: auto; border-radius: 12px; margin-top: 13px;"
-                           src="/uploads/Expressions.mp4" type="video/mp4" data-src="/uploads/Expressions.mp4">
+                           src="<%=R2BASE %>/<%= post.videoUrl %>" type="video/mp4" data-src="/uploads/Expressions.mp4">
                         Your browser does not support the video tag. 
                     </video>
             
@@ -399,7 +399,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     
     <!-- TODO ///////  VIEW POST /////// -->
 
-    <div class="view" id="view-to-post" style="display: none; background:rgba(5,5,8,.92)">
+    <div class="view" id="view-to-post" style="display: none; background:rgba(5,5,8)">
 
       <div style="padding: 13px 16px;border-bottom:1px solid rgba(255,255,255,.05); display: flex; align-items:center; gap:10px; flex-shrink:0">
 
@@ -925,7 +925,18 @@ const letter = document.getElementById('letter-upp').textContent
                                 <input id="video" type="file" name="video" accept="video/*" style="display: none;"/>
                                 <label for="video" class="label-video"><ion-icon name="videocam" style="color: ${r.col}; cursor: pointer; font-size: 30px; display: block; margin-left: 18px;"></ion-icon></label>
 
+                                <div class="upload-video-actions" style="display: none; justify-content: center; align-items: center;">
 
+                                  <button type="submit" id="submit-video" style="padding: 10px 10px; margin-right: 8px; outline: none; border-radius: 10px; background-color: #1E2A56; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
+                                    Preview Video <ion-icon name="arrow-up-outline" style="color: white; font-size: 15px;"></ion-icon>
+                                  </button>
+                                  <button  id="cancel-video" style="padding: 10px 10px; outline: none; border-radius: 10px; background-color: red; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
+                                     <ion-icon name="trash-outline" style="color: white; font-size: 20px;"></ion-icon>
+                                  </button>
+
+                                
+                                </div>  
+                              
                                 <div class="upload-actions" style="display: none; justify-content: center; align-items: center;">
 
                                 <button type="submit" id="submit-upload" style="padding: 10px 10px; margin-right: 8px; outline: none; border-radius: 10px; background-color: #1ed760; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
@@ -934,6 +945,7 @@ const letter = document.getElementById('letter-upp').textContent
                                   <button  id="cancel-upload" style="padding: 10px 10px; outline: none; border-radius: 10px; background-color: red; color: white; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; border: none;">
                                   <ion-icon name="trash-outline" style="color: white; font-size: 20px;"></ion-icon>
                                 </button>
+                                
                                 </div>
                               </form> 
                               `
@@ -945,13 +957,17 @@ const letter = document.getElementById('letter-upp').textContent
 
 
 const submitActionsCont = document.querySelector('.upload-actions')
+const submitVideoActionsCont = document.querySelector('.upload-video-actions')
 const labelImagesInput = document.querySelector('.label-images')
 const labelVideoInput = document.querySelector('.label-video')
 const fileForm = document.getElementById('file-form')
 const postPlaceholder = document.getElementById('post-placeholder')
 const inputFile = document.getElementById('image')
+const inputVideo = document.getElementById('video')
 const cancelUploadBtn = document.getElementById('cancel-upload')
 const submitUploadBtn = document.getElementById('submit-upload')
+const cancelVideoBtn = document.getElementById('cancel-video')
+const submitUploadVideo = document.getElementById('submit-video')
 const errorMessage = document.getElementById('error-display')
 const postBox = document.querySelector('.post-box')
 const textArea = document.getElementById('post-body')
@@ -974,10 +990,18 @@ textArea.addEventListener('keyup', () => {
 labelImagesInput.addEventListener('click', () => {
      
      submitActionsCont.style.display = 'flex'
-     postPlaceholder.textContent = 'Attaching Image..'
+     postPlaceholder.textContent = 'Attaching Image/(s)..'
      labelImagesInput.style.display = 'none'
      labelVideoInput.style.display = 'none'
 
+})
+
+labelVideoInput.addEventListener('click', () => {
+
+     submitVideoActionsCont.style.display = 'flex'
+     postPlaceholder.textContent = 'Attaching Video...'
+     labelImagesInput.style.display = 'none'
+     labelVideoInput.style.display = 'none'
 })
 
 cancelUploadBtn.addEventListener('click', (e) => {
@@ -991,6 +1015,101 @@ cancelUploadBtn.addEventListener('click', (e) => {
      submitUploadBtn.style.backgroundColor = '#1ed760'
      submitUploadBtn.textContent = 'Upload Preview'
      inputFile.value = ''
+})
+
+cancelVideoBtn.addEventListener('click', (e) => {
+
+   e.preventDefault()
+   submitVideoActionsCont.style.display = 'none'
+   postPlaceholder.textContent = 'Add new Post...'
+   labelImagesInput.style.display = 'block'
+   labelVideoInput.style.display = 'block'
+   submitUploadVideo.disabled = false
+   submitUploadVideo.style.backgroundColor = '#1E2A56'
+   submitUploadVideo.textContent = 'Preview Video'
+   inputVideo.value = ''
+})
+
+submitUploadVideo.addEventListener('click', (e) => {
+   
+    e.preventDefault()
+
+    submitUploadVideo.disabled = true
+    cancelVideoBtn.style.display = 'none'
+    submitUploadVideo.style.backgroundColor = '#121212'
+    submitUploadVideo.textContent = 'Uploading Preview'
+
+    if (inputVideo.files.length === 0) {
+        errorMessage.textContent = 'No Video Selected...'
+        setInterval(() => {
+         errorMessage.textContent = ''
+        }, 3000)
+        submitVideoActionsCont.style.display = 'none'
+        labelImagesInput.style.display = 'block'
+        labelVideoInput.style.display = 'block'
+        imageArticle.style.display = 'none'
+        submitUploadVideo.disabled = false
+        cancelVideoBtn.style.display = 'flex'
+        postPlaceholder.textContent = 'Add new post...'
+        submitUploadVideo.style.backgroundColor = '#1E2A56'
+        submitUploadVideo.textContent = 'Preview video'
+          return;
+
+    } else {
+     
+       const videoFiles = Array.from(inputVideo.files)
+       console.log(videoFiles[0].size)
+
+       const MAX_FILES = 1
+       const MAX_VIDEO_SIZE = 30 * 1024 * 1024
+        
+       if (videoFiles.length > MAX_FILES || videoFiles[0].size > MAX_VIDEO_SIZE) {
+
+          errorMessage.textContent = 'MAX VIDEO SIZE IS 30MB...'
+          setInterval(() => {
+            errorMessage.textContent = ''
+          }, 3000)
+          inputVideo.value = ''
+          submitVideoActionsCont.style.display = 'none'
+          labelImagesInput.style.display = 'block'
+          labelVideoInput.style.display = 'block'
+          imageArticle.style.display = 'none'
+          submitUploadVideo.disabled = false
+          cancelVideoBtn.style.display = 'flex'
+          postPlaceholder.textContent = 'Add new post...'
+          submitUploadVideo.style.backgroundColor = '#1E2A56'
+          submitUploadVideo.textContent = 'Preview Video'
+          return;
+       }
+
+       const videoUrl = URL.createObjectURL(videoFiles[0])
+       const videoPrev = document.createElement('video')
+       videoPrev.src = videoUrl
+       videoPrev.style.width = 'auto'
+       videoPrev.style.height = '100%'
+       videoPrev.style.borderRadius = '15px'
+       videoPrev.play()
+       videoPrev.controls = true
+
+       
+       videoPrev.onloadeddata = () => {
+          URL.revokeObjectURL(videoUrl)
+       }
+
+       imageArticle.appendChild(videoPrev)
+       imageArticle.style.display = 'flex'
+       viewToPostCont.style.display = 'block'
+            
+       submitUploadVideo.textContent = 'Success'
+       cancelVideoBtn.style.display = 'none'
+       postPlaceholder.textContent = '<< Video Attached >>'
+       submitUploadVideo.textContent = 'Success'
+       cancelVideoBtn.style.display = 'none'
+
+       postSubmitPostBtn.style.display = 'block'
+       postSubmitPostBtn.disabled = false
+
+    }
 })
 
  submitUploadBtn.addEventListener('click', (e) => {
@@ -1220,13 +1339,155 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
 
       postSubmitPostBtn.disabled = true
       postSubmitPostBtn.textContent = 'Posting...'
-      const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n') 
+      const formatTextAreaValue = textArea.value.replace(/\n{4,}/g, '\n\n')
+      textArea.disabled = true 
       
-      const files = inputFile.files   // returns FILELIST NOT AN ACTUAL ARRAY OF FILES
+      const files = inputFile.files  // returns FILELIST NOT AN ACTUAL ARRAY OF FILES
+      const videoFiles = Array.from(inputVideo.files)
+      const videofile = videoFiles[0]
       
       const filesConverted = Array.from(files)
+
+      if (videofile) {
+          console.log(videofile)
+         const videoData = { name: videofile.name, type: videofile.type }
+
+         let videoProgress = 0
+         const totalVideoBytes = videofile.size
+         
+         try {
+
+           const videoResponse = await fetch('/gen-upload-url-video', {
+                 method: 'POST',
+                 headers: {
+                   "Content-Type": "application/json"
+                 },
+                 body: JSON.stringify({ file: videoData })
+           })
+
+           const uploadUrl = await videoResponse.json()   // server sends objects [{keys,signedUrl,filename,publicurl}]
+           console.log(uploadUrl)
+
+           if (uploadUrl.error) {
+              
+                errorMessage.textContent = uploadUrl.error
+                setInterval(() => {
+                   errorMessage.textContent = ''
+                }, 3000)
+                postPlaceholder.textContent = 'NO VIDEO Attached..'
+                imageArticle.style.display = 'none'
+                submitVideoActionsCont.style.display = 'none'
+                submitUploadVideo.disabled = false
       
-      if (!filesConverted.length && !formatTextAreaValue) {
+                labelImagesInput.style.display = 'block'
+                labelVideoInput.style.display = 'block'
+                cancelVideoBtn.style.display = 'flex'
+                postPlaceholder.textContent = 'Add new Post(No Video selected)...'
+                submitUploadVideo.style.backgroundColor = '#1E2A56'
+                submitUploadVideo.textContent = 'Preview Video.'
+
+           }  
+                // AFTER SUCCESSFULL UPLOAD URL
+
+               const wrapper = document.querySelector('.progress-wrapper')   // display flex - none
+               const progress = document.querySelector('#overallProgress')
+               const text = document.querySelector('.progress-text')
+               const status = document.querySelector('#upload-status')
+
+            function uploadSingleVideo (file, uploadUrl) {
+
+              return new Promise((resolve, reject) => {
+
+                 const xhr = new XMLHttpRequest()
+
+                 xhr.open("PUT", uploadUrl.signedUrl, true)
+
+                 xhr.setRequestHeader("Content-Type", file.type)
+
+                 xhr.upload.onprogress = (event) => {
+
+                    if (event.lengthComputable) {
+
+                      wrapper.style.display = 'flex'
+                      const percent = Math.round((event.loaded / event.total) * 100)
+                      progress.value = percent
+                      text.textContent = `${percent}%`
+
+                        if (percent == 100) {
+                          status.textContent = 'Complete'
+                          status.style.color = '#1ed760'
+                          text.style.color = '#1ed760'
+                         
+                        }
+
+                    }
+                 }
+
+                 xhr.onload = () => {
+
+                   if (xhr.status === 200) {
+                      resolve(uploadUrl.key)
+                   }else {
+                    reject(uploadUrl.key)
+                   }
+                 }
+
+                 xhr.onerror = () => {
+                   reject(uploadUrl.key)
+                 }
+
+                 xhr.send(file)
+
+              })
+
+            }
+             
+              
+           const videokey = await uploadSingleVideo(videofile, uploadUrl)
+           console.log(videokey)
+            
+
+           const completePostWVideo = await fetch('/post', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                             poststring: formatTextAreaValue,
+                             video: videokey,
+                             userid: document.getElementById('userid').value,
+                             userrealm: document.getElementById('userrealm').value
+                    })
+                  })
+  
+        const responseFromPost = await completePostWVideo.json()          
+
+             errorMessage.style.color = '#1ed760'
+             errorMessage.textContent = 'Success'
+             console.log(responseFromPost)
+             textArea.value = 'Success'
+             document.getElementById('userid').value = ''
+             document.getElementById('userrealm').value = ''
+             setInterval(() => {
+                errorMessage.textContent = ''
+                window.location.reload()
+             }, 3000)
+
+
+         } catch (error) {
+            console.log(error)
+            console.log(error)
+            errorMessage.textContent = 'POST FAILED..try again later.'
+            setInterval(() => {
+                errorMessage.textContent = ''
+                window.location.reload()
+              }, 2000)
+         }
+
+
+
+
+      } else if (!filesConverted.length && !formatTextAreaValue) {
           postSubmitPostBtn.disabled = true
           postSubmitPostBtn.textContent = 'Share'
           postSubmitPostBtn.style.display = 'none'
@@ -1253,7 +1514,6 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                     },
                     body: JSON.stringify({
                              poststring: formatTextAreaValue,
-                             imagesrc: [],
                              userid: document.getElementById('userid').value,
                              userrealm: document.getElementById('userrealm').value
                     })
@@ -1274,6 +1534,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
 
         }          
 
+      
       } else {
 
 
@@ -1729,22 +1990,28 @@ function back() {
     textArea.value = ''
     inputPostElem.value = ''
     inputFile.value = ''
+    inputVideo.value = ''
     imageArticle.innerHTML = ''
     submitActionsCont.style.display = 'none'
+    submitVideoActionsCont.style.display = 'none'
     labelImagesInput.style.display = 'block'
     labelVideoInput.style.display = 'block'
     submitUploadBtn.disabled = false
+    submitUploadVideo.disabled = false
     imageArticle.style.display = 'none'
     submitUploadBtn.style.backgroundColor = '#1ed760'
     submitUploadBtn.textContent = 'Upload Preview.'
+    submitUploadVideo.style.backgroundColor = '#1E2A56'
+    submitUploadVideo.textContent = 'Preview Video.'
     postPlaceholder.textContent = 'Add new Post...'
     cancelUploadBtn.style.display = 'flex'
-    submitUploadBtn.disabled = false
+    cancelVideoBtn.style.display = 'flex'
+  
     
     // const imageSource = document.getElementById('filepath').textContent;
     
-    const imagespaths = localStorage.getItem('newFileNames')
-    const parsedImgArray = JSON.parse(imagespaths)
+    // const imagespaths = localStorage.getItem('newFileNames')
+    // const parsedImgArray = JSON.parse(imagespaths)
 
     // fetch('/post/cancel', {
     //   method: 'POST',
