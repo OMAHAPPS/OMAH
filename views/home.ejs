@@ -1583,6 +1583,8 @@ document.addEventListener('DOMContentLoaded', () => {
    
     const savedDOMString = localStorage.getItem('storedDOMState')
     const activeBtn = localStorage.getItem('activeBtn')
+    const theme = localStorage.getItem('themeColor')
+    const themeColor = JSON.parse(theme)
 
     if (savedDOMString) {
       
@@ -1590,8 +1592,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
        if(activeBtn === 'messagesBtn') {
            
-           messagesBtn.style.color = savedState.targetColor
-           messagesBtn.style.borderBottom = savedState.targetBorder
+           messagesBtn.style.color = themeColor
+           messagesBtn.style.borderBottom = `2px solid ${themeColor}`
            feedsBtn.style.color = savedState.feedColor
            feedsBtn.style.borderBottom = savedState.feedBorder
            roomsBtn.style.color = savedState.roomColor
@@ -1603,8 +1605,8 @@ document.addEventListener('DOMContentLoaded', () => {
            
           } else if (activeBtn === 'feedsBtn') {
 
-           feedsBtn.style.color = savedState.targetColor
-           feedsBtn.style.borderBottom = savedState.targetBorder
+           feedsBtn.style.color = themeColor
+           feedsBtn.style.borderBottom = `2px solid ${themeColor}`
            messagesBtn.style.color = savedState.messageColor
            messagesBtn.style.borderBottom = savedState.messageBorder
            roomsBtn.style.color = savedState.roomColor
@@ -1616,8 +1618,8 @@ document.addEventListener('DOMContentLoaded', () => {
            
           } else if (activeBtn === 'roomsBtn') {
             
-            roomsBtn.style.color = savedState.targetColor
-            roomsBtn.style.borderBottom = savedState.targetBorder
+            roomsBtn.style.color = themeColor
+            roomsBtn.style.borderBottom = `2px solid ${themeColor}`
            messagesBtn.style.color = savedState.messageColor
            messagesBtn.style.borderBottom = savedState.messageBorder
            feedsBtn.style.color = savedState.feedColor
