@@ -70,11 +70,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     <h2 class="fd" style="font-size: 16px; font-weight: 700;color: #ede8e0;">You Have Chosen</h2>
     <h2 id="arena-display" class="fd" style="font-size: 22px; font-weight: 700;color: #ede8e0; margin-block: 20px;"></h2>
 
-    <form action="/main?_method=PATCH" method="post">
+    <form id="form" action="/main?_method=PATCH" method="post">
            <input name="realm" id="realm" type="text" value="Observatory" style="display: none;">
            <input name="rcol" id="rcol"  type="text" style="display: none;">
            <input name="ainame" id="ainame" type="text" style="display: none;"> 
-      <button type="submit" style="display: flex; justify-content: center; align-items: center; gap: 10px; padding: 15px 25px; border-radius:15px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); font-size: 16px; font-weight:600; color: #1ed760; letter-spacing: .5px; animation:emerge .9s .5s ease-out both">
+      <button id="picktheme" type="submit" style="display: flex; justify-content: center; align-items: center; gap: 10px; padding: 15px 25px; border-radius:15px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); font-size: 16px; font-weight:600; color: #1ed760; letter-spacing: .5px; animation:emerge .9s .5s ease-out both">
         Continue
       </button>
     </form>
@@ -88,6 +88,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
 <script type="module">
+
 
     
     
@@ -436,6 +437,9 @@ const realmColor = document.getElementById('rcol')
 const aiNameInput = document.getElementById('ainame')
 
 
+
+
+
 arenaButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         confirmBox.style.display = 'flex'
@@ -447,9 +451,11 @@ arenaButtons.forEach(btn => {
         arenaDisplayTag.style.color = btn.children[0].children[0].children[0].style.color
         realmInput.value = btn.children[1].textContent
         realmColor.value = btn.children[2].textContent
+        const item = localStorage.setItem('themeColor', JSON.stringify(btn.children[2].textContent))
+        const parsed = JSON.parse(localStorage.getItem('themeColor'))
         aiNameInput.value = btn.children[3].textContent
         console.log(`${aiNameInput.value} ---  ${typeof aiNameInput}`)        
-        
+        console.log(parsed)
     })
 })
 

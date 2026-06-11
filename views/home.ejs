@@ -199,7 +199,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                             
                             <% post.images.map((image) => { %>
         
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain;" />
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px;" />
         
                             <% }) %>
          
@@ -208,7 +208,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                         <% } else if (post.images.length === 2) { %>
 
-                          <article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; margin-top: 13px; display: flex; background: transparent;">
+                          <article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-top: 13px; display: flex; background: transparent;">
 
                             <div class="placeholder-cont" style="display: none;">
                                   <% post.images.map((image, key) => { %>
@@ -1526,11 +1526,13 @@ window.addEventListener('load', () => {
 
 })
 
+const theme = localStorage.getItem('themeColor')
+const themeColor = JSON.parse(theme)
 
 
 const messageActive = {
-           targetColor: 'r.col',
-           targetBorder: `2px solid ${r.col}`,
+           targetColor: `${themeColor}`,
+           targetBorder: `2px solid ${themeColor}`,
            feedColor: 'rgba(237,232,224,.3)',
            feedBorder: '2px solid transparent',
            roomColor: 'rgba(237,232,224,.3)',
@@ -1541,8 +1543,8 @@ const messageActive = {
            sharePostBtn: 'none'
 }
 const feedActive = {
-           targetColor: 'r.col',
-           targetBorder: `2px solid ${r.col}`,
+           targetColor: `${themeColor}`,
+           targetBorder: `2px solid ${themeColor}`,
            messageColor: 'rgba(237,232,224,.3)',
            messageBorder: '2px solid transparent',
            roomColor: 'rgba(237,232,224,.3)',
@@ -1554,8 +1556,8 @@ const feedActive = {
 }
 
 const roomActive = {
-           targetColor: 'r.col',
-           targetBorder: `2px solid ${r.col}`,
+           targetColor: `${themeColor}`,
+           targetBorder: `2px solid ${themeColor}`,
            messageColor: 'rgba(237,232,224,.3)',
            messageBorder: '2px solid transparent',
            feedColor: 'rgba(237,232,224,.3)',
