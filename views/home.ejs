@@ -134,10 +134,17 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                <div id="poster-followers" style="display: none;"><%= post.poster.totalFollowers %></div>
                <div id="poster-following" style="display: none;"><%= post.poster.totalFollowing %></div>
                <div id="poster-posts-length" style="display: none;"><%= post.poster.totalPosts %></div>
-               <div id="poster-userHandle" style="display: none;">@<%= post.userHandle == 'none' ? post.userName : post.userHandle %></div>
+               <div id="poster-userHandle" style="display: none;">@<%= post.poster.userHandle == 'none' ? post.userName : post.poster.userHandle %></div>
                
+               <% if (post.poster.userDP !== 'none') { %>
+                <img src="<%= R2BASE %>/<%= post.poster.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+               <% } else { %>
+                <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+               <% } %> 
 
-              <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+                
+
+
               <div id="post-id" style="display: none;"><%= post.postId %></div>
 
               <div style="flex:1">
@@ -466,7 +473,6 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                 <div id="profile-info-cont" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 16px;">
 
-                   
 
                       <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="100" height="100" style="border-radius: 50%; object-fit: cover;" />
 
@@ -880,7 +886,8 @@ function charSVG(realmKey, size=150, speaking=false){
           e.preventDefault()
 
           sharePostBtn.style.display = 'none'
-          
+
+     
           // Populate modal with profile info (placeholder for now)
           const profileInfo = {
               userName: btn.children[0].textContent,
@@ -892,10 +899,11 @@ function charSVG(realmKey, size=150, speaking=false){
                   following: btn.children[2].textContent
               } 
           }
+
       
           const profileContainer = document.querySelector('#profile-info-cont')
           
-          profileContainer.querySelector('img').src = profileInfo.userProfilePic
+          profileContainer.querySelector('img').src = profileInfo.userProfilePic  
           profileContainer.querySelector('h2').textContent = profileInfo.userName
           profileContainer.querySelector('p').textContent = profileInfo.userHandle
           profileContainer.querySelector('#following').textContent = `${profileInfo.userStats.following}`

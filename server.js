@@ -175,12 +175,14 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
                 totalFollowers: posterInfo.totalFollowers,
                 totalFollowing: posterInfo.totalFollowing,
                 totalPosts: posterInfo.totalPosts,
-                userDP: posterInfo.userDP
+                userDP: posterInfo.userDP,
+                userHandle: posterInfo.userHandle
             }
 
         }
 
          postDataArray.push(newPostObject)
+        
 
         
         
@@ -528,10 +530,11 @@ app.patch('/handle',  async (req, res) => {
 
     const { userhandle } = req.body 
     const userId = req.user._id
+    console.log(userhandle)
     try {
         
-        await Omaruser.findByIdAndUpdate({ _id: userId }, { $set: { userhandle: userhandle } })
-
+        const updated = await Omaruser.findByIdAndUpdate({ _id: userId }, { $set: { userHandle: userhandle } })
+         
         req.flash('error', 'Updated Successful') 
         res.redirect('/settings')
 

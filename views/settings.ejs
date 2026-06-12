@@ -675,7 +675,6 @@ function validateHandle() {
       errorSpan.textContent = 'Ok'
       errorSpan.style.color = 'limegreen'
       submitBtn.style.display = 'block'
-      handleInput.value = handleInput.value.trimStart()
          }
   } else {
     submitBtn.style.display = 'none'
@@ -693,7 +692,6 @@ submitBtn.addEventListener('click', (e) => {
   submitBtn.style.backgroundColor = 'grey'
   submitBtn.style.color = 'white'
   submitBtn.textContent = 'Sending'
-  handleInput.value = handleInput.value.trimStart() 
   formBox.submit()
 })
 
