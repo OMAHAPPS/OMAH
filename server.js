@@ -329,7 +329,58 @@ app.post('/gen-upload-url-video', async (req, res) => {
     }
 
 })
-      
+
+app.post('/gen-dp-upload-url', async (req, res) => {
+
+    const { file } = req.body
+    const userId = req.user._id
+
+    try {
+
+        const uniqueKey = `feed-images/profile/${userId}/${Date.now()}-${file.name}`
+        const command = new PutObjectCommand({
+            Bucket: process.env.R2_BUCKET_NAME,
+            Key: uniqueKey,
+            ContentType: file.type
+        })
+        const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 })
+        
+        const uploadData = {
+             filename: file.name,
+             key: uniqueKey,
+             signedUrl: signedUrl,
+             publicUrl: `${process.env.R2_PUBLIC_BASE_URL}/${uniqueKey}`
+        }
+        
+        res.json(uploadData)
+
+    } catch (error) {
+
+        res.status(500).json({ error: 'Failed to generate Upload Url' })
+        
+    }
+
+})
+
+app.patch('/update-dp', async (req, res) => {
+
+     const { dpKey } = req.body
+     const userId = req.user._id
+
+     try {
+
+        await Omaruser.findByIdAndUpdate({ _id: userId }, { $set: { userDP: dpKey } })
+
+        res.json({ success: true })
+        
+     } catch (error) {
+
+
+        res.json({ success: false, error: error.message })
+        
+     }
+
+})
 
 
 //  MULTER UNLINK FILES LOGIC ///
@@ -435,7 +486,9 @@ app.get('/settings', notLoggedInCheck, async (req, res) => {
        const totalPosts = posts.length
 
        const User = req.user
-       res.render('settings', { user: User, totalPosts: totalPosts })
+       const R2BASEURL = process.env.R2_PUBLIC_BASE_URL
+
+       res.render('settings', { user: User, R2BASE: R2BASEURL, totalPosts: totalPosts, messages: req.flash('error') })
 })
 
 app.get('/inbox', notLoggedInCheck, async (req, res) => {
@@ -468,4 +521,26 @@ app.get('/user', notLoggedInCheck,  async (req, res) => {
     const posts = await Post.find() 
 
     res.render('userposts', { posts, user } )
+})
+
+
+app.patch('/handle',  async (req, res) => {
+
+    const { userhandle } = req.body 
+    const userId = req.user._id
+    try {
+        
+        await Omaruser.findByIdAndUpdate({ _id: userId }, { $set: { userhandle: userhandle } })
+
+        req.flash('error', 'Updated Successful') 
+        res.redirect('/settings')
+
+    } catch (error) {
+
+        req.flash('error', 'User Update Failed')
+        res.redirect('/settings')
+        
+    }
+
+
 })

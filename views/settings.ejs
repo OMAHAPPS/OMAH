@@ -18,6 +18,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input,textarea{font-family:inherit;border:none;outline:none;background:none;color:inherit}
 ::-webkit-scrollbar{width:0;height:0}
 
+::placeholder{color: #c048488f;}
+
 /* ── TYPE ── */
 .fd{font-family:'Playfair Display',serif}
 .fs{font-family:'DM Serif Display',serif}
@@ -51,6 +53,16 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 <body>
 
+  <% if (locals.messages) { %>
+      
+      <p class="fs" style=" position: absolute; top: 5%; left: 50%; z-index: 55; transform: translateX(-50%); color: red; background-color: #FFF;"><%= messages %></p>
+
+  <% } %>
+
+     <p class="fs" id="error-display" style="position: absolute; top: 5%; left: 50%; transform: translateX(-50%); max-width: 100%; background-color: white; color:red; padding-inline: 5px; border-radius: 2px; font-weight: bold; z-index: 100;"></p>
+    
+
+
     
     <div class="view" id="profile-cont" style="display: block; z-index: 4; background:rgba(5,5,8,.92)">
     
@@ -58,7 +70,18 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <a href="/home" class="tap" style="text-decoration: none; padding: 7px 14px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); font-size: 12px; color: rgba(237,232,224,.45)">
             ← Back
           </a>
+
           <div class="fd" style="flex:1;font-size:16px;font-weight:700;color:rgba(237,232,224,.8)">Profile</div>
+
+          <div class="progress-wrapper" style="height: 100%; display: none; flex-flow: column nowrap; align-items: center; justify-content: center; flex-grow: 1;">
+                <h3 id="upload-status" style="font-size: 15px; color: white; width: 90%; text-align: start;">Uploading DP...</h3>     
+                <div class="prog-wrapper" style="margin-top: 5px; width: 90%; display: flex; align-items: center; justify-content: center;">
+                    <progress id="overallProgress" style="width: 100%; border-radius: 50%; background-color: #1ed760;" value="0" max="100"></progress>
+                    <p class="progress-text" style="color: white; margin-left: 4px; font-size: .75rem;">0%</p>
+                </div>
+          </div>
+
+
         </div>
     
         <div class="scroll" id="profile-scroll" style="flex: 1; padding: 20px 16px">
@@ -68,17 +91,45 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
              <div class="image-cont" style="width: 100%; display: flex; align-items: center; justify-content: center;">
 
-               <article style="position: relative; display: flex; align-items: center; justify-content: center; height: 110px; width: 110px;">
+               <form class="form-dp" action="/userdp?_method=PATCH" enctype="multipart/form-data" method="post" style="position: relative; display: flex; align-items: center; justify-content: center; height: 110px; width: 110px;">
                  
-                <div class="no-dp-cont" style="display: none; align-items: center; justify-content: center; height: 100px; width: 100px; border-radius: 50%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);">
-                  <ion-icon name="person" style="color: gray; font-size: 40px;"></ion-icon>
-                </div> 
-                
-                <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="100" height="100" style="display: block; border-radius: 50%; object-fit: cover;" />
-                 
-                 <button style="display: block; position: absolute; bottom: 0; right: 0;"><ion-icon name="add-circle" style="color: #1ed760; font-size: 30px;"></ion-icon></button>
+                <% if (user.userDP == 'none') { %>
 
-               </article>
+                  <div class="no-dp-cont" style="display: flex; align-items: center; justify-content: center; height: 100px; width: 100px; border-radius: 50%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);">
+                    <ion-icon name="person" style="color: gray; font-size: 40px;"></ion-icon>
+                  </div> 
+                  <img src="<%= R2BASE %>/<%= user.userDP %>" alt="" width="100" height="100" style="display: none; border-radius: 50%; object-fit: cover; object-position: center;" />
+                  
+                  <div class="submit-actions" style="display: none; flex-flow: column nowrap; justify-content: center; align-items: center; height: 110px; width: 110px; border-radius: 50%; position: absolute; top: 0; z-index: 20; background-color: black;">
+                    <button id="submit-dp" type="submit" style="outline: none; border: none; background-color: #1ed760; height: 50px; width: 50px; border-radius: 50%; margin-bottom: 15px;"><ion-icon name="checkmark-outline" style="color: #050508; font-size: 25px; font-weight: bold;"></ion-icon></button>
+                    <div class="cancel-dp" style="width: 30px; height: 30px; border-radius: 50%; background-color: red; display: grid; place-content: center;"><ion-icon name="close" style="font-size: 25px; color: white; font-weight: bold;"></ion-icon></div>
+                    
+                  </div>
+                  <input id="dp" name="dp" type="file" accept="image/*" style="display: none;">
+                   <label id="label-dp" for="dp" style="display: block; position: absolute; bottom: 0; right: 0;"><ion-icon name="add-circle" style="color: #1ed760; font-size: 30px;"></ion-icon></button>
+                    
+                    <% } else { %>
+
+                      <div class="no-dp-cont" style="display: none; align-items: center; justify-content: center; height: 100px; width: 100px; border-radius: 50%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);">
+                        <ion-icon name="person" style="color: gray; font-size: 40px;"></ion-icon>
+                      </div> 
+                      <img src="<%= R2BASE %>/<%= user.userDP %>" alt="" width="100" height="100" style="display: block; border-radius: 50%; object-fit: cover; object-position: center;" />
+                      
+                      <div class="submit-actions" style="display: none; flex-flow: column nowrap; justify-content: center; align-items: center; height: 110px; width: 110px; border-radius: 50%; position: absolute; top: 0; z-index: 20; background-color: black;">
+                        <button id="submit-dp" type="submit" style="outline: none; border: none; background-color: #1ed760; height: 50px; width: 50px; border-radius: 50%; margin-bottom: 15px;"><ion-icon name="checkmark-outline" style="color: #050508; font-size: 25px; font-weight: bold;"></ion-icon></button>
+                        <div class="cancel-dp" style="width: 30px; height: 30px; border-radius: 50%; background-color: red; display: grid; place-content: center;"><ion-icon name="close" style="font-size: 25px; color: white; font-weight: bold;"></ion-icon></div>
+                        
+                      </div>
+                      <input id="dp" name="dp" type="file" accept="image/*" style="display: none;">
+                       <label id="label-dp" for="dp" style="display: none; position: absolute; bottom: 0; right: 0;"><ion-icon name="add-circle" style="color: #1ed760; font-size: 30px;"></ion-icon></button>
+                        
+
+
+                <% } %>
+
+                
+    
+               </form>
 
 
               </div>
@@ -89,7 +140,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             </div>
             
           <!-- Stats grid -->
-          <div style="display: none; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; animation: emerge .5s .06s ease-out both">
+          <div id="quest-box" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; animation: emerge .5s .06s ease-out both">
           
              <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
                 <div style="font-size: 22px; margin-bottom: 6px;">
@@ -128,7 +179,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           </div>
           
          
-          <div style="display: none; flex-direction: column; gap: 8px; animation: emerge .5s .2s ease-out both">
+          <div id="change-btns" style="display: flex; flex-direction: column; gap: 8px; animation: emerge .5s .2s ease-out both">
             <a href="/main" class="tap" style="text-decoration: none; padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
               ✏️ Change Theme
             </a>
@@ -140,45 +191,48 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             </a>
           </div>
     
+          <form action="/handle?_method=PATCH" method="post" id="formbox-userhandle" style="display: none; background-color: rgba(255,255,255,.04); width: 100%; height: 300px; border-radius: 20px; z-index: 50; border: 1px solid gray; animation:viewIn .42s cubic-bezier(.22,.61,.36,1) both;">
+             <div class="head-wrapper" style="width: 100%; height: 15%; position: relative; background-color: transparent; border-radius: 20px 20px 0 0;">
+                 <div class="icon-confirm" style="position: absolute; left: 0; height: 100%; width: 85%; padding: 10px; display: flex; justify-content: flex-start; align-items: center;">
+                     <div style="width: 35px; height: 35px; margin-top: 5px; display: flex; align-items: center; justify-content: center; margin-inline: 8px;">
+                        <img src="/Xikika_ICON-removebg-preview.png" alt="" width="30" height="30">
+                     </div>
+                     <h2 class="fs" style="margin-top: 10px;">Change UserHandle</h2>
+                 </div>
+                 <div id="close-handle" style="cursor: pointer; display: flex; justify-content: center; align-items: center; background-color: #C04848; position: absolute; right: 0; height: 100%; width: 15%; border-radius: 0 20px 0 20px;">
+                     <ion-icon name="close" style="font-size: 2rem; color: var(--text-white); font-weight: bold;"></ion-icon>
+                 </div>
+             </div>
+             <div class="details-wrapper" style="height: 60%; padding-block: 10px; display: flex; justify-content: center; align-items: center;">
+      
+                     <div class="input-box" style=" width: 85%; height: 50%; position: relative;">
+                        <input class="handle-input" id="handle" name="userhandle" placeholder="<%= user.userName %>123" type="text" onkeyup="validateHandle()" style="background-color: black; outline: none; line-height: 60px; border: 2px solid gray; height: 100%; padding-inline: 1px; width: 100%; padding-inline: 20px; border-radius: 10px; font-size: 1.25rem; font-weight: bold; color: #C04848;"/>
+                     <p class="handle-user" for="handle"  style=" position: absolute; top: 0; left: 2%; transform: translateY(-50%); margin-bottom: 5px; background: black; padding-inline: 5px; font-size: 1.2rem; font-weight: bold; color: gray;">
+                         New Handle
+                     </p>
+                    <span id="error-paypal" style="color: red; margin-top: 8px; font-weight: bold; font-family: 'Signika', sans-serif; text-align: start;"></span>
+                     
+                     </div>
+                     
+               
+                 
+             </div>
+             <div class="confirm-btn-paypal" style="background-color: transparent; border: 1px solid var(--muted-gray); border-radius: 0 0 20px 20px; height: 25%; width: 100%; display: flex; align-items: center; justify-content: center;">
+                 <div style="height: 70%; width: 40%; background-color: transparent; margin-bottom: 15px; ">
+                     
+                     <button type="submit" id="handle-submit-btn" style="display: none; cursor: pointer; height: 100%; font-family: 'DM Serif Display',serif; width: 100%; border-radius: 10px; background-color: limegreen; color: black; border: none; outline: none; font-weight: bold; font-family: 'Signika', sans-serif; box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.29), 0 6px 12px 0 rgba(0, 0, 0, 0.3); font-size: 1.1rem;">CONFIRM</button>
+                 </div>
+             
+             </div>
+           </form>
+
         </section>
+
+
       </div>
     
     </div> 
 
-     <form action="/handle?_method=PATCH" id="formbox-userhandle" style="display: block; background-color: rgba(255,255,255,.04); border-radius: 20px; position: absolute; top: 42.5%; left: 50%; transform: translate(-50%, -50%); z-index: 50; height: 250px; width: clamp(350px, 75vw, 500px ); border: 1px solid gray;">
-        <div class="head-wrapper" style="width: 100%; height: 15%; position: relative; background-color: transparent; border-radius: 20px 20px 0 0;">
-            <div class="icon-confirm" style="position: absolute; left: 0; height: 100%; width: 85%; padding: 10px; display: flex; justify-content: flex-start; align-items: center;">
-                <div style="width: 35px; height: 35px; margin-top: 5px; display: flex; align-items: center; justify-content: center; margin-inline: 8px;">
-                   <img src="/Xikika_ICON-removebg-preview.png" alt="" width="30" height="30">
-                </div>
-                <h2 class="fs" style="margin-top: 10px;">Change UserHandle</h2>
-            </div>
-            <div id="close-paypal" style="cursor: pointer; display: flex; justify-content: center; align-items: center; background-color: #C04848; position: absolute; right: 0; height: 100%; width: 15%; border-radius: 0 20px 0 20px;">
-                <ion-icon name="close" style="font-size: 2rem; color: var(--text-white); font-weight: bold;"></ion-icon>
-            </div>
-        </div>
-        <div class="details-wrapper" style="height: 60%; padding-block: 10px; display: flex; justify-content: center; align-items: center;">
-
-                <div class="input-box" style=" width: 85%; height: 50%; position: relative;">
-                   <input class="handle-input" id="mpesa" type="email" onkeyup="validateHandle()" style="background-color: black; outline: none; line-height: 60px; border: 2px solid gray; height: 100%; padding-inline: 1px; width: 100%; padding-inline: 20px; border-radius: 10px; font-size: 1.25rem; font-weight: bold; color: #C04848;"/>
-                <p class="mpesa-label" for="mpesa"  style=" position: absolute; top: 0; left: 2%; transform: translateY(-50%); margin-bottom: 5px; background: black; padding-inline: 5px; font-size: 1.2rem; font-weight: bold; color: gray;">
-                    New Handle
-                </p>
-               <span id="error-paypal" style="color: red; margin-left: 8px; font-weight: bold; font-family: 'Signika', sans-serif;"></span>
-                
-                </div>
-                
-          
-            
-        </div>
-        <div class="confirm-btn-paypal" style="background-color: transparent; border: 1px solid var(--muted-gray); border-radius: 0 0 20px 20px; height: 25%; width: 100%; display: flex; align-items: center; justify-content: center;">
-            <div style="height: 70%; width: 40%; background-color: transparent; margin-bottom: 15px; ">
-                
-                <button id="handle-submit-btn" style="display: none; cursor: pointer; height: 100%; font-family: 'DM Serif Display',serif; width: 100%; border-radius: 10px; background-color: limegreen; color: black; border: none; outline: none; font-weight: bold; font-family: 'Signika', sans-serif; box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.29), 0 6px 12px 0 rgba(0, 0, 0, 0.3); font-size: 1.1rem;">CONFIRM</button>
-            </div>
-        
-        </div>
-      </form>
 
 
 
@@ -388,8 +442,226 @@ function charSVG(realmKey, size=150, speaking=false){
 const submitBtn = document.getElementById('handle-submit-btn')
 const handleInput = document.querySelector('.handle-input')
 const errorSpan = document.getElementById('error-paypal')
+const changeBox = document.getElementById('change-btns')
+const questBox = document.getElementById('quest-box')
+const formBox = document.getElementById('formbox-userhandle')
+const changeHandleBtn = document.getElementById('userhandle')
+const closeBtn = document.getElementById('close-handle')
+const formDP = document.querySelector('.form-dp')
+const inputDp = document.getElementById('dp')
+const labelDP = document.getElementById('label-dp')
+const submitDpBtn = document.getElementById('submit-dp')
+const submitActionsCont = document.querySelector('.submit-actions')
+const cancelDpBtn = document.querySelector('.cancel-dp')
+const errorMessage = document.getElementById('error-display')
+const wrapper = document.querySelector('.progress-wrapper')   // display flex - none
+const progress = document.querySelector('#overallProgress')
+const text = document.querySelector('.progress-text')
+const status = document.querySelector('#upload-status')
+
+
+labelDP.addEventListener('click', () => {
+
+    labelDP.style.display = 'none'                ///// block-none
+    submitActionsCont.style.display = 'flex'     //// flex - none
+
+})
+
+cancelDpBtn.addEventListener('click', () => {
+   
+    labelDP.style.display = 'block'
+    submitActionsCont.style.display = 'none'
+})
+
+
+changeHandleBtn.addEventListener('click', () => {
+
+     questBox.style.display = 'none'
+     changeBox.style.display = 'none'
+     formBox.style.display = 'block'
+})
+
+// UPLOAD DP ACTION TO CLOUDFLARE R2
+
+submitDpBtn.addEventListener('click', async (e) => {
+
+    e.preventDefault()
+
+    submitDpBtn.disabled = true
+    submitDpBtn.style.backgroundColor = 'grey'
+    errorMessage.textContent = 'Please Wait..'
+
+    const fileList = [...inputDp.files]
+
+    const file = fileList[0]
+    
+    const MAX_SIZE = 3 * 1024 * 1024
+
+    if (!file) {
+       labelDP.style.display = 'block'
+       submitActionsCont.style.display = 'none'
+       errorMessage.textContent = 'No File Selected'
+       setTimeout(() => {
+        errorMessage.textContent = ''
+       }, 3000)
+
+    } else if (file.size > MAX_SIZE) {
+
+       labelDP.style.display = 'block'
+       submitActionsCont.style.display = 'none'
+       errorMessage.textContent = 'MAX FILE SIZE is 3MB'
+       setTimeout(() => {
+        errorMessage.textContent = ''
+       }, 3000)
+
+    } else {
+
+      // REQUEST UPLOAD URL
+
+    const imageData = { name: file.name, type: file.type }
+    const totalImageBytes = file.size
+    
+    try {
+
+       const dpUploadUrl = await fetch('/gen-dp-upload-url', {
+             method: 'POST',
+             headers: {
+              "Content-Type": "application/json"
+             },
+             body: JSON.stringify({ file: imageData })
+       })
+       const uploadUrl = await dpUploadUrl.json()
+
+       if (uploadUrl.error) {
+
+          labelDP.style.display = 'block'
+          submitActionsCont.style.display = 'none'
+          errorMessage.textContent = 'Authorization Failed..Try Again'
+          setTimeout(() => {
+             errorMessage.textContent = ''
+          }, 3000)
+
+       } else {
+
+        //  Use Successful uploadUrl to post dp
+
+        const wrapper = document.querySelector('.progress-wrapper')   // display flex - none
+        const progress = document.querySelector('#overallProgress')
+        const text = document.querySelector('.progress-text')
+        const status = document.querySelector('#upload-status')
+
+        function uploadDP (uploadUrl, file) {
+
+          return new Promise((resolve, reject) => {
+
+                const xhr = new XMLHttpRequest()
+
+                xhr.open("PUT", uploadUrl.signedUrl, true)
+
+                xhr.setRequestHeader("ContentType", file.type)
+
+                xhr.onprogress = (event) => {
+
+                    if (event.lengthComputable) {
+
+                       wrapper.style.display = 'flex'
+                       const percent = Math.round((event.loaded / totalImageBytes) * 100)
+                       text.textContent = `${percent}%`
+                       progress.value = percent
+
+                       if (progress == 100) {
+                        status.textContent = 'Complete'
+                        status.style.color = '#1ed760'
+                        text.style.color = '#1ed760'
+                       }
+                    }
+                }
+
+                xhr.onload = () => {
+
+                  if (xhr.status == 200 ) {
+
+                    resolve(uploadUrl.key)
+                  } else {
+                    reject(uploadUrl.key)
+                  }
+
+                }
+
+                xhr.onerror = () => {
+                  reject(uploadUrl.key)
+                }
+
+                xhr.send(file)
+
+          })
+                  
+
+        }
         
-function validateHandle(e) {
+        const imageKey = await uploadDP(uploadUrl, file)
+
+        const completeDpUpdate = await fetch('/update-dp', {
+             method: 'PATCH',
+             headers: {
+              "Content-Type": "application/json"
+             },
+             body: JSON.stringify({ dpKey: imageKey })
+        })
+
+        const updateResp = await completeDpUpdate.json()
+
+        if (updateResp.success == true) {
+             
+             labelDP.style.display = 'none'
+             submitActionsCont.style.display = 'none'
+             errorMessage.textContent = 'Success'
+             errorMessage.style.color = '#1ed760'
+             wrapper.style.display = 'none'
+             setTimeout(() => {
+               errorMessage.textContent = ''
+               window.location.reload()
+             }, 3000)
+
+            //  UI UPDATES
+
+                      
+        } else {
+
+          console.log(updateResp.error)
+           errorMessage.textContent = 'Update Failed'
+             errorMessage.style.color = '#1ed760'
+             wrapper.style.display = 'none'
+             setTimeout(() => {
+               errorMessage.textContent = ''
+             }, 3000)
+
+            //  UI UPDATES
+            labelDP.style.display = 'block'
+            submitActionsCont.style.display = 'none'
+        }
+
+
+
+       }
+      
+    } catch (error) {
+
+      console.log(error)
+      
+    }
+
+
+
+    }
+    
+})
+
+
+
+
+        
+function validateHandle() {
 
   if (handleInput.value) {
 
@@ -398,13 +670,13 @@ function validateHandle(e) {
       errorSpan.textContent = 'Only letters and Numbers'
       errorSpan.style.color = 'red'
       submitBtn.style.display = 'none'
-      e.target.value.trimStart()
-      
+       
     } else {
       errorSpan.textContent = 'Ok'
       errorSpan.style.color = 'limegreen'
       submitBtn.style.display = 'block'
-    }
+      handleInput.value = handleInput.value.trimStart()
+         }
   } else {
     submitBtn.style.display = 'none'
     errorSpan.textContent = ''
@@ -413,6 +685,23 @@ function validateHandle(e) {
     
 }
 
+
+submitBtn.addEventListener('click', (e) => {
+
+  e.preventDefault()
+  submitBtn.disabled = true
+  submitBtn.style.backgroundColor = 'grey'
+  submitBtn.style.color = 'white'
+  submitBtn.textContent = 'Sending'
+  handleInput.value = handleInput.value.trimStart() 
+  formBox.submit()
+})
+
+closeBtn.addEventListener('click', ()=> {
+    questBox.style.display = 'grid'
+    changeBox.style.display = 'flex'
+    formBox.style.display = 'none'
+})
 
     </script>
 </body>
