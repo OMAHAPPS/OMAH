@@ -64,7 +64,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
            font-weight: bold; position: absolute;"><%= messages %></p>
           <% } %>
 
-  <div class="view" style="background: linear-gradient(180deg, rgba(5,5,8,.55) 0%, rgba(5,5,8,0.88) 40%);">
+     <div class="view" style="background: linear-gradient(180deg, rgba(5,5,8,.55) 0%, rgba(5,5,8,0.88) 40%);">
            <!--! COVER DIV -->
            
 
@@ -74,7 +74,6 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   <div>
                      <div class="fd" style="font-size: 17px; font-weight: 700; color:rgba(237,232,224,.88);">
                         <%= user.userName %>
-                        
                      </div>
                      <div <% /* eslint-disable-next-line css-porpertyvalueexpected */ %> style="font-size: 9px; color: <%= user.userColor %>; letter-spacing: 1px; margin-top: 1px; opacity: 0.7;">
                         Newcomer · 0 XP
@@ -93,8 +92,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                         <span id="letter-upp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;" ><%= letter %></span>
                       </a>
                   </div>
-  </div>
-
+      
+     </div>
 
 
       <!--todo /////// TABS //////// -->
@@ -480,9 +479,19 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                     <div class="follow-wrapper" style="display: flex; justify-content: space-around; align-items: center; width: 100%; height: 40px;">
                          
-                         <p id="following" style="color: white; font-size: 16px; font-weight: bold;"><span style="color: rgba(237,232,224,.45);">Following</span></p>
-                         <p id="followers" style="color: white; font-size: 16px; font-weight: bold;"><span style="color: rgba(237,232,224,.45);">Followers</span></p>
-                         <p id="posts" style="color: white; font-size: 16px; font-weight: bold;"><span style="color: rgba(237,232,224,.45);">Posts</span></p>
+                      <div class="following-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <p id="following" style="color: white; font-size: 16px; font-weight: bold;"></p>
+                        <span style="color: rgba(237,232,224,.45);">Following</span>
+                      </div>
+                      <div class="followers-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <p id="followers" style="color: white; font-size: 16px; font-weight: bold;"></p>
+                        <span style="color: rgba(237,232,224,.45);">Followers</span>
+
+                      </div>
+                      <div class="posts-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <p id="posts" style="color: white; font-size: 16px; font-weight: bold;"></p>
+                        <span style="color: rgba(237,232,224,.45);">Posts</span>
+                      </div>
                         
                     </div>
 
@@ -492,7 +501,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                            <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
                            <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
                       </a>
-                      <div class="follow-btn"  style="display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid #C04848; background-color: transparent;">
+                      <div class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
                         <h4 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: .9rem;">Following</h4>
                       </div>
 
@@ -611,10 +620,11 @@ document.addEventListener('DOMContentLoaded', () => {
                   top: parseInt(savedScrollTop, 10),
                   behavior: "smooth"
             })
-                sessionStorage.removeItem('storageKey')
+                
             })
 
           }, 50)
+          sessionStorage.removeItem('storageKey')
        }
 
        postScrollContainer.addEventListener('click', (e) => {
@@ -867,6 +877,8 @@ function charSVG(realmKey, size=150, speaking=false){
 
       btn.addEventListener('click', (e) => {
           
+          e.preventDefault()
+
           sharePostBtn.style.display = 'none'
           
           // Populate modal with profile info (placeholder for now)
@@ -880,15 +892,15 @@ function charSVG(realmKey, size=150, speaking=false){
                   following: btn.children[2].textContent
               } 
           }
-           console.log(profileInfo)
+      
           const profileContainer = document.querySelector('#profile-info-cont')
           
           profileContainer.querySelector('img').src = profileInfo.userProfilePic
           profileContainer.querySelector('h2').textContent = profileInfo.userName
           profileContainer.querySelector('p').textContent = profileInfo.userHandle
-          profileContainer.querySelector('#following').textContent = `${profileInfo.userStats.following} Following`
-          profileContainer.querySelector('#followers').textContent = `${profileInfo.userStats.followers} Followers`
-          profileContainer.querySelector('#posts').textContent = `${profileInfo.userStats.posts} Posts`
+          profileContainer.querySelector('#following').textContent = `${profileInfo.userStats.following}`
+          profileContainer.querySelector('#followers').textContent = `${profileInfo.userStats.followers}`
+          profileContainer.querySelector('#posts').textContent = `${profileInfo.userStats.posts}`
           
           document.querySelector('.overlay').style.display = 'block'
           document.getElementById('profile-wrapper').style.display = 'block'
