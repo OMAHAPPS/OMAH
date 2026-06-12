@@ -98,13 +98,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                      <% if (post.images.length !== 0) { %>
 
-                     <article class="post-article" style="width: 100%; max-height: 600px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; align-items: center; justify-content: flex-start; background: transparent; scroll-snap-type: inline mandatory;">
+                     <article class="post-article" style="width: 100%; height: 400px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; align-items: center; justify-content: flex-start; background: transparent; scroll-snap-type: inline mandatory;">
 
                             
                           
                             <% post.images.map((image) => { %>
         
-                              <img  src="<%= R2BASE %>/<%= image %>" alt="N" style="margin-inline: 3px; width: 98%; height: auto; object-fit: cover; object-position: center; border-radius: inherit; scroll-snap-align: start;" />
+                              <img  src="<%= R2BASE %>/<%= image %>" alt="N" style="margin-inline: 3px; width: auto; height: 100%; object-fit: contain; border-radius: inherit; scroll-snap-align: start; margin-right: 5px;" />
         
                             <% }) %>
          
@@ -176,13 +176,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                    <% if (post.images.length !== 0) { %>
 
-                     <article class="post-article" style="width: 100%; height: 350px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; background: transparent; scroll-snap-type: inline mandatory;">
+                     <article class="post-article" style="width: 100%; height: 200px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; background: transparent; scroll-snap-type: inline mandatory;">
 
                             
                           
                             <% post.images.map((image) => { %>
         
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 98%; height: 100%; object-fit: cover; object-position: center; border-radius: inherit; scroll-snap-align: start;" />
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; border-radius: inherit; scroll-snap-align: start; margin-right: 5px;" />
         
                             <% }) %>
          
@@ -190,7 +190,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                    <% } else { %>
 
-                    <article class="post-article" style="width: 100%; height: 350px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: none; background: transparent;">
+                    <article class="post-article" style="width: auto; height: 200px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; display: none; background: transparent;">
 
                             
                           
@@ -207,7 +207,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                    
                    
                   
-                    <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0;">
+                    <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0; margin-top: 8px;">
                      
                      <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
                          <ion-icon name="heart-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>

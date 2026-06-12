@@ -526,6 +526,108 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
  
 <script> 
 
+const postScrollContainer = document.getElementById('scroll-container-posts')
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  if ('history' in window && 'scrollRestoration' in window) {
+  console.log('ScrollRestoration present')
+
+  window.history.scrollRestoration = 'manual'
+}
+
+  
+    const storageKey = sessionStorage.getItem('storageKey')  // POSIIBLE GET FROM LOCALsTORAGE
+    const savedDOMString = localStorage.getItem('storedDOMState')
+    const activeBtn = localStorage.getItem('activeBtn')
+    const theme = localStorage.getItem('themeColor')
+    const themeColor = JSON.parse(theme)
+    
+    if (savedDOMString) {
+      
+       const savedState = JSON.parse(savedDOMString)
+
+       if(activeBtn === 'messagesBtn') {
+           
+           messagesBtn.style.color = themeColor
+           messagesBtn.style.borderBottom = `2px solid ${themeColor}`
+           feedsBtn.style.color = savedState.feedColor
+           feedsBtn.style.borderBottom = savedState.feedBorder
+           roomsBtn.style.color = savedState.roomColor
+           roomsBtn.style.borderBottom = savedState.roomBorder
+           postScrollContainer.style.left = savedState.postLeft
+           messagesScrollContainer.style.left = savedState.messageLeft
+           groupsScrollContainer.style.left = savedState.roomLeft
+           sharePostBtn.style.display = savedState.sharePostBtn
+           
+          } else if (activeBtn === 'feedsBtn') {
+
+           feedsBtn.style.color = themeColor
+           feedsBtn.style.borderBottom = `2px solid ${themeColor}`
+           messagesBtn.style.color = savedState.messageColor
+           messagesBtn.style.borderBottom = savedState.messageBorder
+           roomsBtn.style.color = savedState.roomColor
+           roomsBtn.style.borderBottom = savedState.roomBorder
+           postScrollContainer.style.left = savedState.postLeft
+           messagesScrollContainer.style.left = savedState.messageLeft
+           groupsScrollContainer.style.left = savedState.roomLeft
+           sharePostBtn.style.display = savedState.sharePostBtn
+           
+          } else if (activeBtn === 'roomsBtn') {
+            
+            roomsBtn.style.color = themeColor
+            roomsBtn.style.borderBottom = `2px solid ${themeColor}`
+           messagesBtn.style.color = savedState.messageColor
+           messagesBtn.style.borderBottom = savedState.messageBorder
+           feedsBtn.style.color = savedState.feedColor
+           feedsBtn.style.borderBottom = savedState.feedBorder
+           postScrollContainer.style.left = savedState.postLeft
+           messagesScrollContainer.style.left = savedState.messageLeft
+           groupsScrollContainer.style.left = savedState.roomLeft
+           sharePostBtn.style.display = savedState.sharePostBtn
+           
+       }  
+           
+       
+    }
+
+
+    if (!postScrollContainer) {
+      return;
+    } else {
+        
+       const savedScrollTop = storageKey
+       if (savedScrollTop) {
+         
+         setTimeout(() => {
+
+            requestAnimationFrame(() => {
+                postScrollContainer.scrollTo({
+                  top: parseInt(savedScrollTop, 10),
+                  behavior: "smooth"
+            })
+                sessionStorage.removeItem('storageKey')
+            })
+
+          }, 50)
+       }
+
+       postScrollContainer.addEventListener('click', (e) => {
+         sessionStorage.setItem('storageKey', postScrollContainer.scrollTop)
+         console.log(`SessionStorageset: ${postScrollContainer.scrollTop}`)
+       })
+
+    }
+})
+
+
+
+
 const CANVAS = (() => {
   const cv = document.getElementById('cv');
   const cx = cv.getContext('2d');
@@ -718,8 +820,9 @@ function charSVG(realmKey, size=150, speaking=false){
     img.addEventListener('click', (e) => {
       
        e.preventDefault();
-       e.stopPropagation();
        
+       console.log(postScrollContainer.scrollTop)
+        
        const articleParent =  e.target.closest('article')
        const wholePost = e.target.closest('a')
        const postLink = wholePost.children[0].children[6].textContent
@@ -1839,7 +1942,6 @@ const roomActive = {
 
 // SHIFTING TABS LOGIC
 
-const postScrollContainer = document.getElementById('scroll-container-posts')
 const messagesScrollContainer = document.getElementById('scroll-container-messages')
 const groupsScrollContainer = document.getElementById('scroll-container-groups')
 const messagesBtn = document.getElementById('Messages')
@@ -1847,61 +1949,7 @@ const feedsBtn = document.getElementById('Feed')
 const roomsBtn = document.getElementById('Groups')
 
 
-document.addEventListener('DOMContentLoaded', () => {
-   
-    const savedDOMString = localStorage.getItem('storedDOMState')
-    const activeBtn = localStorage.getItem('activeBtn')
-    const theme = localStorage.getItem('themeColor')
-    const themeColor = JSON.parse(theme)
 
-    if (savedDOMString) {
-      
-       const savedState = JSON.parse(savedDOMString)
-
-       if(activeBtn === 'messagesBtn') {
-           
-           messagesBtn.style.color = themeColor
-           messagesBtn.style.borderBottom = `2px solid ${themeColor}`
-           feedsBtn.style.color = savedState.feedColor
-           feedsBtn.style.borderBottom = savedState.feedBorder
-           roomsBtn.style.color = savedState.roomColor
-           roomsBtn.style.borderBottom = savedState.roomBorder
-           postScrollContainer.style.left = savedState.postLeft
-           messagesScrollContainer.style.left = savedState.messageLeft
-           groupsScrollContainer.style.left = savedState.roomLeft
-           sharePostBtn.style.display = savedState.sharePostBtn
-           
-          } else if (activeBtn === 'feedsBtn') {
-
-           feedsBtn.style.color = themeColor
-           feedsBtn.style.borderBottom = `2px solid ${themeColor}`
-           messagesBtn.style.color = savedState.messageColor
-           messagesBtn.style.borderBottom = savedState.messageBorder
-           roomsBtn.style.color = savedState.roomColor
-           roomsBtn.style.borderBottom = savedState.roomBorder
-           postScrollContainer.style.left = savedState.postLeft
-           messagesScrollContainer.style.left = savedState.messageLeft
-           groupsScrollContainer.style.left = savedState.roomLeft
-           sharePostBtn.style.display = savedState.sharePostBtn
-           
-          } else if (activeBtn === 'roomsBtn') {
-            
-            roomsBtn.style.color = themeColor
-            roomsBtn.style.borderBottom = `2px solid ${themeColor}`
-           messagesBtn.style.color = savedState.messageColor
-           messagesBtn.style.borderBottom = savedState.messageBorder
-           feedsBtn.style.color = savedState.feedColor
-           feedsBtn.style.borderBottom = savedState.feedBorder
-           postScrollContainer.style.left = savedState.postLeft
-           messagesScrollContainer.style.left = savedState.messageLeft
-           groupsScrollContainer.style.left = savedState.roomLeft
-           sharePostBtn.style.display = savedState.sharePostBtn
-           
-       }  
-           
-       
-    }
-})
 
 messagesBtn.addEventListener('click', (e) => {
     
