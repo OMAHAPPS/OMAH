@@ -89,7 +89,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             </div>
             
           <!-- Stats grid -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; animation: emerge .5s .06s ease-out both">
+          <div style="display: none; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; animation: emerge .5s .06s ease-out both">
           
              <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
                 <div style="font-size: 22px; margin-bottom: 6px;">
@@ -128,11 +128,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           </div>
           
          
-          <div style="display: flex; flex-direction: column; gap: 8px; animation: emerge .5s .2s ease-out both">
+          <div style="display: none; flex-direction: column; gap: 8px; animation: emerge .5s .2s ease-out both">
             <a href="/main" class="tap" style="text-decoration: none; padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
               ✏️ Change Theme
             </a>
-            <button href="/main" class="tap" style="text-decoration: none; padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
+            <button id="userhandle" href="/main" class="tap" style="text-decoration: none; padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
                ✏️ Change User Handle
             </button>
             <a href="/auth/logout" class="tap" style="text-decoration: none; padding: 13px; border-radius: 14px; font-size: 13px; background:rgba(200,60,40,.07); border:1px solid rgba(200,60,40,.2); color: #C04848;">
@@ -144,6 +144,41 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
       </div>
     
     </div> 
+
+     <form action="/handle?_method=PATCH" id="formbox-userhandle" style="display: block; background-color: rgba(255,255,255,.04); border-radius: 20px; position: absolute; top: 42.5%; left: 50%; transform: translate(-50%, -50%); z-index: 50; height: 250px; width: clamp(350px, 75vw, 500px ); border: 1px solid gray;">
+        <div class="head-wrapper" style="width: 100%; height: 15%; position: relative; background-color: transparent; border-radius: 20px 20px 0 0;">
+            <div class="icon-confirm" style="position: absolute; left: 0; height: 100%; width: 85%; padding: 10px; display: flex; justify-content: flex-start; align-items: center;">
+                <div style="width: 35px; height: 35px; margin-top: 5px; display: flex; align-items: center; justify-content: center; margin-inline: 8px;">
+                   <img src="/Xikika_ICON-removebg-preview.png" alt="" width="30" height="30">
+                </div>
+                <h2 class="fs" style="margin-top: 10px;">Change UserHandle</h2>
+            </div>
+            <div id="close-paypal" style="cursor: pointer; display: flex; justify-content: center; align-items: center; background-color: #C04848; position: absolute; right: 0; height: 100%; width: 15%; border-radius: 0 20px 0 20px;">
+                <ion-icon name="close" style="font-size: 2rem; color: var(--text-white); font-weight: bold;"></ion-icon>
+            </div>
+        </div>
+        <div class="details-wrapper" style="height: 60%; padding-block: 10px; display: flex; justify-content: center; align-items: center;">
+
+                <div class="input-box" style=" width: 85%; height: 50%; position: relative;">
+                   <input class="handle-input" id="mpesa" type="email" onkeyup="validateHandle()" style="background-color: black; outline: none; line-height: 60px; border: 2px solid gray; height: 100%; padding-inline: 1px; width: 100%; padding-inline: 20px; border-radius: 10px; font-size: 1.25rem; font-weight: bold; color: #C04848;"/>
+                <p class="mpesa-label" for="mpesa"  style=" position: absolute; top: 0; left: 2%; transform: translateY(-50%); margin-bottom: 5px; background: black; padding-inline: 5px; font-size: 1.2rem; font-weight: bold; color: gray;">
+                    New Handle
+                </p>
+               <span id="error-paypal" style="color: red; margin-left: 8px; font-weight: bold; font-family: 'Signika', sans-serif;"></span>
+                
+                </div>
+                
+          
+            
+        </div>
+        <div class="confirm-btn-paypal" style="background-color: transparent; border: 1px solid var(--muted-gray); border-radius: 0 0 20px 20px; height: 25%; width: 100%; display: flex; align-items: center; justify-content: center;">
+            <div style="height: 70%; width: 40%; background-color: transparent; margin-bottom: 15px; ">
+                
+                <button id="handle-submit-btn" style="display: none; cursor: pointer; height: 100%; font-family: 'DM Serif Display',serif; width: 100%; border-radius: 10px; background-color: limegreen; color: black; border: none; outline: none; font-weight: bold; font-family: 'Signika', sans-serif; box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.29), 0 6px 12px 0 rgba(0, 0, 0, 0.3); font-size: 1.1rem;">CONFIRM</button>
+            </div>
+        
+        </div>
+      </form>
 
 
 
@@ -350,9 +385,33 @@ function charSVG(realmKey, size=150, speaking=false){
   </svg>`;
 }
 
+const submitBtn = document.getElementById('handle-submit-btn')
+const handleInput = document.querySelector('.handle-input')
+const errorSpan = document.getElementById('error-paypal')
         
-        
+function validateHandle(e) {
 
+  if (handleInput.value) {
+
+    if (!handleInput.value.match(/^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$/)) {
+
+      errorSpan.textContent = 'Only letters and Numbers'
+      errorSpan.style.color = 'red'
+      submitBtn.style.display = 'none'
+      e.target.value.trimStart()
+      
+    } else {
+      errorSpan.textContent = 'Ok'
+      errorSpan.style.color = 'limegreen'
+      submitBtn.style.display = 'block'
+    }
+  } else {
+    submitBtn.style.display = 'none'
+    errorSpan.textContent = ''
+  }
+
+    
+}
 
 
     </script>
