@@ -907,6 +907,7 @@ function charSVG(realmKey, size=150, speaking=false){
           setTimeout(() => {
               modal.style.transition = 'top 0.3s ease-out'
               modal.style.top = '50%'
+      
           }, 75)
       })
 
@@ -1166,7 +1167,7 @@ submitUploadVideo.addEventListener('click', (e) => {
 
     if (inputVideo.files.length === 0) {
         errorMessage.textContent = 'No Video Selected...'
-        setInterval(() => {
+        const noLength =  setInterval(() => {
          errorMessage.textContent = ''
         }, 3000)
         submitVideoActionsCont.style.display = 'none'
@@ -1178,6 +1179,7 @@ submitUploadVideo.addEventListener('click', (e) => {
         postPlaceholder.textContent = 'Add new post...'
         submitUploadVideo.style.backgroundColor = '#1E2A56'
         submitUploadVideo.textContent = 'Preview video'
+        clearTimeout(noLength)
           return;
 
     } else {
@@ -1191,7 +1193,7 @@ submitUploadVideo.addEventListener('click', (e) => {
        if (videoFiles.length > MAX_FILES || videoFiles[0].size > MAX_VIDEO_SIZE) {
 
           errorMessage.textContent = 'MAX VIDEO SIZE IS 30MB...'
-          setInterval(() => {
+          setTimeout(() => {
             errorMessage.textContent = ''
           }, 3000)
           inputVideo.value = ''
@@ -1279,7 +1281,7 @@ submitUploadVideo.addEventListener('click', (e) => {
       if ( FilesArray.length > MAX_FILES ) {
 
         errorMessage.textContent = 'MAX of 10 files Allowed...'
-          setInterval(() => {
+          setTimeout(() => {
             errorMessage.textContent = ''
           }, 3000)
           submitActionsCont.style.display = 'none'
@@ -1496,7 +1498,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
            if (uploadUrl.error) {
               
                 errorMessage.textContent = uploadUrl.error
-                setInterval(() => {
+                setTimeout(() => {
                    errorMessage.textContent = ''
                 }, 3000)
                 postPlaceholder.textContent = 'NO VIDEO Attached..'
@@ -1593,7 +1595,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
              textArea.value = 'Success'
              document.getElementById('userid').value = ''
              document.getElementById('userrealm').value = ''
-             setInterval(() => {
+             setTimeout(() => {
                 errorMessage.textContent = ''
                 window.location.reload()
              }, 3000)
@@ -1603,7 +1605,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             console.log(error)
             console.log(error)
             errorMessage.textContent = 'POST FAILED..try again later.'
-            setInterval(() => {
+            setTimeout(() => {
                 errorMessage.textContent = ''
                 window.location.reload()
               }, 2000)
@@ -1827,7 +1829,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
              textArea.value = 'Success'
              document.getElementById('userid').value = ''
              document.getElementById('userrealm').value = ''
-             setInterval(() => {
+             setTimeout(() => {
                 errorMessage.textContent = ''
                 window.location.reload()
              }, 3000)
@@ -1838,7 +1840,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             // UPDATE UI AND THROW MESSAGE OF FAILED TO REACH CLOUDFLARE R2, UPLOAD URL FAILED
             console.log(error)
              errorMessage.textContent = 'POST FAILED..try again later.'
-             setInterval(() => {
+             setTimeout(() => {
                 errorMessage.textContent = ''
                 window.location.reload()
               }, 2000)
