@@ -88,7 +88,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                       
                        <% const userName = user.userName %>
                        <% const letter = userName.slice(0,1) %>
-                      <a href="/settings" class="tap" style="text-decoration: none; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .08); color: #C04848; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                      <a href="/settings" class="stop-fetch" id="scroll-inspect" style="text-decoration: none; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .08); color: #C04848; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                         <span id="letter-upp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;" ><%= letter %></span>
                       </a>
                   </div>
@@ -103,6 +103,17 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                <!-- NAVBAR OPTIONS RENDERED IN JAVASCRIPT -->
 
     </div>
+
+    <!-- * /////  fetch New Posts Button /////  -->
+
+    <a href="/home" class="fetch-new" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="opacity: 1; z-index: 100; text-decoration: none; cursor: pointer; display: flex; justify-content: center; align-items: center; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); height: 40px; width: fit-content; border-radius: 20px; background-color: <%= user.userColor %>; padding-inline: 10px; transition: opacity 1.25s ease-out;">
+           <div class="logo-holders" style="position: relative; height: 25px;">
+                <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="25" height="25" style="border-radius: 50%; object-fit: cover;" />
+                <img src="/placeholder.jpg" alt="" width="25" height="25" style="position: absolute; left: 35%; z-index: -1; border-radius: 50%; object-fit: cover;" />
+
+           </div>
+           <h2 style="font-size: 12px; font-weight: bold; margin-left: 15px; color: rgba(237, 232, 224, .85);">New Feed</h2>
+    </a>
 
     <!--todo ////// FEED  ////// -->
 
@@ -123,7 +134,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <% posts.map((post) => { %>
           
           
-        <a href="/post/<%= post.postId %>"  class="<%= post.videoUrl !== 'none' ? 'glass' : 'glass-images'  %>" style="width: 100%; text-decoration: none; margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
+        <a href="/post/<%= post.postId %>"  class="<%= post.videoUrl !== 'none' ? 'glass' : 'glass-images'  %> stop-fetch" style="width: 100%; text-decoration: none; margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
 
             
 
@@ -335,7 +346,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                
                <!-- ! ELSE MAP MESSAGES -->
                 
-               <a href="/inbox"  class="messages" style="text-decoration: none; scroll-snap-align: start; width: 100%; text-align: left; display: flex; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both"> 
+               <a href="/inbox"  class="stop-fetch" style="text-decoration: none; scroll-snap-align: start; width: 100%; text-align: left; display: flex; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both"> 
                 
                          <!-- todo //// IF NO PROFILE PIC /// -->
                          <div class="tap" style="position: relative; height: 40px; width: 40px; border-radius: 50%; overflow: hidden;  border: 1px solid rgba(237,232,224,.6); display: none; justify-content: center; align-items: center;">
@@ -369,20 +380,21 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      <!-- * /////  ROOMS //////// -->
 
 
-            <a href="/group"  class="groups-cont" style="text-decoration: none; display: block; width: 100%; text-align: left; padding: 16px;border-radius:18px;margin-bottom:10px; background: #C8A86E10; border: 1px solid #C8A86E22;animation:emerge .4s ease-out both">
+            <div  class="groups-cont" style=" display: block; width: 100%; text-align: left; padding: 16px;border-radius:18px;margin-bottom:10px; background: #C8A86E10; border: 1px solid #C8A86E22;animation:emerge .4s ease-out both">
                 
                  
                     <div style="font-size:10px;font-weight:bold;color: #C04848; letter-spacing: 2px; margin-bottom: 10px">LIVE GROUPS · ENGAGEMENTS ACTIVE</div>
 
                     <div id="groups-wrapper" style="display: flex; flex-wrap: wrap; gap: 8px;">
                                      
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 5px; padding: 20px 18px; border-radius: 20px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07)">
+                        <a href="/group" class="stop-fetch" style="text-decoration: none; margin-bottom: 10px;  display: flex; align-items: center; justify-content: center; gap: 5px; padding: 20px 5px; height: 30%; width: 100%; border-radius: 20px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07)">
                           <div style="width: 6px; height: 6px; border-radius: 50%; background: #C04848; box-shadow: 0 0 6px #C04848; animation: throb 1.8s ease-in-out infinite; flex-shrink:0;"></div>
-                          <span style="font-size: 11px; color:rgba(237,232,224,.55)">The Football Die Hards Legends · <span style="color: #1ed760;">  150</span></span>
-                        </div>
-                                      
+                          <span style="font-size: 15px; color:rgba(237,232,224,.55)">The Football Die Hards Legends · <span style="color: #1ed760;">  150</span></span>
+                        </a>
+                                 
                     </div>
-            </a>   
+                  </div>   
+            
 
     </section>
 
@@ -503,7 +515,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                     <div class="interact" style="width: 100%; background-color: transparent; margin-top: 10px; display: flex; justify-content: space-evenly; align-items: center;">
 
-                      <a href="/inbox" class="message" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                      <a href="/inbox" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
                            <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
                            <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
                       </a>
@@ -527,7 +539,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 <ion-icon name="arrow-back-outline" style="color: white; font-size: 1.2rem;"></ion-icon>
               </button>
 
-               <a id="link-to-post" href="" class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="text-decoration: none; display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
+               <a id="link-to-post" href="" class="stop-fetch" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="text-decoration: none; display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
                   <h4 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: .9rem;">View Post</h4>
                </a> 
 
@@ -541,9 +553,15 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
  
 <script> 
 
+
 const postScrollContainer = document.getElementById('scroll-container-posts')
 
 
+const settingLink = document.getElementById('scroll-inspect')
+settingLink.addEventListener('click', () => {
+    sessionStorage.setItem('storageKey', postScrollContainer.scrollTop)
+    console.log('SessionStorage: ' + postScrollContainer.scrollTop)
+})
 
 
 
@@ -556,8 +574,24 @@ document.addEventListener('DOMContentLoaded', () => {
   window.history.scrollRestoration = 'manual'
 }
 
+const stopFetchLinks = document.querySelectorAll('.stop-fetch')
+
+stopFetchLinks.forEach((link) => {
+    
+    link.addEventListener('click', () => {
+
+      const postsContent = postScrollContainer.innerHTML
+      const savedContent = {
+            html: postsContent
+      }
+      sessionStorage.setItem('homePageSnapShot', JSON.stringify(savedContent))
+      console.log('SessionPosts stored' + savedContent.html)
+    })
+})
+
   
-    const storageKey = sessionStorage.getItem('storageKey')  // POSIIBLE GET FROM LOCALsTORAGE
+    const storageKey = sessionStorage.getItem('storageKey')  
+
     const savedDOMString = localStorage.getItem('storedDOMState')
     const activeBtn = localStorage.getItem('activeBtn')
     const theme = localStorage.getItem('themeColor')
@@ -613,9 +647,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     if (!postScrollContainer) {
+      console.log('No post info')
       return;
     } else {
-        
+       
+    
+      const retrievedPostContent = sessionStorage.getItem('homePageSnapShot')
+      
+      if (retrievedPostContent) {
+
+        const postHtml = JSON.parse(retrievedPostContent)
+        postScrollContainer.innerHTML = postHtml.html
+ 
+        sessionStorage.removeItem('homePageSnapShot')   
+      }
+
+
+
        const savedScrollTop = storageKey
        if (savedScrollTop) {
          
@@ -637,10 +685,11 @@ document.addEventListener('DOMContentLoaded', () => {
          sessionStorage.setItem('storageKey', postScrollContainer.scrollTop)
          console.log(`SessionStorageset: ${postScrollContainer.scrollTop}`)
        })
-
-    }
-})
-
+       
+       
+      }
+    })
+   
 
 
 
@@ -836,6 +885,14 @@ function charSVG(realmKey, size=150, speaking=false){
     img.addEventListener('click', (e) => {
       
        e.preventDefault();
+
+       console.log(window.history.state)
+
+       if (!history.state?.imageExpand) {
+
+        history.pushState( { imageExpand: true}, "", "" )
+        console.log("history state created" + window.history.state.imageExpand)
+       }
        
        console.log(postScrollContainer.scrollTop)
         
@@ -869,8 +926,15 @@ function charSVG(realmKey, size=150, speaking=false){
   const closeExpand = document.querySelector('#close-images-expand')
 
   closeExpand.addEventListener('click', () => {
+
       expandedArticle.innerHTML = ''
       expandContainer.style.display = 'none'
+      history.back()
+  })
+
+  window.addEventListener("popstate", (event) => {
+    expandContainer.style.display = 'none'
+    console.log('BackBtn: ' + event.state)
   })
 
 
@@ -1871,7 +1935,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
 
 humanoidContainer.innerHTML = `
   
-         <a href="/ai" id="talk-to-ai" style="text-decoration: none; width: fit-content; display: flex; justify-content: space-around; align-items: center; padding: 5px; transition: background-color 1s ease-out, border 1s ease-out; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
+         <a href="/ai" id="talk-to-ai" class="stop-fetch" style="text-decoration: none; width: fit-content; display: flex; justify-content: space-around; align-items: center; padding: 5px; transition: background-color 1s ease-out, border 1s ease-out; border-radius: 15px; background: ${r.col}14; border: 2px solid ${r.col}28; font-size: 12px; color: ${r.col}; letter-spacing: 1px; animation:fadeIn .8s .5s both">
             <ion-icon id="ai-icon" style="color: ${r.col}; display: block; font-size: 25px; margin-right: 5px; transition: opacity 5s ease-out;" name="snow-outline"></ion-icon> 
             <p id="ai-text" style="font-weight: bold; display: block; margin-right: 5px; transition: opacity 5s ease-out;" >Ask Nova AI</p> 
             <div style="animation:orbIn .6s ease-out both">${charSVG('<%= user.userRealm %>',28,false)}</div>
@@ -1972,6 +2036,24 @@ const groupsScrollContainer = document.getElementById('scroll-container-groups')
 const messagesBtn = document.getElementById('Messages')
 const feedsBtn = document.getElementById('Feed')
 const roomsBtn = document.getElementById('Groups')
+const fetchNewFeed = document.querySelector('.fetch-new')
+
+
+
+let lastScrollTop = postScrollContainer.scrollTop + 200
+
+postScrollContainer.addEventListener('scroll', () => {
+  
+let currentScrollTop = postScrollContainer.scrollTop    
+
+  if (currentScrollTop > lastScrollTop ) {
+    fetchNewFeed.style.opacity = '0.4'
+  }else if (currentScrollTop < lastScrollTop) {
+    fetchNewFeed.style.opacity = '1'
+  }  
+
+  lastScrollTop = currentScrollTop
+}, { passive: true })
 
 
 
@@ -1988,6 +2070,7 @@ messagesBtn.addEventListener('click', (e) => {
     messagesScrollContainer.style.left = '0'
     groupsScrollContainer.style.left = '100%'
     sharePostBtn.style.display = 'none'
+    fetchNewFeed.style.display = 'none'
 
     localStorage.setItem('storedDOMState', JSON.stringify(messageActive))
     localStorage.setItem('activeBtn', 'messagesBtn')
@@ -2006,7 +2089,8 @@ feedsBtn.addEventListener('click', (e) => {
     messagesScrollContainer.style.left = '100%'
     groupsScrollContainer.style.left = '200%'
     sharePostBtn.style.display = 'block'
-
+    fetchNewFeed.style.display = 'flex'
+  
     localStorage.setItem('storedDOMState', JSON.stringify(feedActive))
     localStorage.setItem('activeBtn', 'feedsBtn')
 
@@ -2024,6 +2108,7 @@ roomsBtn.addEventListener('click', (e) => {
     messagesScrollContainer.style.left = '-100%'
     groupsScrollContainer.style.left = '0'
     sharePostBtn.style.display = 'none'
+    fetchNewFeed.style.display = 'none'
 
     localStorage.setItem('storedDOMState', JSON.stringify(roomActive))
     localStorage.setItem('activeBtn', 'roomsBtn')
