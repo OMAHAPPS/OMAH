@@ -2045,9 +2045,9 @@ postScrollContainer.addEventListener('scroll', () => {
 let currentScrollTop = postScrollContainer.scrollTop    
 
   if (currentScrollTop > lastScrollTop ) {
-    fetchNewFeed.style.opacity = '0.4'
+    fetchNewFeed.style.opacity = '0'
   }else if (currentScrollTop < lastScrollTop) {
-    fetchNewFeed.style.opacity = '1'
+    fetchNewFeed.style.opacity = '0.5'
   }  
 
   lastScrollTop = currentScrollTop
