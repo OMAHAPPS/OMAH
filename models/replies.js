@@ -7,7 +7,10 @@ const replySchema = new Schema({
      userId: { type: String, required: true },
      postId: { type: String, required: true },
      replystring: { type: String, default: 'none', required: false },
-     images: { type: Array, default: [], required: false }
+     images: { type: Array, default: [], required: false },
+     videoUrl: { type: String, default: 'none', required: false },
+     likes: { type: Number, default: 0, required: false },
+     interactions: { type: Number, default: 0, required: false }
 
 }, { timestamps: true } )
 

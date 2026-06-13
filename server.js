@@ -20,6 +20,7 @@ const { GoogleGenAI } = require('@google/genai')
 
 const Omaruser = require('./models/omahUsers')
 const Post = require('./models/posts')
+const Reply = require('./models/replies')
 
 const googleRoutes = require('./routes/auth-routes')
 
@@ -147,7 +148,9 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
 
     const userData = await Omaruser.findOne({ _id: id })
 
-    const allPosts = await Post.find()
+    const allPostsNS = await Post.find()
+    
+    const allPosts = allPostsNS.sort((a, b) =>  b.createdAt - a.createdAt )
 
     const allUsers = await Omaruser.find()
 
@@ -307,7 +310,7 @@ app.post('/gen-upload-url-video', async (req, res) => {
 
     try {
 
-        const uniqueKey = `feed-images/videos/${userId}/${Date.now()}-${file.name}`
+        const uniqueKey = `feed-images/videos/posts/${userId}/${Date.now()}-${file.name}`
         const command = new PutObjectCommand({
             Bucket: process.env.R2_BUCKET_NAME,
             Key: uniqueKey,
@@ -331,6 +334,77 @@ app.post('/gen-upload-url-video', async (req, res) => {
     }
 
 })
+
+app.post('/gen-upload-url-reply-video', async (req, res) => {
+
+     const { file } = req.body
+     const userId = req.user._id
+
+     try {
+        
+         const uniqueKey = `feed-images/videos/replies/${userId}/${Date.now()}-${file.name}`
+         const command = new PutObjectCommand({
+              Bucket: process.env.R2_BUCKET_NAME,
+              Key: uniqueKey,
+              ContentType: file.type
+         })
+         const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 })
+    
+         const uploadUrl = {
+              filename: file.name,
+              key: uniqueKey,
+              signedUrl: signedUrl,
+              publicUrl: `${process.env.R2_PUBLIC_BASE_URL}/${uniqueKey}`
+         }
+
+         res.json(uploadUrl)
+
+     } catch (error) {
+
+        res.status(500).json({ error: 'Failed to Gen UploadUrl' })
+        
+     }
+
+
+})
+
+app.post('/gen-upload-urls-reply-images', async (req, res) => {
+
+      const files = req.body.files
+
+      try {
+
+        const uploadData = await Promise.all(files.map( async (file) => {
+
+               const uniqueKey = `feed-images/reply-images/${Date.now()}-${file.name}`
+               const command = new PutObjectCommand({
+                 Bucket: process.env.R2_BUCKET_NAME,
+                 Key: uniqueKey,
+                 ContentType: file.type
+               })
+               const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 })
+            
+
+               return {
+                  filename: file.name,
+                  key: uniqueKey,
+                  signedUrl: signedUrl,
+                  publicUrl: `${process.env.R2_PUBLIC_BASE_URL}/${uniqueKey}`
+               }
+        }))
+
+        res.json(uploadData)
+        
+        
+      } catch (error) {
+          
+         console.log(error)
+         res.status(500).json({ error: 'Failed to Generate Urls' })
+      }
+
+})
+
+
 
 app.post('/gen-dp-upload-url', async (req, res) => {
 
@@ -419,6 +493,7 @@ app.post('/post', async (req, res) => {
      
      const userData = await Omaruser.findOne({ _id: userid })
      const username = userData.userName
+     const userHandle = userData.userHandle !== 'none' ? userData.userHandle : 'none'
 
      const postObject = {
                  userId: userid,
@@ -426,7 +501,7 @@ app.post('/post', async (req, res) => {
                  userRealm: userrealm,
                  videoUrl: video,
                  images: imagesrc,
-                 userHandle: 'none',
+                 userHandle: userHandle,
                  post: poststring
      }
      
@@ -441,6 +516,47 @@ app.post('/post', async (req, res) => {
      })
      
 
+})
+
+app.post('/post/reply', async (req, res) => {
+
+    const { replystring, videoUrl, imagesrc, userid, postid } = req.body
+
+    const reply = new Reply({
+           userId: userid,
+           postId: postid,
+           replystring: replystring,
+           videoUrl: videoUrl,
+           images: imagesrc
+    }).save().then((data) => {
+         res.json({ success: true })
+    }).catch((error) => {
+         res.json({ success: false })
+    })
+
+})
+
+app.patch('/post-update', async (req, res) => {
+
+      const { postid } = req.body
+      const parentPost = await Post.findOne({ _id: postid })
+      const currentReplyCount = parentPost.replies
+      const currentInteractions = parentPost.interactions
+      const newReplyCount = currentReplyCount + 1
+      const newInteractions = currentInteractions + 1 
+
+      try {
+
+        await Post.findByIdAndUpdate({ _id: postid }, { $set: { interactions: newInteractions, replies: newReplyCount } })
+        
+        res.json({ success: true })
+        
+      } catch (error) {
+        console.log(error)
+
+        res.json({ success: false })
+        
+      }
 })
 
 app.get('/ai', notLoggedInCheck, (req, res) => {
@@ -508,12 +624,15 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
     const postId = req.params.id
     const userid = req.user._id
     const post = await Post.findOne({ _id: postId })
+    const posterId = post.userId
+    const posterData = await Omaruser.findOne({ _id: posterId })
     const user = await Omaruser.findOne({ _id: userid })
+    const replies = await Reply.find({ postId: postId })
     
   
     const R2BASE = process.env.R2_PUBLIC_BASE_URL
    
-    res.render('post', { post, user, R2BASE })
+    res.render('post', { post, user, poster: posterData, replies, R2BASE })
 })
 
 app.get('/user', notLoggedInCheck,  async (req, res) => {

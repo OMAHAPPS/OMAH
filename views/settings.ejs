@@ -565,7 +565,7 @@ submitDpBtn.addEventListener('click', async (e) => {
                     if (event.lengthComputable) {
 
                        wrapper.style.display = 'flex'
-                       const percent = Math.round((event.loaded / totalImageBytes) * 100)
+                       const percent = Math.round((event.loaded / event.total) * 100)
                        text.textContent = `${percent}%`
                        progress.value = percent
 

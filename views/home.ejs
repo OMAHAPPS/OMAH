@@ -56,7 +56,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
    
          
 
-    <p class="fs" id="error-display" style="position: absolute; top: 5%; left: 50%; transform: translateX(-50%); max-width: 100%; background-color: white; color:red; padding-inline: 5px; border-radius: 2px; font-weight: bold; z-index: 100;"></p>
+    <p class="fs" id="error-display" style="position: absolute; top: 5%; left: 50%; white-space: nowrap; transform: translateX(-50%); max-width: 100%; background-color: white; color:red; padding-inline: 5px; border-radius: 2px; font-weight: bold; z-index: 100;"></p>
     
 
     <% if (locals.messages) { %>
@@ -75,10 +75,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      <div class="fd" style="font-size: 17px; font-weight: 700; color:rgba(237,232,224,.88);">
                         <%= user.userName %>
                      </div>
-                     <div <% /* eslint-disable-next-line css-porpertyvalueexpected */ %> style="font-size: 9px; color: <%= user.userColor %>; letter-spacing: 1px; margin-top: 1px; opacity: 0.7;">
-                        Newcomer · 0 XP
+                     <div <% /* eslint-disable-next-line css-porpertyvalueexpected */ %> style="font-size: 11px; color: <%= user.userColor %>; letter-spacing: 1px; margin-top: 1px; opacity: 0.7;">
+                        @<%= user.userHandle !== 'none' ? user.userHandle : user.userName %>
                      </div>
-                  </div>
+            </div>
+
                   
                   <div id="humanoid">
                     <!-- ! RENDERED BY JAVASCRIPT -->
@@ -88,7 +89,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                       
                        <% const userName = user.userName %>
                        <% const letter = userName.slice(0,1) %>
-                      <a href="/settings" class="stop-fetch" id="scroll-inspect" style="text-decoration: none; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .08); color: #C04848; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                      <a href="/settings" class="settings" id="scroll-inspect" style="text-decoration: none; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .08); color: #C04848; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                         <span id="letter-upp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;" ><%= letter %></span>
                       </a>
                   </div>
@@ -106,7 +107,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!-- * /////  fetch New Posts Button /////  -->
 
-    <a href="/home" class="fetch-new" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="opacity: 1; z-index: 100; text-decoration: none; cursor: pointer; display: flex; justify-content: center; align-items: center; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); height: 40px; width: fit-content; border-radius: 20px; background-color: <%= user.userColor %>; padding-inline: 10px; transition: opacity 1.25s ease-out;">
+    <a href="/home" class="fetch-new" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="opacity: 1; z-index: 10; text-decoration: none; cursor: pointer; display: flex; justify-content: center; align-items: center; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); height: 40px; width: fit-content; border-radius: 20px; background-color: <%= user.userColor %>; padding-inline: 10px; transition: opacity 1.25s ease-out;">
            <div class="logo-holders" style="position: relative; height: 25px;">
                 <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="25" height="25" style="border-radius: 50%; object-fit: cover;" />
                 <img src="/placeholder.jpg" alt="" width="25" height="25" style="position: absolute; left: 35%; z-index: -1; border-radius: 50%; object-fit: cover;" />
@@ -166,7 +167,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                                  <% if (post.userName == user.userName) { %>
                                    <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                                    <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; margin-left: 2px;">@<%= post.userHandle !== 'none' ? post.userHandle : post.userName  %></span>
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@<%= post.poster.userHandle !== 'none' ? post.poster.userHandle : post.userName  %></span>
                                  <% } %>
                         </div>
                               <% const timestamp = post.createdAt %>
@@ -531,7 +532,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
     </section>
 
-    <div id="images-expand" style="display: none; background-color: black; position: absolute; top: 0; height: 100%; width: 100%; z-index: 6; overflow-x: scroll;">
+    <div id="images-expand" style="display: none; background-color: black; position: absolute; top: 0; height: 100%; width: 100%; z-index: 100; overflow-x: scroll;">
 
             <div id="link-holders" style="width: 100%; height: 15%; display: flex; align-items: center; justify-content: space-between; padding: 20px;">
 
@@ -557,11 +558,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 const postScrollContainer = document.getElementById('scroll-container-posts')
 
 
-const settingLink = document.getElementById('scroll-inspect')
-settingLink.addEventListener('click', () => {
-    sessionStorage.setItem('storageKey', postScrollContainer.scrollTop)
-    console.log('SessionStorage: ' + postScrollContainer.scrollTop)
-})
+// const settingLink = document.getElementById('scroll-inspect')
+// settingLink.addEventListener('click', () => {
+//     sessionStorage.setItem('storageKey', postScrollContainer.scrollTop)
+//     console.log('SessionStorage: ' + postScrollContainer.scrollTop)
+// })
 
 
 
@@ -585,7 +586,7 @@ stopFetchLinks.forEach((link) => {
             html: postsContent
       }
       sessionStorage.setItem('homePageSnapShot', JSON.stringify(savedContent))
-      console.log('SessionPosts stored' + savedContent.html)
+      
     })
 })
 
@@ -934,6 +935,7 @@ function charSVG(realmKey, size=150, speaking=false){
 
   window.addEventListener("popstate", (event) => {
     expandContainer.style.display = 'none'
+    expandedArticle.innerHTML = ''
     console.log('BackBtn: ' + event.state)
   })
 
@@ -1242,7 +1244,7 @@ submitUploadVideo.addEventListener('click', (e) => {
 
     if (inputVideo.files.length === 0) {
         errorMessage.textContent = 'No Video Selected...'
-        const noLength =  setInterval(() => {
+        setTimeout(() => {
          errorMessage.textContent = ''
         }, 3000)
         submitVideoActionsCont.style.display = 'none'
@@ -1254,7 +1256,7 @@ submitUploadVideo.addEventListener('click', (e) => {
         postPlaceholder.textContent = 'Add new post...'
         submitUploadVideo.style.backgroundColor = '#1E2A56'
         submitUploadVideo.textContent = 'Preview video'
-        clearTimeout(noLength)
+
           return;
 
     } else {
@@ -1287,7 +1289,7 @@ submitUploadVideo.addEventListener('click', (e) => {
        const videoUrl = URL.createObjectURL(videoFiles[0])
        const videoPrev = document.createElement('video')
        videoPrev.src = videoUrl
-       videoPrev.style.width = 'auto'
+       videoPrev.style.maxWidth = '100%'
        videoPrev.style.height = '100%'
        videoPrev.style.borderRadius = '15px'
        videoPrev.play()
@@ -1305,9 +1307,7 @@ submitUploadVideo.addEventListener('click', (e) => {
        submitUploadVideo.textContent = 'Success'
        cancelVideoBtn.style.display = 'none'
        postPlaceholder.textContent = '<< Video Attached >>'
-       submitUploadVideo.textContent = 'Success'
-       cancelVideoBtn.style.display = 'none'
-
+       
        postSubmitPostBtn.style.display = 'block'
        postSubmitPostBtn.disabled = false
 
@@ -1327,7 +1327,7 @@ submitUploadVideo.addEventListener('click', (e) => {
      
      if (inputFile.files.length === 0) {
           errorMessage.textContent = 'No Images Selected...'
-          setInterval(() => {
+          setTimeout(() => {
             errorMessage.textContent = ''
           }, 3000)
           submitActionsCont.style.display = 'none'
@@ -1377,7 +1377,7 @@ submitUploadVideo.addEventListener('click', (e) => {
         if (file.size > MAX_FILE_SIZE) {
 
           errorMessage.textContent = 'FILE/(s) Exceeded 6MB limit per File...'
-          setInterval(() => {
+          setTimeout(() => {
             errorMessage.textContent = ''
           }, 3000)
           submitActionsCont.style.display = 'none'
@@ -1421,9 +1421,7 @@ submitUploadVideo.addEventListener('click', (e) => {
           submitUploadBtn.textContent = 'Success'
           cancelUploadBtn.style.display = 'none'
           postPlaceholder.textContent = '<< Image/s Attached >>'
-          submitUploadBtn.textContent = 'Success'
-          cancelUploadBtn.style.display = 'none'
-
+         
           postSubmitPostBtn.style.display = 'block'
           postSubmitPostBtn.disabled = false
 
