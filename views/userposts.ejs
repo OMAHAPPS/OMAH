@@ -54,15 +54,15 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
      <header style="height: 25%; padding: 5px 5px; border-bottom: 1px solid rgba(255,255,255,.08);">
 
            <div class="links-wrapper" style="height: 35%; width: 100%; display: flex; align-items: center; justify-content: space-between;">
-               <a href="/home" style="padding: 10px; display: flex; justify-content: center; align-items: center; border: .05px solid rgba(255, 255, 255, .08); border-radius: 50%; background-color: rgba(0, 0, 0, 0.623);">
-                   <ion-icon name="arrow-back-outline" style="font-size: 20px; color: #C04848;"></ion-icon>
+               <a href="/home" id="back" style="padding: 10px; display: flex; justify-content: center; align-items: center; border: .05px solid rgba(255, 255, 255, .08); border-radius: 50%; background-color: rgba(0, 0, 0, 0.623);">
+                   <ion-icon name="arrow-back-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;"></ion-icon>
                </a>
                <div class="follow-mgs" style="display: flex; align-items: center; justify-content: center;">
                 <a href="/inbox" class="message" style="text-decoration: none; margin-right: 15px; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" style="fill: #C04848;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
                 </a>
-                <div class="follow-btn" style="display: grid; place-content: center; padding: 15px; height: 20px; width: fit-content; border-radius: 15px; border: 1px solid #C04848; background-color: transparent;">
-                           <h4 style="color: #C04848; font-size: .75rem;">Following</h4>
+                <div class="follow-btn"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; padding: 15px; height: 20px; width: fit-content; border-radius: 15px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
+                           <h4  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: .75rem;">Following</h4>
                  </div>
                </div>
 
@@ -71,20 +71,23 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                
                  <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px; padding: 16px; width: 100%;">
 
-             
-                        <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="65" height="65" style="border-radius: 50%; object-fit: cover;" />
+                       <% if (user.userDP !== 'none') { %>
+                        <img src="<%= R2BASE %>/<%= user.userDP %>" alt="" width="65" height="65" style="border-radius: 50%; object-fit: cover;" />
+                        <% } else { %>
+                          <img src="/placeholder.jpg" alt="" width="65" height="65" style="border-radius: 50%; object-fit: cover;" />
+                       <% } %>
 
                         <div style="flex:1; position: relative; width: 100%;">
                 
                             <div style="margin-bottom: 5px; display: flex; align-items: center; justify-content: flex-start; font-size: 18px; font-weight: 600; color: rgba(237,232,224,.85)">
-                                 Alvin 
-                                 <h2 style="margin-left: 5px; font-size: 16px; color: #C04848; font-weight: 600;" >@VinnTonae</h2>      
+                                 <%= user.userName %> 
+                                 <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="margin-left: 5px; font-size: 16px; color: <%= user.userColor %>; font-weight: 600;" >@<%= user.userHandle !== 'none' ? user.userHandle : user.userName %></h2>      
                             </div>
                             <div class="follow-info" style="display: flex; align-items: center; justify-content: flex-start;">
 
-                                <h2 style="font-size: 13px; color: rgba(237,232,224,.32); margin-right: 10px;" ><span style="color: rgba(237,232,224,.92);">556</span> Following</h2> 
-                                <h2 style="font-size: 13px; color: rgba(237,232,224,.32); margin-right: 10px;" ><span style="color: rgba(237,232,224,.92);">20K</span> Followers</h2> 
-                                <h2 style="font-size: 13px; color: rgba(237,232,224,.32);" ><span style="color: rgba(237,232,224,.92);">5K</span> Posts</h2> 
+                                <h2 style="font-size: 13px; color: rgba(237,232,224,.32); margin-right: 10px;" ><span style="color: rgba(237,232,224,.92);"><%= user.totalFollowing %></span> Following</h2> 
+                                <h2 style="font-size: 13px; color: rgba(237,232,224,.32); margin-right: 10px;" ><span style="color: rgba(237,232,224,.92);"><%= user.totalFollowers %></span> Followers</h2> 
+                                <h2 style="font-size: 13px; color: rgba(237,232,224,.32);" ><span style="color: rgba(237,232,224,.92);"><%= user.totalPosts %></span> Posts</h2> 
                             </div>
                                 
 
@@ -93,8 +96,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                         
               </div>
 
-              <div class="post-text" style="display: grid; place-content: center; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-bottom: 2px solid #C04848; padding: 5px;">
-                    <h2 style="color: #C04848; font-size: 14px;">Posts</h2>
+              <div class="post-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-bottom: 2px solid <%= user.userColor %>; padding: 5px;">
+                    <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: 14px;">Posts</h2>
               </div>
 
            </section>
@@ -104,21 +107,20 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
          <% posts.map((post) => { %>
 
-            <div class="glass-images" style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
+            <div   style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
    
               <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
    
-                <!-- ! element Placeholders for profile image and user info -->
-                 <div id="poster-username" style="display: none;"><%= post.userName %></div>
-                 <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
-                 <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
-                 <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
    
-                <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+                 <% if (user.userDP !== 'none') { %>
+                   <img src="<%= R2BASE %>/<%= user.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+                 <% } else { %>
+                   <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+                 <% } %>
    
                 <div style="flex:1">
                   
-                      <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85)">
+                      <div style="font-size: 14px; font-weight: 600; color: rgba(237,232,224,.85)">
                                    <%= post.userName %> 
                                    <% if (post.userName == user.userName) { %>
                                      <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
@@ -133,40 +135,146 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                                 <% const minutesPast = Math.floor( (diff / 60000) ) %>
    
                                 <% if (daysPast > 0) { %>
-                                 <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'<%= daysPast %>d ago' · The <%= post.userRealm %></div>
+                                 <div style="font-size:11px;color:rgba(237,232,224,.66);margin-top:1px"> · <%= daysPast %>d ago · </div>
                                  <% } else if (hoursPast > 0) { %>
-                                   <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'<%= hoursPast %>h ago' · The <%= post.userRealm %></div>
+                                   <div style="font-size:11px;color:rgba(237,232,224,.66);margin-top:1px"> · <%= hoursPast %>h ago · </div>
                                    <% } else if (minutesPast > 0) { %>
-                                     <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'<%= minutesPast %>min ago' · The <%= post.userRealm %></div>
+                                     <div style="font-size:11px;color:rgba(237,232,224,.66);margin-top:1px"> · <%= minutesPast %>min ago · </div>
                                      <% } else if (minutesPast == 0) { %>
-                                       <div style="font-size:9px;color:rgba(237,232,224,.66);margin-top:1px">'Just now' · The <%= post.userRealm %></div>
+                                       <div style="font-size:11px;color:rgba(237,232,224,.66);margin-top:1px"> · Just now · </div>
                                     <% } %>
                     </div>
                           
                 </div>
    
-                <p style="font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
+                <a href="/post/<%= post._id %>?post=<%= post.userId %>" style="text-decoration: none; font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></a>
    
-                <% if (post.image !== 'none') { %>
-                  <img src="/uploads/<%= post.image %>" alt="Image Corrupted" style="max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                  <% } else { %>
-                   <img src="" alt="No image" style="display: none; max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px;" />
-                <% } %>
+                       <%  if (post.videoUrl !== 'none') { %>
+
+                  <video id="player" controls preload="none" style="display: block; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
+                           src="<%=R2BASE %>/<%= post.videoUrl %>" type="video/mp4" data-src="/uploads/Expressions.mp4">
+                        Your browser does not support the video tag. 
+                    </video>
+            
+
+                  
+                 <% } else if (post.images.length === 0) { %>
+
+                    <article class="post-article" style="width: 100%; height: 200px; border-radius: 12px; margin-top: 13px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
+                    </article>
+
+                        <% } else if (post.images.length === 1) { %>
+
+                          <article class="post-article" style="z-index: 5; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; background: transparent;">
+
+
+                              <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div>   
+                            
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px;" />
+        
+                            <% }) %>
+         
+                          </article>
+                          
+
+                        <% } else if (post.images.length === 2) { %>
+
+                          <article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-top: 13px; display: flex; background: transparent;">
+
+                            <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div> 
+        
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
+        
+                            <% }) %>
+         
+                          </article>
+
+                        <% } else if (post.images.length === 3) { %>
+
+                          <article class="post-article" style="z-index: 5;width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; gap: 3px; background: transparent;">
+
+                            <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div> 
+
+                             <% const images = post.images %>
+
+                             <img class="post-images" src="<%= R2BASE %>/<%= images[0] %>" alt="N" style="height: 100%; width: 49%; object-fit: cover; object-position: center; border-radius: 12px 0 0 12px;" />
+        
+                             <div class="stacked" style="display: flex; flex-flow: column nowrap; gap: 3px; height: 100%; width: calc(50% - 5px); border-radius: 0 12px 12px 0; background: transparent;">
+                               <img class="post-images" src="<%= R2BASE %>/<%= images[1] %>" alt="N" style="width: calc(100% -1px); height: calc(50% - 2px); border-radius: 0 12px 0 0; object-fit: cover; object-position: center;" />
+                               <img class="post-images" src="<%= R2BASE %>/<%= images[2] %>" alt="N" style="width: calc(100% - 1px); height: calc(50% - 2px); border-radius: 0 0 12px 0; object-fit: cover; object-position: center;" />
+
+                             </div>
+        
+                          </article>
+
+                        <% } else if (post.images.length === 4) { %>
+
+                          <article class="post-article" style="z-index: 5;overflow: hidden; width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; flex-wrap: wrap; gap: 3px; overflow: hidden; background: transparent;">
+
+                            <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div>  
+        
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1.5px); height: calc(50% - 1.5px); border-radius: 1px solid red; object-fit: cover; object-position: center;"/>
+        
+                            <% }) %>
+         
+                          </article>
+
+                        <% } else { %>
+
+                          <article class="post-article" style="z-index: 5; width: 100%; height: 250px; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
+
+                           <div class="placeholder-cont" style="display: none;">
+                                  <% post.images.map((image, key) => { %>
+                                    <p id="<%= key %>" ><%= image %></p>
+                                  <% }) %>
+                            </div> 
+        
+                            <% post.images.map((image) => { %>
+        
+                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; margin-right: 3px;" />
+        
+                            <% }) %>
+         
+                          </article>
+
+                        <% } %>
    
                 <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
                      <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="heart-outline" style="font-size: 16px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 13px; color: #C04848; font-weight: 600; margin-left: 3px;">20</span>
+                         <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 13px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"><%= post.likes %></span>
                      </div>   
                      <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="barcode-outline" style="font-size: 15px; font-weight: bold; color: #C04848;"></ion-icon>
-                         <span style="font-size: 13px; color: #C04848; font-weight: 600; margin-left: 3px;">204</span>
+                         <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 13px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"><%= post.interactions %></span>
                      </div>  
-                     <ion-icon name="share-social-outline" style="font-size: 20px; font-weight: bold; color: #C04848;"></ion-icon>
-                     <ion-icon name="repeat" style="font-size: 20px; font-weight: bold; color: #C04848;"></ion-icon>
+                     <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                     <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
                    
                    </div>
-           </div> 
+            </div> 
 
          <% }) %>
 

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 
 const postSchema = new Schema({
      
-       userId: { type: String, required: true },
+       userId: { type: String, required: true, index: true },
        userName: { type: String, required: true },
        userHandle: { type: String, default: 'none', required: false },
        post: { type: String, default: 'none', required: false },

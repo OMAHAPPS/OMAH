@@ -148,53 +148,112 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
 
     const userData = await Omaruser.findOne({ _id: id })
 
-    const allPostsNS = await Post.find()
+    const allPosts = await Post.find()
     
-    const allPosts = allPostsNS.sort((a, b) =>  b.createdAt - a.createdAt )
+    // const allPosts = allPostsNS.sort((a, b) =>  b.createdAt - a.createdAt )
 
-    const allUsers = await Omaruser.find()
+    const requiredUsseArray = allPosts.map((post) => post.userId)
+    
+    const allUsers = await Omaruser.find({ _id: { $in: requiredUsseArray  } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+    
+     const postDataArray = []
 
-    const postDataArray = []
+     allPosts.forEach((post) => {
 
-    allPosts.forEach((post) => {
+          const userId = post.userId
 
-        const userId = post.userId
+          const posterInfoArray = allUsers.filter((user) => user.id == userId )
+          const posterInfo = posterInfoArray[0]
+         
+         const newPostObject = {
+             postId: post._id,
+             createdAt: post.createdAt,  
+             videoUrl: post.videoUrl,
+             images: post.images,
+             likes: post.likes,
+             interactions: post.interactions,
+             replies: post.replies,
+             userHandle: post.userHandle,
+             post: post.post,
+             userName: post.userName,
+             poster: {
+                 totalFollowers: posterInfo.totalFollowers,
+                 totalFollowing: posterInfo.totalFollowing,
+                 totalPosts: posterInfo.totalPosts,
+                 userDP: posterInfo.userDP,
+                 userHandle: posterInfo.userHandle
+             }
 
-        const posterInfoArray = allUsers.filter((user) => user.id == userId )
-         const posterInfo = posterInfoArray[0]
+         }
 
-        const newPostObject = {
-            postId: post._id,
-            createdAt: post.createdAt,  
-            videoUrl: post.videoUrl,
-            images: post.images,
-            likes: post.likes,
-            interactions: post.interactions,
-            replies: post.replies,
-            userHandle: post.userHandle,
-            post: post.post,
-            userName: post.userName,
-            poster: {
-                totalFollowers: posterInfo.totalFollowers,
-                totalFollowing: posterInfo.totalFollowing,
-                totalPosts: posterInfo.totalPosts,
-                userDP: posterInfo.userDP,
-                userHandle: posterInfo.userHandle
-            }
-
-        }
-
-         postDataArray.push(newPostObject)
+       postDataArray.push(newPostObject)
         
 
         
         
+     })
+
+
+     const R2BaseUrl = process.env.R2_PUBLIC_BASE_URL 
+
+    res.render('home', { user: userData, posts: postDataArray, R2BASE: R2BaseUrl, messages: req.flash('error') })
+
+
+})
+
+app.get('/post/:id', notLoggedInCheck, async (req, res) => {
+    
+    const postId = req.params.id
+    const userid = req.user._id
+    const optionalQuery = req.query.post       // to carry userId which was routed from 
+    const post = await Post.findOne({ _id: postId })
+    const posterId = post.userId
+    const posterData = await Omaruser.findOne({ _id: posterId })
+    const user = await Omaruser.findOne({ _id: userid })
+    const replies = await Reply.find({ postId: postId })
+
+    const requiredUserArray = replies.map((reply) => reply.userId)
+
+  const allUsers = await Omaruser.find({ _id: { $in: requiredUserArray  } }).select('_id totalFollowers totalFollowing totalPosts userName userDP userHandle')
+    
+     const replyDataArray = []
+     
+
+     replies.forEach((reply) => {
+
+          const userId = reply.userId
+
+          const posterInfoArray = allUsers.filter((user) => user.id == userId )
+          const posterInfo = posterInfoArray[0]
+         
+         const newReplyObject = {
+             replyId: reply._id,
+             createdAt: reply.createdAt,  
+             videoUrl: reply.videoUrl,
+             images: reply.images,
+             likes: reply.likes,
+             interactions: reply.interactions,
+             reply: reply.replystring,
+             author: {
+                 totalFollowers: posterInfo.totalFollowers,
+                 totalFollowing: posterInfo.totalFollowing,
+                 totalPosts: posterInfo.totalPosts,
+                 userDP: posterInfo.userDP,
+                 userName: posterInfo.userName,
+                 userHandle: posterInfo.userHandle,
+                 userId: posterInfo._id
+             }
+
+         }
+
+       replyDataArray.push(newReplyObject)  
+       
     })
-    // console.log(postDataArray)
 
     const R2BaseUrl = process.env.R2_PUBLIC_BASE_URL 
 
-     res.render('home', { user: userData, posts: postDataArray, R2BASE: R2BaseUrl, messages: req.flash('error') })
+    res.render('post', { post, user, poster: posterData, replies: replyDataArray, R2BASE: R2BaseUrl, query: optionalQuery })
+
 })
 
 const storage = multer.diskStorage({
@@ -619,30 +678,20 @@ app.get('/group', notLoggedInCheck, async (req, res) => {
       res.render('group')
 })
 
-app.get('/post/:id', notLoggedInCheck, async (req, res) => {
+
+
+app.get('/user/:id', notLoggedInCheck,  async (req, res) => {
     
-    const postId = req.params.id
-    const userid = req.user._id
-    const post = await Post.findOne({ _id: postId })
-    const posterId = post.userId
-    const posterData = await Omaruser.findOne({ _id: posterId })
+    const userid = req.params.id
+    
     const user = await Omaruser.findOne({ _id: userid })
-    const replies = await Reply.find({ postId: postId })
-    
-  
-    const R2BASE = process.env.R2_PUBLIC_BASE_URL
-   
-    res.render('post', { post, user, poster: posterData, replies, R2BASE })
+    const userPosts = await Post.find({ userId: userid }) 
+    const R2baseUrl = process.env.R2_PUBLIC_BASE_URL
+
+    res.render('userposts', { posts: userPosts, user, R2BASE: R2baseUrl } )
 })
 
-app.get('/user', notLoggedInCheck,  async (req, res) => {
-    
-    const userid = req.user._id
-    const user = await Omaruser.findOne({ _id: userid })
-    const posts = await Post.find() 
 
-    res.render('userposts', { posts, user } )
-})
 
 
 app.patch('/handle',  async (req, res) => {

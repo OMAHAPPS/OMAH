@@ -107,7 +107,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!-- * /////  fetch New Posts Button /////  -->
 
-    <a href="/home" class="fetch-new" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="opacity: 1; z-index: 10; text-decoration: none; cursor: pointer; display: flex; justify-content: center; align-items: center; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); height: 40px; width: fit-content; border-radius: 20px; background-color: <%= user.userColor %>; padding-inline: 10px; transition: opacity 1.25s ease-out;">
+    <a href="/home" class="fetch-new" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="opacity: 1; z-index: 1; text-decoration: none; cursor: pointer; display: none; justify-content: center; align-items: center; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); height: 40px; width: fit-content; border-radius: 20px; background-color: <%= user.userColor %>; padding-inline: 10px; transition: opacity 1.25s ease-out;">
            <div class="logo-holders" style="position: relative; height: 25px;">
                 <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="25" height="25" style="border-radius: 50%; object-fit: cover;" />
                 <img src="/placeholder.jpg" alt="" width="25" height="25" style="position: absolute; left: 35%; z-index: -1; border-radius: 50%; object-fit: cover;" />
@@ -115,9 +115,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
            </div>
            <h2 style="font-size: 12px; font-weight: bold; margin-left: 15px; color: rgba(237, 232, 224, .85);">New Feed</h2>
     </a>
-
+    
     <!--todo ////// FEED  ////// -->
-
+    
     <section id="scroll-container-posts" class="scroll" style="margin-top: 12px; display: flex; flex-flow: column nowrap; justify-content: flex-start; align-items: center; height: 92%; width: 100%; flex:1; padding:14px 14px 80px; position: absolute; top: 8%; left: 0; overflow-y: scroll; overflow-x: hidden; transition: .3s ease-in-out;">
       
                          <!--* ////// POSTS ///// -->
@@ -334,7 +334,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 
     </section>
             
-    <section id="scroll-container-messages" class="scroll" style="display: block; height: 92%; width: 100%; flex:1; padding: 30px 14px 80px 14px; position: absolute; top: 8%; left: 100%; overflow-y: scroll; overflow-x: hidden; transition: .3s ease-in-out;">
+    <section id="scroll-container-messages" class="scroll" style="z-index: 30; display: block; height: 92%; width: 100%; flex:1; padding: 30px 14px 80px 14px; position: absolute; top: 8%; left: 100%; overflow-y: scroll; overflow-x: hidden; transition: .3s ease-in-out;">
               
               <!--* //////  Messages ////////  -->
               
@@ -376,7 +376,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     </section>
 
-    <section id="scroll-container-groups" class="scroll" style="margin-top: 12px; display: block; height: 92%; width: 100%; flex:1; padding:14px 14px 80px; position: absolute; top: 8%; left: 200%; overflow-y: scroll; overflow-x: hidden; transition: .3s ease-in-out;">
+    <section id="scroll-container-groups" class="scroll" style="z-index: 30; margin-top: 12px; display: block; height: 92%; width: 100%; flex:1; padding:14px 14px 80px; position: absolute; top: 8%; left: 200%; overflow-y: scroll; overflow-x: hidden; transition: .3s ease-in-out;">
 
                      <!-- * /////  ROOMS //////// -->
 
@@ -883,16 +883,17 @@ function charSVG(realmKey, size=150, speaking=false){
 
  postImages.forEach((img) => {
 
+    
     img.addEventListener('click', (e) => {
       
        e.preventDefault();
 
-       console.log(window.history.state)
+      
 
        if (!history.state?.imageExpand) {
 
         history.pushState( { imageExpand: true}, "", "" )
-        console.log("history state created" + window.history.state.imageExpand)
+       
        }
        
        console.log(postScrollContainer.scrollTop)
@@ -942,7 +943,7 @@ function charSVG(realmKey, size=150, speaking=false){
 
   const sharePostBtn = document.querySelector('.sharePost')
 
-   const modal = document.querySelector('.profile-content')
+  const modal = document.querySelector('.profile-content')
 
 
     document.querySelectorAll('.info-button').forEach((btn) => {
@@ -1626,6 +1627,10 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                  xhr.onload = () => {
 
                    if (xhr.status === 200) {
+                      progress.style.display = 'none'
+                      status.textContent = 'Please Wait..'
+                      text.style.display = 'none'
+
                       resolve(uploadUrl.key)
                    }else {
                     reject(uploadUrl.key)
@@ -1796,7 +1801,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             
             let uploadedBytes = 0
 
-        function uploadSingleFile (file, uploadInfo, index, fileProgress, totalBytes, progress, text, wrapper) {
+        function uploadSingleFile (file, uploadInfo, index, fileProgress, totalBytes, status, progress, text, wrapper) {
                 // CREATE UI and track successful and failed file uploads
                 return new Promise((resolve, reject) => {
 
@@ -1840,7 +1845,9 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                   xhr.onload = async () => {
                      
                       if (xhr.status === 200) {
-  
+                          progress.style.display = 'none'
+                          status.textContent = 'Please Wait..'
+                          text.style.display = 'none'
                          
                          resolve(uploadInfo.key)     // MAPS THE SUCCESSFULL FILE UPLOAD TO THE ARRAY
 
@@ -1873,7 +1880,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             
 
             const uploadedKeys = await Promise.all(uploadUrls.map((uploadinfo, index) => {
-                      return  uploadSingleFile(files[index], uploadinfo, index, fileProgress, totalBytes, progress, text, wrapper)
+                      return  uploadSingleFile(files[index], uploadinfo, index, fileProgress, totalBytes, status, progress, text, wrapper)
 
                   }))     
              
@@ -2038,17 +2045,20 @@ const fetchNewFeed = document.querySelector('.fetch-new')
 
 
 
-let lastScrollTop = postScrollContainer.scrollTop + 200
+let lastScrollTop = postScrollContainer.scrollTop + 50
+
+let moreScrollTop = postScrollContainer.scrollTop + 200
 
 postScrollContainer.addEventListener('scroll', () => {
   
 let currentScrollTop = postScrollContainer.scrollTop    
 
   if (currentScrollTop > lastScrollTop ) {
-    fetchNewFeed.style.opacity = '0'
+    fetchNewFeed.style.opacity = '0.65'
+    fetchNewFeed.style.display = 'flex'
   }else if (currentScrollTop < lastScrollTop) {
-    fetchNewFeed.style.opacity = '0.5'
-  }  
+    fetchNewFeed.style.opacity = '1'
+  } 
 
   lastScrollTop = currentScrollTop
 }, { passive: true })

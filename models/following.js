@@ -5,11 +5,12 @@ const Schema = mongoose.Schema
 const followingSchema = new Schema({
 
        parentId: { type: String, required: true },
-       bucketId: { type: String, required: true },
        count: { type: Number, required: true },
        following: { type: Array, default: [], required: false }
 
-}, { timestamps: true })
+})
+
+followingSchema.index({ parentId: 1, count: 1 })       // remember to maintain order when querring aggregation
 
 const Following = new mongoose.model('following', followingSchema)
 
