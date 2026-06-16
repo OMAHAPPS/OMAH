@@ -213,7 +213,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                               <% const minutesPast = Math.floor( (diff / 60000) ) %>
 
                           <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
-                                   <%= post.userName %> 
+                                   <%= reply.author.userName %> 
                                    <% if (daysPast > 0) { %>
                                <span style="color: rgba(237, 232, 224, .42);"> . <%= daysPast %>d</span>
                                <% } else if (hoursPast > 0) { %>
@@ -1033,6 +1033,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
           const postid = document.getElementById('postid').value
 
           errorMessage.style.color = '#1ed760'
+          errorMessage.style.backgroundColor = 'transparent'
           errorMessage.textContent = 'Success Waiting Updates..'
           console.log(responseFromPost)
           textArea.value = 'Success'
@@ -1042,7 +1043,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
              errorMessage.textContent = ''
           }, 3000)
            
-          const updateParentPost = await fetch('/post-update', {
+          const updateParentPost = await fetch('/post-update-reply', {
                 method: 'PATCH',
                 headers: {
                    "Content-Type": "application/json"
@@ -1120,6 +1121,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
         if (responseStringOnly.success == true) {
 
              errorMessage.style.color = '#1ed760'
+             errorMessage.style.backgroundColor = 'transparent'
              errorMessage.textContent = 'Checking Updates..'
              setInterval(() => {
                 errorMessage.textContent = ''
@@ -1127,7 +1129,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
              textArea.value = 'Success'
              const postid = document.getElementById('postid').value
                  
-          const updateParentPostSt = await fetch('/post-update', {
+          const updateParentPostSt = await fetch('/post-update-reply', {
                 method: 'PATCH',
                 headers: {
                    "Content-Type": "application/json"
@@ -1323,6 +1325,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
           if (responseFromReply.success == true) {
 
              errorMessage.style.color = '#1ed760'
+             errorMessage.style.backgroundColor = 'transparent'
              errorMessage.textContent = 'Checking Updates..'
              setInterval(() => {
                 errorMessage.textContent = ''
@@ -1330,7 +1333,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
              textArea.value = 'Success'
              const postid = document.getElementById('postid').value
                  
-          const updateParentPostSt = await fetch('/post-update', {
+          const updateParentPostSt = await fetch('/post-update-reply', {
                 method: 'PATCH',
                 headers: {
                    "Content-Type": "application/json"

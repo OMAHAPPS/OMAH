@@ -567,13 +567,37 @@ app.post('/post', async (req, res) => {
      
      
      const post =  new Post(postObject).save().then((post) => { 
-         
-         res.json({ success: true })
+         console.log(`New Post Created By: ${post.userName}`)
+         res.json({ success: true, post: post })
      }).catch((err) => {
          console.log(err)
          res.json({ success: false })
      })
      
+
+})
+
+app.patch('/post-update-user', async (req, res) => {
+
+     const { postid } = req.body
+     const postCreated = await Post.findOne({ _id: postid })
+     const userToUpdateId = postCreated.userId
+
+     try {
+
+        await Omaruser.findByIdAndUpdate({ _id: userToUpdateId }, { $inc: { totalPosts: 1 } })
+
+        res.json({ success: true })
+        
+     } catch (error) {
+
+      
+        res.json({ success: false })
+        
+     }
+
+
+
 
 })
 
@@ -595,7 +619,7 @@ app.post('/post/reply', async (req, res) => {
 
 })
 
-app.patch('/post-update', async (req, res) => {
+app.patch('/post-update-reply', async (req, res) => {
 
       const { postid } = req.body
       const parentPost = await Post.findOne({ _id: postid })
