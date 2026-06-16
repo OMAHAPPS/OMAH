@@ -150,7 +150,7 @@ stopFetchLinks.forEach((link) => {
        })
     })
  
-         document.querySelectorAll('.info-button').forEach((btn) => {
+ document.querySelectorAll('.info-button').forEach((btn) => {
 
       btn.addEventListener('click', (e) => {
           
@@ -162,6 +162,7 @@ stopFetchLinks.forEach((link) => {
           // Populate modal with profile info (placeholder for now)
           const profileInfo = {
               userName: btn.children[0].textContent,
+              userId: btn.children[7].textContent,
               userProfilePic: btn.children[5].getAttribute('src'),
               userHandle: btn.children[4].textContent,
               userStats: {
@@ -171,7 +172,7 @@ stopFetchLinks.forEach((link) => {
               } 
           }
 
-      
+          
           const profileContainer = document.querySelector('#profile-info-cont')
           
           profileContainer.querySelector('img').src = profileInfo.userProfilePic  
@@ -180,6 +181,8 @@ stopFetchLinks.forEach((link) => {
           profileContainer.querySelector('#following').textContent = `${profileInfo.userStats.following}`
           profileContainer.querySelector('#followers').textContent = `${profileInfo.userStats.followers}`
           profileContainer.querySelector('#posts').textContent = `${profileInfo.userStats.posts}`
+          profileContainer.querySelector('#link-to-message').href = `/inbox/${profileInfo.userId}`
+          profileContainer.querySelector('#link-to-profile').href = `/user/${profileInfo.userId}`
           
           document.querySelector('.overlay').style.display = 'block'
           document.getElementById('profile-wrapper').style.display = 'block'
@@ -191,7 +194,6 @@ stopFetchLinks.forEach((link) => {
       })
 
     })
-
 
  
         sessionStorage.removeItem('homePageSnapShot')   
@@ -492,6 +494,7 @@ function charSVG(realmKey, size=150, speaking=false){
           // Populate modal with profile info (placeholder for now)
           const profileInfo = {
               userName: btn.children[0].textContent,
+              userId: btn.children[7].textContent,
               userProfilePic: btn.children[5].getAttribute('src'),
               userHandle: btn.children[4].textContent,
               userStats: {
@@ -510,6 +513,8 @@ function charSVG(realmKey, size=150, speaking=false){
           profileContainer.querySelector('#following').textContent = `${profileInfo.userStats.following}`
           profileContainer.querySelector('#followers').textContent = `${profileInfo.userStats.followers}`
           profileContainer.querySelector('#posts').textContent = `${profileInfo.userStats.posts}`
+          profileContainer.querySelector('#link-to-message').href = `/inbox/${profileInfo.userId}`
+          profileContainer.querySelector('#link-to-profile').href = `/user/${profileInfo.userId}`
           
           document.querySelector('.overlay').style.display = 'block'
           document.getElementById('profile-wrapper').style.display = 'block'

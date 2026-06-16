@@ -167,6 +167,7 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
          
          const newPostObject = {
              postId: post._id,
+             userId: post.userId,
              createdAt: post.createdAt,  
              videoUrl: post.videoUrl,
              images: post.images,
@@ -692,9 +693,16 @@ app.get('/settings', notLoggedInCheck, async (req, res) => {
        res.render('settings', { user: User, R2BASE: R2BASEURL, totalPosts: totalPosts, messages: req.flash('error') })
 })
 
-app.get('/inbox', notLoggedInCheck, async (req, res) => {
+app.get('/inbox/:id', notLoggedInCheck, async (req, res) => {
 
-      res.render('inbox')
+    const userMessagingId = req.user._id
+    const userMessagedId = req.params.id
+    const parties = {
+        sender: userMessagingId,
+        recipient: userMessagedId
+    }
+
+      res.render('inbox', { parties })
 })
 
 app.get('/group', notLoggedInCheck, async (req, res) => {
