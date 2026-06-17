@@ -711,32 +711,34 @@ app.get('/inbox/:id', notLoggedInCheck, async (req, res) => {
 
     const userMessagingId = req.user._id
     const userMessagedId = req.params.id
+    const postOriginId = req.query.postOrigin
     const parties = {
         sender: userMessagingId,
         recipient: userMessagedId
     }
 
-      res.render('inbox', { parties })
+      res.render('inbox', { parties, origin: postOriginId })
 })
 
-app.get('/group', notLoggedInCheck, async (req, res) => {
-
-      res.render('group')
-})
 
 
 
 app.get('/user/:id', notLoggedInCheck,  async (req, res) => {
     
     const userid = req.params.id
+    const postOriginId = req.query.postOrigin
     
     const user = await Omaruser.findOne({ _id: userid })
     const userPosts = await Post.find({ userId: userid }) 
     const R2baseUrl = process.env.R2_PUBLIC_BASE_URL
 
-    res.render('userposts', { posts: userPosts, user, R2BASE: R2baseUrl } )
+    res.render('userposts', { posts: userPosts, user, R2BASE: R2baseUrl, origin: postOriginId } )
 })
 
+app.get('/group', notLoggedInCheck, async (req, res) => {
+
+      res.render('group')
+})
 
 
 

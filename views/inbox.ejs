@@ -50,9 +50,17 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 <body>
 
    <header style="position: relative; height: 10%; display: flex; align-items: center; gap: 12px; padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08);">
-        <a href="/home" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
-            <ion-icon name="arrow-back-outline"></ion-icon>
-        </a>     
+        
+        <% if (origin) { %>
+            <a href="/post/<%= origin %>" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+            </a> 
+        <% } else { %>
+            <a href="/home" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+            </a>     
+        <% } %>
+
         
         <div id="prof" onclick="displayNav()" style=" font-size: 15px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px; flex: 1;">
 

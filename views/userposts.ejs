@@ -54,9 +54,19 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
      <header style="height: 25%; padding: 5px 5px; border-bottom: 1px solid rgba(255,255,255,.08);">
 
            <div class="links-wrapper" style="height: 35%; width: 100%; display: flex; align-items: center; justify-content: space-between;">
-               <a href="/home" id="back" style="padding: 10px; display: flex; justify-content: center; align-items: center; border: .05px solid rgba(255, 255, 255, .08); border-radius: 50%; background-color: rgba(0, 0, 0, 0.623);">
-                   <ion-icon name="arrow-back-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;"></ion-icon>
-               </a>
+              
+             <% if (origin) { %>
+               <a href="/post/<%= origin %>" id="back" style="padding: 10px; display: flex; justify-content: center; align-items: center; border: .05px solid rgba(255, 255, 255, .08); border-radius: 50%; background-color: rgba(0, 0, 0, 0.623);">
+                  <ion-icon name="arrow-back-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;"></ion-icon>
+              </a>
+            <% } else { %>
+              <a href="/home" id="back" style="padding: 10px; display: flex; justify-content: center; align-items: center; border: .05px solid rgba(255, 255, 255, .08); border-radius: 50%; background-color: rgba(0, 0, 0, 0.623);">
+                  <ion-icon name="arrow-back-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;"></ion-icon>
+              </a>
+            <% } %>
+             
+
+
                <div class="follow-mgs" style="display: flex; align-items: center; justify-content: center;">
                 <a href="/inbox" class="message" style="text-decoration: none; margin-right: 15px; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>

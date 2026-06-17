@@ -98,8 +98,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
               <% } %>
-
-
+               
+              <div id="post-id" style="display: none;"><%= post._id %></div>
+              
               <div style="flex:1; position: relative;">
                 
                         <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.9)">
@@ -114,7 +115,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                         <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>;" >@<%= post.userHandle !== 'none' ? post.userHandle : poster.userHandle !== 'none' ? poster.userHandle : poster.userName %></h2>
 
                         <div id="follow-btn" class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; place-content: center; width: fit-content; background-color: transparent;">
-                          <ion-icon name="ellipsis-vertical-outline" style="font-size: 20px; color: #C04848;"></ion-icon>
+                          <ion-icon name="ellipsis-vertical-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;"></ion-icon>
                         </div>
                              
               </div>
@@ -209,6 +210,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                <% } %> 
 
                <div id="poster-userId" style="display: none;"><%= reply.author.userId %></div>
+               <div id="post-id" style="display: none;"><%= post._id %></div>
   
                 <div class="poster-info" style="text-decoration: none; flex:1; position: relative;">
 
@@ -326,10 +328,6 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
         <% })  %> 
     
-
-
-       
-       
        
 
     </main>
@@ -1389,6 +1387,8 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
 })
 
 
+const profileContainer = document.querySelector('#profile-info-cont')
+
 const sharePostBtn = document.querySelector('.sharePost')
 
 const modal = document.querySelector('.profile-content')
@@ -1473,11 +1473,30 @@ document.querySelector('.poster-info').addEventListener('click', (e) => {
              userHandle: infoContainer.children[5].textContent,
              userProfilePic: infoContainer.children[6].getAttribute('src')
       }
-      console.log(profileInfo)
+      
+      const postId = infoContainer.children[7].textContent
 
-})
+          profileContainer.querySelector('img').src = profileInfo.userProfilePic  
+          profileContainer.querySelector('h2').textContent = profileInfo.userName
+          profileContainer.querySelector('p').textContent = profileInfo.userHandle
+          profileContainer.querySelector('#following').textContent = `${profileInfo.following}`
+          profileContainer.querySelector('#followers').textContent = `${profileInfo.followers}`
+          profileContainer.querySelector('#posts').textContent = `${profileInfo.posts}`
+          profileContainer.querySelector('#link-to-message').href = `/inbox/${profileInfo.userId}?postOrigin=${postId}`
+          profileContainer.querySelector('#link-to-profile').href = `/user/${profileInfo.userId}?postOrigin=${postId}`
+          
+          document.querySelector('.overlay').style.display = 'block'
+          document.getElementById('profile-wrapper').style.display = 'block'
+          setTimeout(() => {
+              modal.style.transition = 'top 0.3s ease-out'
+              modal.style.top = '50%'
+      
+          }, 75)
+      })
 
-  document.querySelectorAll('.info-button').forEach((btn) => {
+
+document.querySelectorAll('.info-button').forEach((btn) => {
+
 
       btn.addEventListener('click', (e) => {
           
@@ -1500,8 +1519,8 @@ document.querySelector('.poster-info').addEventListener('click', (e) => {
               } 
           }
 
-      
-          const profileContainer = document.querySelector('#profile-info-cont')
+          const postId = btn.children[7].textContent
+          
           
           profileContainer.querySelector('img').src = profileInfo.userProfilePic  
           profileContainer.querySelector('h2').textContent = profileInfo.userName
@@ -1509,8 +1528,8 @@ document.querySelector('.poster-info').addEventListener('click', (e) => {
           profileContainer.querySelector('#following').textContent = `${profileInfo.userStats.following}`
           profileContainer.querySelector('#followers').textContent = `${profileInfo.userStats.followers}`
           profileContainer.querySelector('#posts').textContent = `${profileInfo.userStats.posts}`
-          profileContainer.querySelector('#link-to-message').href = `/inbox/${profileInfo.userId}`
-          profileContainer.querySelector('#link-to-profile').href = `/user/${profileInfo.userId}`
+          profileContainer.querySelector('#link-to-message').href = `/inbox/${profileInfo.userId}?postOrigin=${postId}`
+          profileContainer.querySelector('#link-to-profile').href = `/user/${profileInfo.userId}?postOrigin=${postId}`
           
           document.querySelector('.overlay').style.display = 'block'
           document.getElementById('profile-wrapper').style.display = 'block'
