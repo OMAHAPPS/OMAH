@@ -869,6 +869,56 @@ document.addEventListener('DOMContentLoaded', () => {
         
         postScrollContainer.innerHTML = postHtml.html
 
+
+         const postImages = document.querySelectorAll('.post-images')
+         const expandedArticle = document.querySelector('#expanded-article')
+         const expandContainer = document.querySelector('#images-expand')
+         const linkToPost = document.getElementById('link-to-post')
+
+         postImages.forEach((img) => {
+
+    
+            img.addEventListener('click', (e) => {
+      
+                e.preventDefault();
+
+      
+
+              if (!history.state?.imageExpand) {
+
+                  history.pushState( { imageExpand: true}, "", "" )
+       
+              }
+       
+             console.log(postScrollContainer.scrollTop)
+        
+          const articleParent =  e.target.closest('article')
+          const wholePost = e.target.closest('a')
+          const postLink = wholePost.children[0].children[6].textContent
+          const placeholderCont = articleParent.children[0]
+          const imagesArray = Array.from(placeholderCont.children, child => child.textContent)
+
+          linkToPost.href = `/post/${postLink}` 
+       
+     
+           
+           imagesArray.forEach((img) => {
+              const image = document.createElement('img')
+              image.src = `<%= R2BASE %>/${img}`
+              image.style.width = '98%'
+              image.style.marginInline = '3px'
+              image.style.height = 'auto'
+              image.style.scrollSnapAlign = 'start'
+              image.style.objectFit = 'contain'
+              expandedArticle.appendChild(image)
+            })
+       
+       
+            expandContainer.style.display = 'block'
+         
+
+           })
+         })
      
        document.querySelectorAll('.info-button').forEach((btn) => {
 
@@ -998,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', () => {
        
        
        expandContainer.style.display = 'block'
-       console.log(expandContainer)
+      
 
        })
     })
