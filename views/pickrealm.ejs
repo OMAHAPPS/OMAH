@@ -86,8 +86,10 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
 
-
+<script src="/socket.io/socket.io.js"></script>
 <script type="module">
+
+const socket = io({ auth: { userId: '<%= user._id %>' } })  
 
 
     

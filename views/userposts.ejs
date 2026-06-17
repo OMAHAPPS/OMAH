@@ -57,11 +57,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               
              <% if (origin) { %>
                <a href="/post/<%= origin %>" id="back" style="padding: 10px; display: flex; justify-content: center; align-items: center; border: .05px solid rgba(255, 255, 255, .08); border-radius: 50%; background-color: rgba(0, 0, 0, 0.623);">
-                  <ion-icon name="arrow-back-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;"></ion-icon>
+                  <ion-icon name="arrow-back-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 25px; color: <%= userReq.userColor %>;"></ion-icon>
               </a>
             <% } else { %>
               <a href="/home" id="back" style="padding: 10px; display: flex; justify-content: center; align-items: center; border: .05px solid rgba(255, 255, 255, .08); border-radius: 50%; background-color: rgba(0, 0, 0, 0.623);">
-                  <ion-icon name="arrow-back-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;"></ion-icon>
+                  <ion-icon name="arrow-back-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 25px; color: <%= userReq.userColor %>;"></ion-icon>
               </a>
             <% } %>
              
@@ -69,10 +69,10 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                <div class="follow-mgs" style="display: flex; align-items: center; justify-content: center;">
                 <a href="/inbox" class="message" style="text-decoration: none; margin-right: 15px; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
                 </a>
-                <div class="follow-btn"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; padding: 15px; height: 20px; width: fit-content; border-radius: 15px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
-                           <h4  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: .75rem;">Following</h4>
+                <div class="follow-btn"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; padding: 15px; height: 20px; width: fit-content; border-radius: 15px; border: 1px solid <%= userReq.userColor %>; background-color: transparent;">
+                           <h4  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= userReq.userColor %>; font-size: .75rem;">Following</h4>
                  </div>
                </div>
 
@@ -91,9 +91,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 
                             <div style="margin-bottom: 5px; display: flex; align-items: center; justify-content: flex-start; font-size: 18px; font-weight: 600; color: rgba(237,232,224,.85)">
                                  <%= user.userName %> 
-                                 <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="margin-left: 5px; font-size: 16px; color: <%= user.userColor %>; font-weight: 600;" >@<%= user.userHandle !== 'none' ? user.userHandle : user.userName %></h2>      
+                                 <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="margin-left: 5px; font-size: 16px; color: <%= userReq.userColor %>; font-weight: 600;" >@<%= user.userHandle !== 'none' ? user.userHandle : user.userName %></h2>      
                             </div>
-                            <div class="follow-info" style="display: flex; align-items: center; justify-content: flex-start;">
+                            <div class="follow-info" style="display: flex; align-items: center; justify-content: flex-start; margin-top: 5px;">
 
                                 <h2 style="font-size: 13px; color: rgba(237,232,224,.32); margin-right: 10px;" ><span style="color: rgba(237,232,224,.92);"><%= user.totalFollowing %></span> Following</h2> 
                                 <h2 style="font-size: 13px; color: rgba(237,232,224,.32); margin-right: 10px;" ><span style="color: rgba(237,232,224,.92);"><%= user.totalFollowers %></span> Followers</h2> 
@@ -106,8 +106,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                         
               </div>
 
-              <div class="post-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-bottom: 2px solid <%= user.userColor %>; padding: 5px;">
-                    <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: 14px;">Posts</h2>
+              <div class="post-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-bottom: 2px solid <%= userReq.userColor %>; padding: 5px;">
+                    <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= userReq.userColor %>; font-size: 14px;">Posts</h2>
               </div>
 
            </section>
@@ -133,9 +133,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                       <div style="font-size: 14px; font-weight: 600; color: rgba(237,232,224,.85)">
                                    <%= post.userName %> 
                                    <% if (post.userName == user.userName) { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= userReq.userColor %>; background: <%= userReq.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                                      <% } else { %>
-                                       <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                       <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= userReq.userColor %>; background: <%= userReq.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                                    <% } %>
                           </div>
                                 <% const timestamp = post.createdAt %>
@@ -273,15 +273,15 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
    
                 <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
                      <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 13px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"><%= post.likes %></span>
+                         <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= userReq.userColor %>;"></ion-icon>
+                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; color: <%= userReq.userColor %>; font-weight: 600; margin-left: 3px;"><%= post.likes %></span>
                      </div>   
                      <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 13px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"><%= post.interactions %></span>
+                         <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= userReq.userColor %>;"></ion-icon>
+                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; color: <%= userReq.userColor %>; font-weight: 600; margin-left: 3px;"><%= post.interactions %></span>
                      </div>  
-                     <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                     <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                     <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= userReq.userColor %>;"></ion-icon>
+                     <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= userReq.userColor %>;"></ion-icon>
                    
                    </div>
             </div> 

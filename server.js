@@ -85,8 +85,35 @@ mongoose.connect(dbURI)
 
 const io = new Server(server)
 
+// AUTHENTICATION MIDDLEWARE FOR IO
+io.use((socket, next) => {
+
+  const userId = socket.handshake.auth.userId;
+
+  // 1. Reject if no userId is provided
+  if (!userId) {
+    console.log('Authentication error: user Login is required')
+    return next(new Error("Authentication error: user Login is required"));
+  }
+
+  // 3. Store the userId on the socket instance for future use
+  socket.userId = userId;
+  next();
+});
+
 io.on('connection', (socket) => {
-    console.log(`New Socket ${socket.id} Mounted on port ${PORT}`)
+    console.log(`New Socket ${socket.userId} Mounted on port ${PORT}`)
+    
+    //  Join a private room dedicated to this specific user
+    socket.join(`user-room-${socket.userId}`);
+
+    //DISconnect instance
+    socket.on('disconnect', () => {
+        console.log(`${socket.userId} Disconnected`)
+    })
+
+
+
 })
 
 const loginCheck = (req, res, next) => {
@@ -111,14 +138,15 @@ const notLoggedInCheck = (req, res, next) => {
 
 
 
-
 app.get('/', loginCheck, (req, res) => {
       res.render('arrive')
 })
 
 app.get('/main', notLoggedInCheck, (req, res) => {
 
-   res.render('pickrealm')
+    const user = req.user
+
+   res.render('pickrealm', { user })
 
 })
 
@@ -709,37 +737,41 @@ app.get('/settings', notLoggedInCheck, async (req, res) => {
 
 app.get('/inbox/:id', notLoggedInCheck, async (req, res) => {
 
+    const userMessaging = req.user
     const userMessagingId = req.user._id
     const userMessagedId = req.params.id
+    const userMessaged = await Omaruser.findOne({ _id: userMessagedId })
     const postOriginId = req.query.postOrigin
     const parties = {
         sender: userMessagingId,
         recipient: userMessagedId
     }
+    const R2BASE = process.env.R2_PUBLIC_BASE_URL
 
-      res.render('inbox', { parties, origin: postOriginId })
+      res.render('inbox', { userReq: userMessaging, userMessaged,  parties, origin: postOriginId, R2BASE })
 })
-
-
 
 
 app.get('/user/:id', notLoggedInCheck,  async (req, res) => {
     
     const userid = req.params.id
     const postOriginId = req.query.postOrigin
+    const userReq = req.user
+
     
     const user = await Omaruser.findOne({ _id: userid })
     const userPosts = await Post.find({ userId: userid }) 
     const R2baseUrl = process.env.R2_PUBLIC_BASE_URL
 
-    res.render('userposts', { posts: userPosts, user, R2BASE: R2baseUrl, origin: postOriginId } )
+    res.render('userposts', { userReq,  posts: userPosts, user, R2BASE: R2baseUrl, origin: postOriginId } )
 })
 
 app.get('/group', notLoggedInCheck, async (req, res) => {
 
-      res.render('group')
-})
+    const user = req.user
 
+      res.render('group', { user })
+})
 
 
 app.patch('/handle',  async (req, res) => {

@@ -229,8 +229,10 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     </section>
     
     
-
+<script src="/socket.io/socket.io.js"></script>
 <script>
+
+    const socket = io({ auth: { userId: '<%= user._id %>' } })
 
     const dot = (col) => { return `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${col}; box-shadow:0 0 6px ${col}; animation: throb 1.8s ease-in-out infinite;flex-shrink:0"></div>`; }
 
