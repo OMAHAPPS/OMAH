@@ -193,11 +193,25 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
         
         
      })
+    
+     function FisheYates (array) {
+
+       
+        for(let i = array.length - 1; i > 0; i--) {
+            
+        const j = Math.floor(Math.random() * (i + 1));
+
+             [array[i], array[j]] = [array[j], array[i]]
+        } 
+        return array
+     }
+     
+     const sortedPostDataArray = FisheYates(postDataArray)
 
 
      const R2BaseUrl = process.env.R2_PUBLIC_BASE_URL 
 
-    res.render('home', { user: userData, posts: postDataArray, R2BASE: R2BaseUrl, messages: req.flash('error') })
+    res.render('home', { user: userData, posts: sortedPostDataArray, R2BASE: R2BaseUrl, messages: req.flash('error') })
 
 
 })

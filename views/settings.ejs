@@ -366,78 +366,78 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 };
 
 
-function charSVG(realmKey, size=150, speaking=false){
+// function charSVG(realmKey, size=150, speaking=false){
 
-  const r=REALMS[realmKey]||REALMS.Arena;
-  const c=r.col,c2=r.colB,s=size,h=size,w=size;
-  const cx=w/2,cy=h/2;
-  const anim=speaking?`animation:speak 1.1s ease-in-out infinite`:`animation:drift 7s ease-in-out infinite`;
+//   const r=REALMS[realmKey]||REALMS.Arena;
+//   const c=r.col,c2=r.colB,s=size,h=size,w=size;
+//   const cx=w/2,cy=h/2;
+//   const anim=speaking?`animation:speak 1.1s ease-in-out infinite`:`animation:drift 7s ease-in-out infinite`;
 
-  const rays=Array.from({length:10},(_,i)=>{
-    const a=(i/10)*Math.PI*2,r1=s*.24,r2=s*(.38+Math.random()*.08);
-    const x1=cx+r1*Math.cos(a),y1=cy+r1*Math.sin(a);
-    const xm=cx+(r1+r2*.4)*Math.cos(a+.3),ym=cy+(r1+r2*.4)*Math.sin(a+.3);
-    const x2=cx+r2*Math.cos(a+.15),y2=cy+r2*Math.sin(a+.15);
-    return `<path d="M${x1},${y1} Q${xm},${ym} ${x2},${y2}" fill="none" stroke="${i%2?c:c2}"
-      stroke-width="${speaking?1.9:1.1}" stroke-dasharray="8 5"
-      style="animation:throb ${1.5+i*.2}s ${i*.12}s ease-in-out infinite;opacity:${speaking?.55:.35}"/>`;
-  }).join('');
+//   const rays=Array.from({length:10},(_,i)=>{
+//     const a=(i/10)*Math.PI*2,r1=s*.24,r2=s*(.38+Math.random()*.08);
+//     const x1=cx+r1*Math.cos(a),y1=cy+r1*Math.sin(a);
+//     const xm=cx+(r1+r2*.4)*Math.cos(a+.3),ym=cy+(r1+r2*.4)*Math.sin(a+.3);
+//     const x2=cx+r2*Math.cos(a+.15),y2=cy+r2*Math.sin(a+.15);
+//     return `<path d="M${x1},${y1} Q${xm},${ym} ${x2},${y2}" fill="none" stroke="${i%2?c:c2}"
+//       stroke-width="${speaking?1.9:1.1}" stroke-dasharray="8 5"
+//       style="animation:throb ${1.5+i*.2}s ${i*.12}s ease-in-out infinite;opacity:${speaking?.55:.35}"/>`;
+//   }).join('');
 
-  const BODIES={
-    Arena:`
-      <ellipse cx="${cx}" cy="${cy-.04*s}" rx="${s*.2}" ry="${s*.24}" fill="${c}" opacity=".88"/>
-      <ellipse cx="${cx}" cy="${cy-.04*s}" rx="${s*.15}" ry="${s*.19}" fill="${c2}" opacity=".7"/>
-      <ellipse cx="${cx-s*.07}" cy="${cy-.08*s}" rx="${s*.04}" ry="${s*.05}" fill="${c}"/>
-      <ellipse cx="${cx+s*.07}" cy="${cy-.08*s}" rx="${s*.04}" ry="${s*.05}" fill="${c}"/>
-      <ellipse cx="${cx-s*.07}" cy="${cy-.08*s}" rx="${s*.02}" ry="${s*.03}" fill="#050508" opacity=".9"/>
-      <ellipse cx="${cx+s*.07}" cy="${cy-.08*s}" rx="${s*.02}" ry="${s*.03}" fill="#050508" opacity=".9"/>
-      <path d="M${cx-s*.06} ${cy+s*.04} L${cx+s*.06} ${cy+s*.04}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".8"/>
-      <path d="M${cx-s*.18} ${cy-s*.22} L${cx-s*.1} ${cy-s*.36} L${cx} ${cy-s*.25} L${cx+s*.1} ${cy-s*.4} L${cx+s*.18} ${cy-s*.22}"
-        stroke="${c}" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round" stroke-linejoin="round"/>`,
-    Dojo:`
-      <ellipse cx="${cx+s*.03}" cy="${cy}" rx="${s*.19}" ry="${s*.23}" fill="${c}" opacity=".85" transform="rotate(-6 ${cx} ${cy})"/>
-      <ellipse cx="${cx+s*.03}" cy="${cy}" rx="${s*.14}" ry="${s*.18}" fill="${c2}" opacity=".65" transform="rotate(-6 ${cx} ${cy})"/>
-      <ellipse cx="${cx-s*.05}" cy="${cy-s*.06}" rx="${s*.05}" ry="${s*.04}" fill="${c}"/>
-      <ellipse cx="${cx-s*.05}" cy="${cy-s*.06}" rx="${s*.025}" ry="${s*.02}" fill="#050508" opacity=".9"/>
-      <path d="M${cx-s*.17} ${cy-s*.15} Q${cx-s*.22} ${cy+s*.1} ${cx-s*.2} ${cy+s*.35}" stroke="${c}" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
-      <path d="M${cx+s*.18} ${cy-s*.1} Q${cx+s*.23} ${cy+s*.12} ${cx+s*.21} ${cy+s*.38}" stroke="${c}" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
-      <path d="M${cx-s*.02} ${cy+s*.06} Q${cx+s*.05} ${cy+s*.11} ${cx+s*.1} ${cy+s*.07}" stroke="${c}" stroke-width="1.5" fill="none" opacity=".7" stroke-linecap="round"/>`,
-    Archive:`
-      <ellipse cx="${cx}" cy="${cy+s*.02}" rx="${s*.2}" ry="${s*.24}" fill="${c}" opacity=".82"/>
-      <ellipse cx="${cx}" cy="${cy+s*.02}" rx="${s*.15}" ry="${s*.19}" fill="${c2}" opacity=".62"/>
-      <path d="M${cx-s*.12} ${cy-s*.05} Q${cx-s*.07} ${cy-s*.1} ${cx-s*.02} ${cy-s*.05}" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <path d="M${cx+s*.02} ${cy-s*.05} Q${cx+s*.07} ${cy-s*.1} ${cx+s*.12} ${cy-s*.05}" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <path d="M${cx-s*.05} ${cy+s*.06} Q${cx} ${cy+s*.09} ${cx+s*.05} ${cy+s*.06}" stroke="${c}" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".7"/>
-      <path d="M${cx} ${cy-s*.22} Q${cx} ${cy-s*.38} ${cx} ${cy-s*.22}" stroke="${c}" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/>
-      <path d="M${cx-s*.12} ${cy-s*.2} Q${cx-s*.1} ${cy-s*.32} ${cx-s*.06} ${cy-s*.22}" stroke="${c}" stroke-width="2.5" fill="none" opacity=".5" stroke-linecap="round"/>
-      <path d="M${cx+s*.12} ${cy-s*.2} Q${cx+s*.1} ${cy-s*.32} ${cx+s*.06} ${cy-s*.22}" stroke="${c}" stroke-width="2.5" fill="none" opacity=".5" stroke-linecap="round"/>`,
-    Observatory:`
-      <rect x="${cx-s*.18}" y="${cy-s*.22}" width="${s*.36}" height="${s*.46}" rx="${s*.05}" fill="${c}" opacity=".85"/>
-      <rect x="${cx-s*.13}" y="${cy-s*.17}" width="${s*.26}" height="${s*.36}" rx="${s*.04}" fill="${c2}" opacity=".65"/>
-      <rect x="${cx-s*.1}" y="${cy-s*.08}" width="${s*.06}" height="${s*.05}" rx="${s*.01}" fill="${c}"/>
-      <rect x="${cx+s*.04}" y="${cy-s*.08}" width="${s*.06}" height="${s*.05}" rx="${s*.01}" fill="${c}"/>
-      <line x1="${cx-s*.06}" y1="${cy+s*.06}" x2="${cx+s*.06}" y2="${cy+s*.06}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".8"/>
-      <polygon points="${cx},${cy-s*.38} ${cx+s*.12},${cy-s*.22} ${cx-s*.12},${cy-s*.22}" stroke="${c}" stroke-width="1.5" fill="none" opacity=".5"/>
-      <circle cx="${cx+s*.22}" cy="${cy-s*.08}" r="${s*.025}" fill="${c}" style="animation:throb 2s ease-in-out infinite"/>`,
-  };
+//   const BODIES={
+//     Arena:`
+//       <ellipse cx="${cx}" cy="${cy-.04*s}" rx="${s*.2}" ry="${s*.24}" fill="${c}" opacity=".88"/>
+//       <ellipse cx="${cx}" cy="${cy-.04*s}" rx="${s*.15}" ry="${s*.19}" fill="${c2}" opacity=".7"/>
+//       <ellipse cx="${cx-s*.07}" cy="${cy-.08*s}" rx="${s*.04}" ry="${s*.05}" fill="${c}"/>
+//       <ellipse cx="${cx+s*.07}" cy="${cy-.08*s}" rx="${s*.04}" ry="${s*.05}" fill="${c}"/>
+//       <ellipse cx="${cx-s*.07}" cy="${cy-.08*s}" rx="${s*.02}" ry="${s*.03}" fill="#050508" opacity=".9"/>
+//       <ellipse cx="${cx+s*.07}" cy="${cy-.08*s}" rx="${s*.02}" ry="${s*.03}" fill="#050508" opacity=".9"/>
+//       <path d="M${cx-s*.06} ${cy+s*.04} L${cx+s*.06} ${cy+s*.04}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+//       <path d="M${cx-s*.18} ${cy-s*.22} L${cx-s*.1} ${cy-s*.36} L${cx} ${cy-s*.25} L${cx+s*.1} ${cy-s*.4} L${cx+s*.18} ${cy-s*.22}"
+//         stroke="${c}" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round" stroke-linejoin="round"/>`,
+//     Dojo:`
+//       <ellipse cx="${cx+s*.03}" cy="${cy}" rx="${s*.19}" ry="${s*.23}" fill="${c}" opacity=".85" transform="rotate(-6 ${cx} ${cy})"/>
+//       <ellipse cx="${cx+s*.03}" cy="${cy}" rx="${s*.14}" ry="${s*.18}" fill="${c2}" opacity=".65" transform="rotate(-6 ${cx} ${cy})"/>
+//       <ellipse cx="${cx-s*.05}" cy="${cy-s*.06}" rx="${s*.05}" ry="${s*.04}" fill="${c}"/>
+//       <ellipse cx="${cx-s*.05}" cy="${cy-s*.06}" rx="${s*.025}" ry="${s*.02}" fill="#050508" opacity=".9"/>
+//       <path d="M${cx-s*.17} ${cy-s*.15} Q${cx-s*.22} ${cy+s*.1} ${cx-s*.2} ${cy+s*.35}" stroke="${c}" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
+//       <path d="M${cx+s*.18} ${cy-s*.1} Q${cx+s*.23} ${cy+s*.12} ${cx+s*.21} ${cy+s*.38}" stroke="${c}" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
+//       <path d="M${cx-s*.02} ${cy+s*.06} Q${cx+s*.05} ${cy+s*.11} ${cx+s*.1} ${cy+s*.07}" stroke="${c}" stroke-width="1.5" fill="none" opacity=".7" stroke-linecap="round"/>`,
+//     Archive:`
+//       <ellipse cx="${cx}" cy="${cy+s*.02}" rx="${s*.2}" ry="${s*.24}" fill="${c}" opacity=".82"/>
+//       <ellipse cx="${cx}" cy="${cy+s*.02}" rx="${s*.15}" ry="${s*.19}" fill="${c2}" opacity=".62"/>
+//       <path d="M${cx-s*.12} ${cy-s*.05} Q${cx-s*.07} ${cy-s*.1} ${cx-s*.02} ${cy-s*.05}" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+//       <path d="M${cx+s*.02} ${cy-s*.05} Q${cx+s*.07} ${cy-s*.1} ${cx+s*.12} ${cy-s*.05}" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+//       <path d="M${cx-s*.05} ${cy+s*.06} Q${cx} ${cy+s*.09} ${cx+s*.05} ${cy+s*.06}" stroke="${c}" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".7"/>
+//       <path d="M${cx} ${cy-s*.22} Q${cx} ${cy-s*.38} ${cx} ${cy-s*.22}" stroke="${c}" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/>
+//       <path d="M${cx-s*.12} ${cy-s*.2} Q${cx-s*.1} ${cy-s*.32} ${cx-s*.06} ${cy-s*.22}" stroke="${c}" stroke-width="2.5" fill="none" opacity=".5" stroke-linecap="round"/>
+//       <path d="M${cx+s*.12} ${cy-s*.2} Q${cx+s*.1} ${cy-s*.32} ${cx+s*.06} ${cy-s*.22}" stroke="${c}" stroke-width="2.5" fill="none" opacity=".5" stroke-linecap="round"/>`,
+//     Observatory:`
+//       <rect x="${cx-s*.18}" y="${cy-s*.22}" width="${s*.36}" height="${s*.46}" rx="${s*.05}" fill="${c}" opacity=".85"/>
+//       <rect x="${cx-s*.13}" y="${cy-s*.17}" width="${s*.26}" height="${s*.36}" rx="${s*.04}" fill="${c2}" opacity=".65"/>
+//       <rect x="${cx-s*.1}" y="${cy-s*.08}" width="${s*.06}" height="${s*.05}" rx="${s*.01}" fill="${c}"/>
+//       <rect x="${cx+s*.04}" y="${cy-s*.08}" width="${s*.06}" height="${s*.05}" rx="${s*.01}" fill="${c}"/>
+//       <line x1="${cx-s*.06}" y1="${cy+s*.06}" x2="${cx+s*.06}" y2="${cy+s*.06}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+//       <polygon points="${cx},${cy-s*.38} ${cx+s*.12},${cy-s*.22} ${cx-s*.12},${cy-s*.22}" stroke="${c}" stroke-width="1.5" fill="none" opacity=".5"/>
+//       <circle cx="${cx+s*.22}" cy="${cy-s*.08}" r="${s*.025}" fill="${c}" style="animation:throb 2s ease-in-out infinite"/>`,
+//   };
 
-  const uid=`ch_${realmKey}_${size}`;
-  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;display:block;${anim}">
-    <defs>
-      <radialGradient id="${uid}" cx="50%" cy="45%">
-        <stop offset="0%" stop-color="${c}" stop-opacity="${speaking?.7:.42}"/>
-        <stop offset="45%" stop-color="${c}" stop-opacity="${speaking?.25:.14}"/>
-        <stop offset="100%" stop-color="${c}" stop-opacity="0"/>
-      </radialGradient>
-    </defs>
-    <circle cx="${cx}" cy="${cy}" r="${speaking?s*.52:s*.42}" fill="url(#${uid})"/>
-    ${rays}
-    ${BODIES[realmKey]||BODIES.Arena}
-    ${speaking?`
-      <circle cx="${cx}" cy="${cy}" r="${s*.42}" fill="none" stroke="${c}" stroke-width="1.5" opacity=".3" style="animation:throb 1.2s ease-out infinite"/>
-      <circle cx="${cx}" cy="${cy}" r="${s*.5}" fill="none" stroke="${c2}" stroke-width="1" opacity=".18" style="animation:throb 1.2s .4s ease-out infinite"/>`:''}
-  </svg>`;
-}
+//   const uid=`ch_${realmKey}_${size}`;
+//   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;display:block;${anim}">
+//     <defs>
+//       <radialGradient id="${uid}" cx="50%" cy="45%">
+//         <stop offset="0%" stop-color="${c}" stop-opacity="${speaking?.7:.42}"/>
+//         <stop offset="45%" stop-color="${c}" stop-opacity="${speaking?.25:.14}"/>
+//         <stop offset="100%" stop-color="${c}" stop-opacity="0"/>
+//       </radialGradient>
+//     </defs>
+//     <circle cx="${cx}" cy="${cy}" r="${speaking?s*.52:s*.42}" fill="url(#${uid})"/>
+//     ${rays}
+//     ${BODIES[realmKey]||BODIES.Arena}
+//     ${speaking?`
+//       <circle cx="${cx}" cy="${cy}" r="${s*.42}" fill="none" stroke="${c}" stroke-width="1.5" opacity=".3" style="animation:throb 1.2s ease-out infinite"/>
+//       <circle cx="${cx}" cy="${cy}" r="${s*.5}" fill="none" stroke="${c2}" stroke-width="1" opacity=".18" style="animation:throb 1.2s .4s ease-out infinite"/>`:''}
+//   </svg>`;
+// }
 
 const submitBtn = document.getElementById('handle-submit-btn')
 const handleInput = document.querySelector('.handle-input')

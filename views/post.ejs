@@ -78,13 +78,16 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
         <div class="glass-images" style="margin-top: 10px; padding: 16px; border-bottom: 0.05px solid gray;"> 
 
-            <a href="/user/<%= post.userId %>" class="poster-info" style="text-decoration: none; display: flex; align-items: center; gap:9px; margin-bottom:13px;">
+            <div class="poster-info" style="text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap:9px; margin-bottom:13px;">
 
               <!-- ! element Placeholders for profile image and user info -->
-               <div id="poster-username" style="display: none;"><%= post.userName %></div>
-               <div id="poster-followers" style="display: none;"><%= post.followers ? post.followers : 553 %></div>
-               <div id="poster-following" style="display: none;"><%= post.following ? post.following : 234 %></div>
-               <div id="poster-posts-length" style="display: none;"><%= post.postsLength ? post.postsLength : 3000 %></div>
+               <div id="poster-username" style="display: none;"><%= poster.userName %></div>
+               <div id="poster-followers" style="display: none;"><%= poster.totalFollowers %></div>
+               <div id="poster-following" style="display: none;"><%= poster.totalFollowing %></div>
+               <div id="poster-posts-length" style="display: none;"><%= poster.totalPosts %></div>
+               <div id="poster-id" style="display: none;"><%= poster._id %></div>
+               <div id="poster-userHandle" style="display: none;">@<%= poster.userHandle !== 'none' ? poster.userHandle : poster.userName %></div>
+
                
               <% if (poster.userDP !== 'none') { %>
 
@@ -110,13 +113,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                         <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>;" >@<%= post.userHandle !== 'none' ? post.userHandle : poster.userHandle !== 'none' ? poster.userHandle : poster.userName %></h2>
 
-                        <div id="follow-btn" class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
-                           <h4 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: .75rem;">Following</h4>
+                        <div id="follow-btn" class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; place-content: center; width: fit-content; background-color: transparent;">
+                          <ion-icon name="ellipsis-vertical-outline" style="font-size: 20px; color: #C04848;"></ion-icon>
                         </div>
                              
               </div>
                         
-            </a>
+            </div>
 
  
               <p style="font-size: 16px;line-height:1.68;color:rgba(237,232,224,.85);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
@@ -1456,13 +1459,30 @@ modal.addEventListener('touchend', (e) => {
         }, 300)
     })
 
+document.querySelector('.poster-info').addEventListener('click', (e) => {
+      
+      e.preventDefault()
+      sharePostBtn.style.display = 'none'
+      const infoContainer = document.querySelector('.poster-info')
+      const profileInfo = {
+             userName: infoContainer.children[0].textContent,
+             followers: infoContainer.children[1].textContent,
+             following: infoContainer.children[2].textContent,
+             posts: infoContainer.children[3].textContent,
+             userId: infoContainer.children[4].textContent,
+             userHandle: infoContainer.children[5].textContent,
+             userProfilePic: infoContainer.children[6].getAttribute('src')
+      }
+      console.log(profileInfo)
 
+})
 
   document.querySelectorAll('.info-button').forEach((btn) => {
 
       btn.addEventListener('click', (e) => {
           
           e.preventDefault()
+          
 
           sharePostBtn.style.display = 'none'
 
