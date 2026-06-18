@@ -9,7 +9,7 @@ const userPostsLikedSchema = new Schema({
       posts: { type: Array, default: [], required: false }
 })
 
-userPostsLikedSchema.index({ parentId: 1, count: 1 })
+userPostsLikedSchema.index({ parentId: 1 })
 
 const LikedPost = new mongoose.model('userPostLikes', userPostsLikedSchema)
 

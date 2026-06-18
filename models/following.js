@@ -10,7 +10,7 @@ const followingSchema = new Schema({
 
 })
 
-followingSchema.index({ parentId: 1, count: 1 })       // remember to maintain order when querring aggregation
+followingSchema.index({ parentId: 1 })       // remember to maintain order when querring aggregation
 
 const Following = new mongoose.model('following', followingSchema)
 

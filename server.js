@@ -21,6 +21,7 @@ const { GoogleGenAI } = require('@google/genai')
 const Omaruser = require('./models/omahUsers')
 const Post = require('./models/posts')
 const Reply = require('./models/replies')
+const LikedPost = require('./models/userPostLikes')
 
 const googleRoutes = require('./routes/auth-routes')
 
@@ -112,7 +113,76 @@ io.on('connection', (socket) => {
         console.log(`${socket.userId} Disconnected`)
     })
 
+    socket.on('update-likes', async (data, ack) => {
 
+        
+         try {
+
+             if (!data || typeof data !== 'object' || Array.isArray(data)) {
+
+                     ack({ success: false, error: 'Invalid Payload Datatype' })
+               }
+
+            const userLikingId = socket.userId
+            const userHasLikedBefore = await LikedPost.findOne({ parentId: userLikingId } )
+
+            // if user has never liked anything ever before
+            if (!userHasLikedBefore) {
+
+                const newLikeInstanceForUser = new LikedPost({
+                     parentId: userLikingId, count: 1, posts: [data.postId] 
+                    }).save().then( async (newBucket) => {
+
+                        console.log(`new Bucket Created For User: ${newBucket.parentId}`)
+
+                        const updatedPostFirst = await Post.findByIdAndUpdate(data.postId, { $inc: { likes: 1, interactions: 2 } }, { returnDocument: 'after' })
+
+                        ack({ success: true, newLikesCount: updatedPostFirst.likes, UIStatus: 'like' })
+                    })    
+                    .catch((err) => {
+
+                        console.log(err)
+                        ack({ success: false, UIStatus: 'unlike', error: 'New like Instance failed' })
+                    })
+                
+            } else {
+
+                const userLikedPostBefore = await LikedPost.findOne({ parentId: userLikingId, posts: data.postId }).select('_id count')
+             
+              if (!userLikedPostBefore) {
+
+                  const updatedPost = await Post.findByIdAndUpdate(data.postId, { $inc: { likes: 1, interactions: 2 } }, { returnDocument: 'after' } )
+                  const UpdatedUserLiked = await LikedPost.findOneAndUpdate({ parentId: userLikingId, count: { $lt: 500 } }, { $push: { posts: data.postId }, $inc: { count: 1 } }, { upsert: true })
+
+                ack({ success: true, newLikesCount: updatedPost.likes, UIStatus: 'like' })
+            
+              } else {
+
+                 if(userLikedPostBefore.count === 1) {
+                      
+                       await LikedPost.deleteOne({ _id: userLikedPostBefore._id })
+                       const updatedPost = await Post.findByIdAndUpdate(data.postId, { $inc: { likes: -1 } }, { returnDocument: 'after' })
+
+                       ack({ success: true, newLikesCount: updatedPost.likes, UIStatus: 'unlike' })
+
+                 } else {
+                    const pulledLikesByUser = await LikedPost.findOneAndUpdate({ _id: userLikedPostBefore._id }, { $pull: { posts: data.postId }, $inc: { count: -1 } })
+                    const updatedPost = await Post.findByIdAndUpdate(data.postId, { $inc: { likes: -1 } }, { returnDocument: 'after' })   
+                     
+                    ack({ success: true, newLikesCount: updatedPost.likes, UIStatus: 'unlike'})
+                 }
+
+              }
+                
+            }
+        
+            
+         } catch (error) {
+            console.log(error)
+            ack({ success: false, UIStatus: 'unlike', error: 'DataBase Update Failed' })
+            
+         }
+    })
 
 })
 

@@ -18,6 +18,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input,textarea{font-family:inherit;border:none;outline:none;background:none;color:inherit}
 ::-webkit-scrollbar{width:0;height:0}
 
+/* UNLIKE LIKE TOGGLE */
+.like{display: none}
+.like.active{display: block;}
+.unlike{display: block}
+.unlike.active{display: none;}
+
 /* ── TYPE ── */
 .fd{font-family:'Playfair Display',serif}
 .fs{font-family:'DM Serif Display',serif}
@@ -309,17 +315,19 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                    <!-- ! Likes and counts container -->
 
               <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px; margin-top: 5px;">
-                     <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="font-size: 13px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.likes %></span>
-                     </div>   
+                     <button data-liked="false" class="likes-cont-event" style="z-index: 10; padding: 12px 18px; display: flex; align-items: center; justify-content: center;">
+                         <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: block; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out ;"></ion-icon>
+                         <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: none; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out;" ></ion-icon>
+                         <h3 class="like-h3" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.likes %></h3>
+                         <h3 class="postId-span" style="display: none;"><%= post.postId %></h3>
+                     </button>   
                      <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
                        <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                       <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 13px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.replies %></span>
+                       <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.replies %></h3>
                      </div>
                      <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 13px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.interactions %></span>
+                         <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.interactions %></span>
                      </div> 
 
                      <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
@@ -562,6 +570,83 @@ const socket = io({ auth: { userId: '<%= user._id %>' } })
 
 const postScrollContainer = document.getElementById('scroll-container-posts')
 
+ document.querySelectorAll('.likes-cont-event').forEach((btn) => {
+  
+               let debounceTimer = null
+
+               btn.addEventListener('click', (e) => {
+    
+                    e.preventDefault()
+    
+                    const currentActiveState = btn.dataset.liked === 'true' 
+                    const likeIcon = btn.querySelector('.like')
+                    const unlikeIcon = btn.querySelector('.unlike')
+                    const h3Span = btn.querySelector('.like-h3')
+                    const postId = btn.querySelector('.postId-span').textContent
+    
+                    const newLikedState = !currentActiveState
+                 
+                    btn.dataset.liked = (newLikedState).toString()
+    
+                    if (newLikedState) {
+      
+                       likeIcon.style.display = 'block'
+                       likeIcon.style.scale = '1.2'
+                       unlikeIcon.style.display = 'none'
+      
+      
+                    } else {
+                       likeIcon.style.display = 'none'
+                       unlikeIcon.style.display = 'block'
+                       unlikeIcon.style.scale ='1.2'
+     
+                    }
+   
+                     clearTimeout(debounceTimer)
+    
+                    const updateDB = async (postId, btn) => {
+
+                        const currentDataSet = btn.dataset.liked
+                        const payload = { postId: postId, dataset: currentDataSet }
+
+
+                     const response = await socket.timeout(5000).emitWithAck("update-likes", payload)
+          
+                     if (response.success) {
+                       // update Success Instance
+                     if (response.UIStatus == 'like') {
+
+                        h3Span.textContent = response.newLikesCount
+                        likeIcon.style.display = 'block'
+                        likeIcon.style.scale = '1'
+                        unlikeIcon.style.display = 'none'
+                        console.log(response)
+                      } else {
+                        h3Span.textContent = response.newLikesCount
+                        likeIcon.style.display = 'none'
+                        unlikeIcon.style.display = 'block'
+                        unlikeIcon.style.scale = '1'
+                        console.log('Successfully unliked the post on all fronts')
+                        console.log(response)
+                      }
+                      } else {
+                       // failure instance
+                        likeIcon.style.display = 'none'
+                        unlikeIcon.style.display = 'block'
+                        unlikeIcon.style.scale = '1'
+                        console.log('Likes did not comeThrough')
+                        console.log(response.error)
+                      }
+                      } 
+
+                 debounceTimer = setTimeout(() => {
+      
+                   updateDB(postId, btn)
+     
+                 }, 500)
+    
+              })
+            })
    
 const CANVAS = (() => {
   const cv = document.getElementById('cv');
@@ -777,7 +862,7 @@ humanoidContainer.innerHTML = `
 
   
 document.addEventListener('DOMContentLoaded', () => {
-
+  console.log('DOMcontentLoaded')
   if ('history' in window && 'scrollRestoration' in window) {
   console.log('ScrollRestoration present')
 
@@ -924,7 +1009,84 @@ document.addEventListener('DOMContentLoaded', () => {
              
          })
      
+       document.querySelectorAll('.likes-cont-event').forEach((btn) => {
+  
+               let debounceTimer = null
+
+               btn.addEventListener('click', (e) => {
+    
+                    e.preventDefault()
+    
+                    const currentActiveState = btn.dataset.liked === 'true' 
+                    const likeIcon = btn.querySelector('.like')
+                    const unlikeIcon = btn.querySelector('.unlike')
+                    const h3Span = btn.querySelector('.like-h3')
+                    const postId = btn.querySelector('.postId-span').textContent
+    
+                    const newLikedState = !currentActiveState
+                 
+                    btn.dataset.liked = (newLikedState).toString()
+    
+                    if (newLikedState) {
       
+                       likeIcon.style.display = 'block'
+                       likeIcon.style.scale = '1.2'
+                       unlikeIcon.style.display = 'none'
+      
+      
+                    } else {
+                       likeIcon.style.display = 'none'
+                       unlikeIcon.style.display = 'block'
+                       unlikeIcon.style.scale ='1.2'
+     
+                    }
+   
+                     clearTimeout(debounceTimer)
+    
+                    const updateDB = async (postId, btn) => {
+
+                        const currentDataSet = btn.dataset.liked
+                        const payload = { postId: postId, dataset: currentDataSet }
+
+
+                     const response = await socket.timeout(5000).emitWithAck("update-likes", payload)
+          
+                     if (response.success) {
+                       // update Success Instance
+                     if (response.UIStatus == 'like') {
+
+                        h3Span.textContent = response.newLikesCount
+                        likeIcon.style.display = 'block'
+                        likeIcon.style.scale = '1'
+                        unlikeIcon.style.display = 'none'
+                        console.log(response)
+                      } else {
+                        h3Span.textContent = response.newLikesCount
+                        likeIcon.style.display = 'none'
+                        unlikeIcon.style.display = 'block'
+                        unlikeIcon.style.scale = '1'
+                        console.log('Successfully unliked the post on all fronts')
+                        console.log(response)
+                      }
+                      } else {
+                       // failure instance
+                        likeIcon.style.display = 'none'
+                        unlikeIcon.style.display = 'block'
+                        unlikeIcon.style.scale = '1'
+                        console.log('Likes did not comeThrough')
+                        console.log(response.error)
+                      }
+                      } 
+
+                 debounceTimer = setTimeout(() => {
+      
+                   updateDB(postId, btn)
+     
+                 }, 500)
+    
+              })
+            })
+   
 
        document.querySelectorAll('.info-button').forEach((btn) => {
 
@@ -2251,17 +2413,27 @@ const fetchNewFeed = document.querySelector('.fetch-new')
 
 let lastScrollTop = postScrollContainer.scrollTop + 50
 
-let moreScrollTop = postScrollContainer.scrollTop + 200
 
 postScrollContainer.addEventListener('scroll', () => {
   
 let currentScrollTop = postScrollContainer.scrollTop    
 
   if (currentScrollTop > lastScrollTop ) {
+
     fetchNewFeed.style.opacity = '0.65'
     fetchNewFeed.style.display = 'flex'
+    const display = setTimeout(() => {
+       fetchNewFeed.style.opacity = '0'
+       clearTimeout(display)
+    }, 2000)
+
   }else if (currentScrollTop < lastScrollTop) {
+    
     fetchNewFeed.style.opacity = '1'
+    const displayUp = setTimeout(() => {
+       fetchNewFeed.style.opacity = '0'
+       clearTimeout(displayUp)
+    }, 2000)
   } 
 
   lastScrollTop = currentScrollTop
