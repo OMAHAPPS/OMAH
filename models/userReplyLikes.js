@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 const userReplyLikedSchema = new Schema({
       
       parentId: { type: String, required: true },
-      count: { type: String, required: true },
+      count: { type: Number, required: true },
       replies: { type: Array, default: [], required: false }
 })
 

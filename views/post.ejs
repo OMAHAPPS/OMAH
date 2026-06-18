@@ -168,17 +168,39 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
               <div style="display:flex;align-items:center;gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
-
-                   <h2 style="font-size: 15px;color: rgba(237,232,224,.5); display: flex; align-items: center; gap: 4px; font-weight: 400; justify-content: center;"><%= hours %>:<%= minutes %> <span>.</span> <%= day %><span id="month"></span><%= year %> <span>.</span> <span style="font-weight: bold; color: rgba(245, 245, 245, 0.8); margin-left: 5px;"><%= post.likes %></span> Likes</h2>
+                   
+                   <% if (post.likes === 0) { %>
+                    <h2 style="font-size: 15px;color: rgba(237,232,224,.5); display: flex; align-items: center; gap: 4px; font-weight: 400; justify-content: center;"><%= hours %>:<%= minutes %> <span>.</span> <%= day %><span id="month"></span><%= year %> <span>.</span> <span style="font-weight: bold; color: rgba(245, 245, 245, 0.8); margin-left: 5px;">No Likes Yet</span></h2>
+                   <% } else if (post.likes === 1) { %>
+                      <h2 style="font-size: 15px;color: rgba(237,232,224,.5); display: flex; align-items: center; gap: 4px; font-weight: 400; justify-content: center;"><%= hours %>:<%= minutes %> <span>.</span> <%= day %><span id="month"></span><%= year %> <span>.</span> <span style="font-weight: bold; color: rgba(245, 245, 245, 0.8); margin-left: 5px;"><%= post.likes %></span> Like</h2>
+                   <% } else { %>
+                        <h2 style="font-size: 15px;color: rgba(237,232,224,.5); display: flex; align-items: center; gap: 4px; font-weight: 400; justify-content: center;"><%= hours %>:<%= minutes %> <span>.</span> <%= day %><span id="month"></span><%= year %> <span>.</span> <span style="font-weight: bold; color: rgba(245, 245, 245, 0.8); margin-left: 5px;"><%= post.likes %></span> Likes</h2>
+                   <% } %>
+                   
                    
               </div>
 
-               <div style="display:flex; align-items:center; justify-content: space-around; gap:15px; padding: 20px 0 5px 0;">
-                   
-                   <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                   <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                   <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                   <ion-icon name="flag-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+              <div style="display:flex; align-items:center; justify-content: space-around; gap:10px; padding: 20px 0 5px 0;">
+                
+                
+                <% if (status == 'present') { %>
+                    <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                    <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                    <ion-icon name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;></ion-icon>
+                    
+                    <ion-icon name="share-social-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                    <ion-icon name="flag-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                    
+                    <% } else { %>
+                      <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                      <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                      <ion-icon name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;></ion-icon>
+                      <ion-icon name="share-social-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                      <ion-icon name="flag-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+ 
+                   <% } %>
+
+
                    
               </div>
         </div>
@@ -308,16 +330,20 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     
                       <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0; margin-top: 8px;">
                        
-                       <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
-                           <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                           <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.likes %></span>
-                       </div>   
+                       <button class="like-reply-cont" data-liked="false" style="outline: none; border: none; display: flex; align-items: center; justify-content: center;">
+                           <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; pointer-events: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                           <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; pointer-event: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                           <span class="span-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.likes %></span>
+                           <h3 class="postId-span" style="display: none;"><%= reply.replyId %></h3>
+                           <h3 class="mainPost-span" style="display: none;"><%= post._id %></h3>
+
+                       </button>   
                        <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                           <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                           <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.interactions %></span>
+                           <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                           <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.interactions %></span>
                        </div>   
-                       <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                       <ion-icon name="flag-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                       <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                       <ion-icon name="flag-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
                      
                      </div>
   
@@ -523,6 +549,90 @@ document.querySelectorAll('.follow-reply-btn').forEach((btn) => {
       e.preventDefault()
     })
 })
+
+// LIKING REPLIES LOGIC
+
+document.querySelectorAll('.like-reply-cont').forEach((btn) => {
+  
+               let debounceTimer = null
+
+               btn.addEventListener('click', (e) => {
+    
+                    e.preventDefault()
+    
+                    const currentActiveState = btn.dataset.liked === 'true' 
+                    const likeIcon = btn.querySelector('.like')
+                    const unlikeIcon = btn.querySelector('.unlike')
+                    const h3Span = btn.querySelector('.span-text')
+                    const replyId = btn.querySelector('.postId-span').textContent
+                    const mainPostId = btn.querySelector('.mainPost-span').textContent
+    
+                    const newLikedState = !currentActiveState
+                 
+                    btn.dataset.liked = (newLikedState).toString()
+    
+                    if (newLikedState) {
+      
+                       likeIcon.style.display = 'block'
+                       likeIcon.style.scale = '1.2'
+                       unlikeIcon.style.display = 'none'
+      
+      
+                    } else {
+                       likeIcon.style.display = 'none'
+                       unlikeIcon.style.display = 'block'
+                       unlikeIcon.style.scale ='1.2'
+     
+                    }
+   
+                     clearTimeout(debounceTimer)
+    
+                    const updateDB = async (replyId, btn) => {
+
+                        const currentDataSet = btn.dataset.liked
+                        const payload = { replyId: replyId, mainPostId: mainPostId,  dataset: currentDataSet }
+
+
+                     const response = await socket.timeout(5000).emitWithAck("update-reply-likes", payload)
+          
+                     if (response.success) {
+                       // update Success Instance
+                     if (response.UIStatus == 'like') {
+
+                        h3Span.textContent = response.newLikesCount
+                        likeIcon.style.display = 'block'
+                        likeIcon.style.scale = '1'
+                        unlikeIcon.style.display = 'none'
+                        console.log('succesful like')
+                        console.log(response)
+                      } else {
+                        h3Span.textContent = response.newLikesCount
+                        likeIcon.style.display = 'none'
+                        unlikeIcon.style.display = 'block'
+                        unlikeIcon.style.scale = '1'
+                        console.log('Successfully unliked the post on all fronts')
+                        console.log(response)
+                      }
+                      } else {
+                       // failure instance
+                        likeIcon.style.display = 'none'
+                        unlikeIcon.style.display = 'block'
+                        unlikeIcon.style.scale = '1'
+                        console.log('Likes did not comeThrough')
+                        console.log(response.error)
+                      }
+                      } 
+
+                 debounceTimer = setTimeout(() => {
+      
+                   updateDB(replyId, btn)
+     
+                 }, 500)
+    
+              })
+            })
+   
+
 
 
 
@@ -1563,7 +1673,7 @@ function back() {
     submitUploadBtn.textContent = 'Upload Preview.'
     submitUploadVideo.style.backgroundColor = '#1E2A56'
     submitUploadVideo.textContent = 'Preview Video.'
-    postPlaceholder.textContent = 'Add new Post...'
+    postPlaceholder.textContent = 'Post Reply...'
     cancelUploadBtn.style.display = 'flex'
     cancelVideoBtn.style.display = 'flex'
   

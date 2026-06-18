@@ -22,6 +22,7 @@ const Omaruser = require('./models/omahUsers')
 const Post = require('./models/posts')
 const Reply = require('./models/replies')
 const LikedPost = require('./models/userPostLikes')
+const LikedReply = require('./models/userReplyLikes')
 
 const googleRoutes = require('./routes/auth-routes')
 
@@ -184,6 +185,80 @@ io.on('connection', (socket) => {
          }
     })
 
+    socket.on('update-reply-likes', async (data, ack) => {
+        
+         try {
+
+             if (!data || typeof data !== 'object' || Array.isArray(data)) {
+
+                     ack({ success: false, error: 'Invalid Payload Datatype' })
+               }
+
+            const userLikingId = socket.userId
+            const userHasLikedBefore = await LikedReply.findOne({ parentId: userLikingId } )
+
+            // if user has never liked anything ever before
+            if (!userHasLikedBefore) {
+
+                const newLikeInstanceForUser = new LikedReply({
+                     parentId: userLikingId, count: 1, posts: [data.replyId] 
+                    }).save().then( async (newBucket) => {
+
+                        console.log(`new Bucket Created For User: ${newBucket.parentId}`)
+
+                        const updatedReplyFirst = await Reply.findByIdAndUpdate(data.replyId, { $inc: { likes: 1, interactions: 2 } }, { returnDocument: 'after' })
+                        const updateMainPost = await Post.findByIdAndUpdate(data.mainPostId, { $inc: { interactions: 2 } }, { returnDocument: 'after' })
+
+                        ack({ success: true, newLikesCount: updatedReplyFirst.likes, UIStatus: 'like' })
+                    })    
+                    .catch((err) => {
+
+                        console.log(err)
+                        ack({ success: false, UIStatus: 'unlike', error: 'New like Instance failed' })
+                    })
+                
+            } else {
+
+                const userLikedReplyBefore = await LikedReply.findOne({ parentId: userLikingId, replies: data.replyId }).select('_id count')
+             
+              if (!userLikedReplyBefore) {
+
+                  const updatedReply = await Reply.findByIdAndUpdate(data.replyId, { $inc: { likes: 1, interactions: 2 } }, { returnDocument: 'after' } )
+                  const updateMainPost = await Post.findByIdAndUpdate(data.mainPostId, { $inc: { interactions: 2 } }, { returnDocument: 'after' })
+                  const UpdatedUserLiked = await LikedReply.findOneAndUpdate({ parentId: userLikingId, count: { $lt: 500 } }, { $push: { replies: data.replyId }, $inc: { count: 1 } }, { upsert: true })
+
+                ack({ success: true, newLikesCount: updatedReply.likes, UIStatus: 'like' })
+            
+              } else {
+
+                 if(userLikedReplyBefore.count === 1) {
+                      
+                       await LikedReply.deleteOne({ _id: userLikedReplyBefore._id })
+                       const updatedReply = await Reply.findByIdAndUpdate(data.replyId, { $inc: { likes: -1 } }, { returnDocument: 'after' })
+
+                       ack({ success: true, newLikesCount: updatedReply.likes, UIStatus: 'unlike' })
+
+                 } else {
+                    const pulledLikesByUser = await LikedReply.findOneAndUpdate({ _id: userLikedReplyBefore._id }, { $pull: { replies: data.replyId }, $inc: { count: -1 } })
+                    const updatedReply = await Reply.findByIdAndUpdate(data.replyId, { $inc: { likes: -1 } }, { returnDocument: 'after' })   
+                     
+                    ack({ success: true, newLikesCount: updatedReply.likes, UIStatus: 'unlike'})
+                 }
+
+              }
+                
+            }
+        
+            
+         } catch (error) {
+            console.log(error)
+            ack({ success: false, UIStatus: 'unlike', error: 'DataBase Update Failed' })
+            
+         }
+    
+
+    })
+
 })
 
 const loginCheck = (req, res, next) => {
@@ -324,6 +399,13 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
     const posterData = await Omaruser.findOne({ _id: posterId })
     const user = await Omaruser.findOne({ _id: userid })
     const replies = await Reply.find({ postId: postId })
+    const userLiked = await LikedPost.findOne({ parentId: userid, posts: postId }) // to be reused in like logic
+    let likedStatus = 'none'
+    if (!userLiked) {
+         likedStatus = 'none'
+    } else {
+        likedStatus = 'present'
+        }
 
     const requiredUserArray = replies.map((reply) => reply.userId)
 
@@ -365,7 +447,7 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
 
     const R2BaseUrl = process.env.R2_PUBLIC_BASE_URL 
 
-    res.render('post', { post, user, poster: posterData, replies: replyDataArray, R2BASE: R2BaseUrl, query: optionalQuery })
+    res.render('post', { post, user, poster: posterData, replies: replyDataArray, status: likedStatus, R2BASE: R2BaseUrl, query: optionalQuery })
 
 })
 
