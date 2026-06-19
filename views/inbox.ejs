@@ -92,10 +92,23 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             
             
         </div>    
+        
+        <% if (!followingStatus) { %>
+            <button class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="opacity: 1; outline: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; background-color: <%= userReq.userColor %>; transition: all .4s ease-out;">
+                <h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: black; font-size: .75rem;">Follow</h4>
+            </button>  
+            <button class="unfollow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="outline: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: none; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid <%= userReq.userColor %>; background-color: transparent; transition: all .4s ease-out;">
+                <h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: <%= userReq.userColor %>; font-size: .75rem;">Following</h4>
+            </button>
+        <% } else { %>
+                <button class="unfollow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="outline: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid <%= userReq.userColor %>; background-color: transparent; transition: all .4s ease-out;">
+                   <h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: <%= userReq.userColor %>; font-size: .75rem;">Following</h4>
+                </button>
+                <button class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="opacity: 1; outline: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: none; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; background-color: <%= userReq.userColor %>; transition: all .4s ease-out;">
+                   <h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: black; font-size: .75rem;">Follow</h4>
+                </button> 
+        <% } %>
 
-        <div class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid <%= userReq.userColor %>; background-color: transparent;">
-            <h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="color: <%= userReq.userColor %>; font-size: .75rem;">Following</h4>
-        </div>
             
 
    </header>
@@ -152,7 +165,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
         <nav class="single-profile-content" style=" position: absolute; top: 100%; z-index: 4; border-radius: 50px 50px 0 0; width: 100%; height: 50%; background-color: #050508; touch-action: none; will-change: transform;">
 
-                <div class="scroll-icon" style="width: 40px; height: 4px; background-color: #C04848; border-radius: 2px; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);"></div>    
+                <div class="scroll-icon" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width: 40px; height: 4px; background-color: <%= userReq.userColor %>; border-radius: 2px; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);"></div>    
 
                 <div id="single-profile-info-cont" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 16px;">
 
@@ -182,11 +195,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     <div class="interact" style="width: 100%; background-color: transparent; margin-top: 10px; display: flex; justify-content: space-evenly; align-items: center;">
 
                       <a href="/inbox" class="message" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: #C04848;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
-                           <h3 style="font-size: .9rem; color: #C04848;">Message</h2>
+                           <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                           <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= userReq.userColor %>;">Message</h2>
                       </a>
-                      <div class="follow-btn" style="display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid #C04848; background-color: transparent;">
-                        <h4 style="color: #C04848; font-size: .9rem;">Following</h4>
+                      <div class="follow-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid <%= userReq.userColor %>; background-color: transparent;">
+                        <h4 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= userReq.userColor %>; font-size: .9rem;">Following</h4>
                       </div>
 
                     </div>
@@ -200,10 +213,102 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
     
-
+<script src="/socket.io/socket.io.js"></script>
 <script>
 
+    const socket = io({ auth: { userId: '<%= userReq._id %>' } })
+
     const dot = (col) => { return `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${col}; box-shadow:0 0 6px ${col}; animation: throb 1.8s ease-in-out infinite;flex-shrink:0"></div>`; }
+    const userColor = '<%= userReq.userColor %>'
+    
+    const unfollowBtn = document.querySelector('.unfollow-btn')
+    const followBtn = document.querySelector('.follow-btn')
+
+    followBtn.addEventListener('click', async (e) => {
+
+          e.target.innerHTML = `${dot(userColor)}`
+          e.target.style.backgroundColor = 'transparent'
+          e.target.style.border = `1px solid ${userColor}`
+          e.target.disabled = true 
+
+          const payload = { recipientId: '<%= userMessaged._id %>' }
+
+          try {
+            
+              const response = await socket.timeout(5000).emitWithAck("follow-request", payload)
+      
+              if (response.success) {   // follow instance success
+      
+                      e.target.style.display = 'none'
+                      e.target.innerHTML = `<h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: black; font-size: .75rem;">Follow</h4>`
+                      e.target.style.backgroundColor = `${userColor}`
+                      e.target.disabled = false
+                      unfollowBtn.style.display = 'grid'
+                      console.log(response)
+                 
+      
+              } else {
+                
+                      e.target.innerHTML = `<h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: black; font-size: .75rem;">Follow</h4>`
+                      e.target.style.backgroundColor = `${userColor}`
+                      e.target.style.border = 'none'
+                      e.target.disabled = false       
+                      console.log(response)
+               
+              }
+
+          } catch (error) {   //ACKTIMEOUT
+
+                      e.target.innerHTML = `<h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: red; font-size: .75rem;">Failed</h4>`
+                      e.target.style.backgroundColor = `${userColor}`
+                      e.target.style.border = 'none'
+                      e.target.disabled = false
+                      setTimeout(() => {
+                          e.target.innerHTML = `<h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: black; font-size: .75rem;">Follow</h4>`
+                      }, 500)    
+            
+          }
+
+
+    })
+
+    unfollowBtn.addEventListener('click', async (e) => {
+              
+            e.target.innerHTML = `${dot(userColor)}`
+            e.target.disabled = true
+
+            const payload = { recipientId: '<%= userMessaged._id %>' }
+
+            try {
+                
+                const response = await socket.timeout(5000).emitWithAck("unfollow-request", payload)
+    
+                if (response.success) {  // UNFOLLOW SUCCESS INSTANCE
+    
+                    e.target.disabled = false
+                    e.target.style.display = 'none'
+                    e.target.innerHTML = `<h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: <%= userReq.userColor %>; font-size: .75rem;">Following</h4>`
+                    followBtn.style.display = 'grid'
+                    console.log(response)
+    
+                } else {    // UNFOLLOW INSTANCE FAILED
+    
+                    e.target.disabled = false
+                    e.target.innerHTML = `<h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: <%= userReq.userColor %>; font-size: .75rem;">Following</h4>`
+                    console.log(response)
+                }
+
+            } catch (error) {
+
+                    e.target.disabled = false
+                    e.target.innerHTML = `<h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: red; font-size: .75rem;">Failed</h4>`
+                    setTimeout(() => {
+                        e.target.innerHTML = `<h4 <% /* eslint-disable-next-line css-propertyvaluexpected */ %> style="pointer-events: none; color: <%= userReq.userColor %>; font-size: .75rem;">Following</h4>`
+                    }, 500)
+                
+            }
+
+    })
 
     const textArea = document.getElementById('text-area')
     const sendMsgBtn = document.getElementById('send-msg-btn')

@@ -23,6 +23,7 @@ const Post = require('./models/posts')
 const Reply = require('./models/replies')
 const LikedPost = require('./models/userPostLikes')
 const LikedReply = require('./models/userReplyLikes')
+const Following = require('./models/following')
 
 const googleRoutes = require('./routes/auth-routes')
 
@@ -259,6 +260,102 @@ io.on('connection', (socket) => {
 
     })
 
+    socket.on('follow-request', async (data, ack) => {
+
+        try {
+
+              if (!data || typeof data !== 'object' || Array.isArray(data)) {
+
+                     ack({ success: false, error: 'Invalid Payload Datatype', UIStatus: 'follow' })
+               }
+
+               const userReqId = socket.userId
+               const userHasEverFollowedBefore = await Following.findOne({ parentId: userReqId })
+
+            // CREATE NEW FOLLOWING INSTANCE/BUCKET
+            if (!userHasEverFollowedBefore) {
+
+                const newUserFollowBucket = new Following({
+                    parentId: userReqId, count: 1, following: [data.recipientId]
+                }).save().then((newBucket) => {
+                    //  UPDATE BOTH FOLLOWING TOTAL FOR REQUSER AND FOLLOWERS TOTAL FOR RECIPIENT
+                    console.log(`New Bucket crated for ${userReqId}`)
+                    return newBucket._id
+                }).then( async (update) => {
+
+                     const updatedRecientFollowers = await Omaruser.findByIdAndUpdate(data.recipientId, { $inc: { totalFollowers: 1 } })
+                     const updateReqUserFollowing = await Omaruser.findByIdAndUpdate(userReqId, { $inc: { totalFollowing: 1 } })
+
+                    ack({ success: true, UIStatus: 'following' })
+                })
+                .catch((err) => {
+
+                    ack({ success: false, UIStatus: 'follow', error: 'Failed to create Bucket/updateFailure' })
+                })
+
+            } else {          // REQUSER HAS A BUCKET ALREADY
+                   
+                const updatedReqUserbucket = await Following.findOneAndUpdate({ parentId: userReqId, count: { $lt: 500 } }, { $push: { following: data.recipientId }, $inc: { count: 1 } }, { upsert: true })
+                const updatedReqUserFCount = await Omaruser.findByIdAndUpdate(userReqId, { $inc: { totalFollowing: 1 } })
+                const updatedRecipientFollwers = await Omaruser.findByIdAndUpdate(data.recipientId, { $inc: { totalFollowers: 1 } })
+
+                ack({ success: true, UIStatus: 'following' })
+
+            }    
+
+            
+        } catch (error) {
+             console.log(error)
+             ack({ success: false, UIStatus: 'follow', error: 'ACK timeout/MongoDB error' })            
+        }
+
+    })
+
+    socket.on('unfollow-request', async (data, ack) => {
+
+           try {
+
+            if (!data || typeof data !== 'object' || Array.isArray(data)) {
+
+                ack({ success: false, error: 'Invalid Payload Datatype', UIStatus: 'following' })
+            }
+
+            const userReqId = socket.userId
+
+            const userReqTargetBucket = await Following.findOne({ parentId: userReqId, following: data.recipientId })
+
+            if (!userReqTargetBucket) {
+                // USER NEVER FOLLOWED RECIPIENT
+                ack({ success: false, UIStatus: 'follow', message: 'User Never followed this recipient before' })
+               
+            } else {
+               
+                 if (userReqTargetBucket.count === 1) {  // Delete the Bucket found
+                    
+                     const bucketDeleted = await Following.deleteOne({ _id: userReqTargetBucket._id })
+                     const updatedReqUser = await Omaruser.findByIdAndUpdate(userReqId, { $inc: { totalFollowing: -1 } })
+                     const updatedRecipient = await Omaruser.findByIdAndUpdate(data.recipientId, { $inc: { totalFollowers: -1 } } )
+
+                     ack({ success: true, UIStatus: 'follow', message: 'Deleted Bucket and Updated both req/rec' })
+
+                 } else {
+                     
+                     const updateTargetBucketCount = await Following.findByIdAndUpdate(userReqTargetBucket._id, { $pull: { following: data.recipientId }, $inc: { count: -1 } })
+                     const updatedReqUser = await Omaruser.findByIdAndUpdate(userReqId, { $inc: { totalFollowing: -1 } })
+                     const updatedRecipient = await Omaruser.findByIdAndUpdate(data.recipientId, { $inc: { totalFollowers: -1 } })
+
+                     ack({ success: true, UIStatus: 'follow', message: 'Normal bucket, req, rec Updates' })
+                 }
+
+            }
+            
+           } catch (error) {
+              
+                   console.log(error)
+                   ack({ success: false, UIStatus: 'following', error: 'ACKTimeout/MongoDB error' })
+           }
+    })
+
 })
 
 const loginCheck = (req, res, next) => {
@@ -367,24 +464,24 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
         
      })
     
-    //  function FisheYates (array) {
+     function FisheYates (array) {
 
        
-    //     for(let i = array.length - 1; i > 0; i--) {
+        for(let i = array.length - 1; i > 0; i--) {
             
-    //     const j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(Math.random() * (i + 1));
 
-    //          [array[i], array[j]] = [array[j], array[i]]
-    //     } 
-    //     return array
-    //  }
+             [array[i], array[j]] = [array[j], array[i]]
+        } 
+        return array
+     }
      
-    //  const sortedPostDataArray = FisheYates(postDataArray)
+     const sortedPostDataArray = FisheYates(postDataArray)
 
 
      const R2BaseUrl = process.env.R2_PUBLIC_BASE_URL 
 
-    res.render('home', { user: userData, posts: postDataArray, R2BASE: R2BaseUrl, messages: req.flash('error') })
+    res.render('home', { user: userData, posts: sortedPostDataArray, R2BASE: R2BaseUrl, messages: req.flash('error') })
 
 
 })
@@ -825,7 +922,7 @@ app.patch('/post-update-reply', async (req, res) => {
 
       try {
 
-        await Post.findByIdAndUpdate({ _id: postid }, { $set: { interactions: newInteractions, replies: newReplyCount } })
+        await Post.findByIdAndUpdate(postid, { $set: { $inc: { replies: 1, interactions: 1 } } })
         
         res.json({ success: true })
         
@@ -898,24 +995,31 @@ app.get('/inbox/:id', notLoggedInCheck, async (req, res) => {
         sender: userMessagingId,
         recipient: userMessagedId
     }
+    
+    const isUserReqFollowing = await Following.findOne({ parentId: userMessagingId, following: userMessagedId })
+
+
     const R2BASE = process.env.R2_PUBLIC_BASE_URL
 
-      res.render('inbox', { userReq: userMessaging, userMessaged,  parties, origin: postOriginId, R2BASE })
+      res.render('inbox', { userReq: userMessaging, userMessaged, followingStatus: isUserReqFollowing,  parties, origin: postOriginId, R2BASE })
 })
 
 
 app.get('/user/:id', notLoggedInCheck,  async (req, res) => {
     
-    const userid = req.params.id
+    const userid = req.params.id                    //RECIPIENT
     const postOriginId = req.query.postOrigin
-    const userReq = req.user
+    const userReq = req.user                        //REQUSER
 
     
     const user = await Omaruser.findOne({ _id: userid })
     const userPosts = await Post.find({ userId: userid }) 
     const R2baseUrl = process.env.R2_PUBLIC_BASE_URL
 
-    res.render('userposts', { userReq,  posts: userPosts, user, R2BASE: R2baseUrl, origin: postOriginId } )
+
+    const userReqIsFollowingRec = await Following.findOne({ parentId: userReq._id, following: userid })
+
+    res.render('userposts', { userReq, following: userReqIsFollowingRec,  posts: userPosts, user, R2BASE: R2baseUrl, origin: postOriginId } )
 })
 
 app.get('/group', notLoggedInCheck, async (req, res) => {

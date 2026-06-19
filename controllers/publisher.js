@@ -147,3 +147,49 @@ function processMacroCategories(rawDraft) {
     "linkStrippedFromBody": true
   }
 }
+
+
+
+//  timeout handling ack
+
+io.on("connection", (socket) => {
+  socket.on("request_data", async (data, callback) => {
+    let isTimedOut = false;
+
+    // 1. Start a safety timer matching your client timeout (e.g., 5000ms)
+    const serverTimeout = setTimeout(() => {
+      isTimedOut = true;
+      console.error(`Execution timeout for socket ${socket.id}. Aborting processing.`);
+      
+      // Optional: Perform server-side cleanup here (e.g., abort DB queries)
+    }, 5000);
+
+    try {
+      // Simulate heavy asynchronous database or API processing
+      const result = await processHeavyData(data);
+
+      // 2. Check if the server already timed out before responding
+      if (!isTimedOut) {
+        clearTimeout(serverTimeout);
+        callback({ status: "ok", result }); 
+      }
+    } catch (error) {
+      if (!isTimedOut) {
+        clearTimeout(serverTimeout);
+        callback({ status: "error", message: "Processing failed" });
+      }
+    }
+  });
+});
+
+
+//CLIENT SIDE
+
+try {
+  // Sets a strict 5-second window for the server to reply
+  const response = await socket.timeout(5000).emitWithAck("request_data", myData);
+  console.log("Success:", response);
+} catch (error) {
+  // If the server-side timer triggers, this block catches the timeout error
+  console.error("The server failed to acknowledge the event within 5000ms.");
+}
