@@ -922,7 +922,7 @@ app.patch('/post-update-reply', async (req, res) => {
 
       try {
 
-        await Post.findByIdAndUpdate(postid, { $set: { $inc: { replies: 1, interactions: 1 } } })
+        await Post.findByIdAndUpdate(postid,  { $inc: { replies: 1, interactions: 1 } } )
         
         res.json({ success: true })
         

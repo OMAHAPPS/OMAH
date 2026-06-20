@@ -216,7 +216,19 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
-    const socket = io({ auth: { userId: '<%= userReq._id %>' } })
+    const socket = io({ auth: { userId: '<%= userReq._id %>' }, ackTimeout: 5000, retries: 3 })
+
+    // MESSAGING LOGIC WITH RETRIES OPTION
+
+    
+
+
+
+
+
+
+
+
 
     const dot = (col) => { return `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${col}; box-shadow:0 0 6px ${col}; animation: throb 1.8s ease-in-out infinite;flex-shrink:0"></div>`; }
     const userColor = '<%= userReq.userColor %>'
@@ -235,7 +247,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
           try {
             
-              const response = await socket.timeout(5000).emitWithAck("follow-request", payload)
+              const response = await socket.timeout(5000).volatile.emitWithAck("follow-request", payload)
       
               if (response.success) {   // follow instance success
       
@@ -281,7 +293,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
             try {
                 
-                const response = await socket.timeout(5000).emitWithAck("unfollow-request", payload)
+                const response = await socket.timeout(5000).volatile.emitWithAck("unfollow-request", payload)
     
                 if (response.success) {  // UNFOLLOW SUCCESS INSTANCE
     

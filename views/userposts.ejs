@@ -372,7 +372,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
           try {
             
-            const response = await socket.timeout(5000).emitWithAck("follow-request", payload)
+            const response = await socket.timeout(5000).volatile.emitWithAck("follow-request", payload)
     
             if (response.success) {   // follow instance success
     
@@ -418,7 +418,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
             try {
               
-              const response = await socket.timeout(5000).emitWithAck("unfollow-request", payload)
+              const response = await socket.timeout(5000).volatile.emitWithAck("unfollow-request", payload)
   
               if (response.success) {  // UNFOLLOW SUCCESS INSTANCE
   
