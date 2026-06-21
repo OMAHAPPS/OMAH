@@ -1661,11 +1661,36 @@ document.querySelectorAll('.info-button').forEach((btn) => {
           profileContainer.querySelector('#link-to-profile').href = `/user/${profileInfo.userId}?postOrigin=${postId}`
           
           if (profileInfo.userId == userReqId) {
-              document.querySelector('.interact').innerHTML = `<a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+              document.querySelector('.interact').innerHTML = `<a id="link-to-message" href="/inbox/${profileInfo.userId}?postOrigin=${postId}" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
+                                                               </a>
+                                                               <a id="link-to-profile" class="stop-fetch" href="/inbox/${profileInfo.userId}?postOrigin=${postId}" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Profile</h2>
+                                                               </a>
+                                                               <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}?postOrigin=${postId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
                                                                  <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
                                                                  <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Your Profile</h2>
                                                                </a>
                                                               `
+          } else {
+             
+              document.querySelector('.interact').innerHTML = `<a id="link-to-message" href="/inbox/${profileInfo.userId}?postOrigin=${postId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
+                                                               </a>
+                                                               <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}?postOrigin=${postId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Profile</h2>
+                                                               </a>
+                                                               <a id="link-to-profile" class="stop-fetch" href="" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Your Profile</h2>
+                                                               </a>
+                                                              `
+             
+
           }
 
           document.querySelector('.overlay').style.display = 'block'
@@ -1674,7 +1699,7 @@ document.querySelectorAll('.info-button').forEach((btn) => {
               modal.style.transition = 'top 0.3s ease-out'
               modal.style.top = '50%'
       
-          }, 75)
+          }, 200)
       })
 
     })

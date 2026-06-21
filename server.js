@@ -989,7 +989,7 @@ app.get('/inbox/:id', notLoggedInCheck, async (req, res) => {
     const userMessaging = req.user
     const userMessagingId = req.user._id
     const userMessagedId = req.params.id
-    const userMessaged = await Omaruser.findOne({ _id: userMessagedId })
+    const userMessaged = await Omaruser.findOne({ _id: userMessagedId }).lean()
     const postOriginId = req.query.postOrigin
     const parties = {
         sender: userMessagingId,
