@@ -7,6 +7,7 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <title>Inbox</title>
+
      <style>
 /* ── FOUNDATION ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -45,6 +46,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 @keyframes storyPulse  {0%,100%{box-shadow:0 0 0 0 var(--sc)}50%{box-shadow:0 0 0 4px var(--sc)}}
 @keyframes heartbeat   {0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.06)}}
 @keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
+
+/* chatContainer styles */
+.chat-date-divider{font-family: 'Playfair Display', serif; height: 8%; width: 100%; display: flex; align-items: center; justify-content: center; color: rgba(237,232,224,.95); font-size: 0.9rem; }
+.receiver-cont{align-self: flex-start; max-width: 72%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 0 18px 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;}
+.sender-cont{align-self: flex-end; max-width: 72%; border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px 0 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;}
 </style>
 </head>
 <body>
@@ -113,14 +119,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
    </header>
 
-    <main style="height: 80%; display: flex; flex-direction: column; gap: 12px; padding: 16px; overflow-y: scroll; overflow-x: hidden; scroll-snap-type: y mandatory; scroll-padding-block: 10px;">
+    <main id="chat-container" style="height: 80%; display: flex; flex-direction: column; gap: 12px; padding: 16px; overflow-y: scroll; overflow-x: hidden; scroll-snap-type: y mandatory; scroll-padding-block: 10px;">
 
        
         
-        <div class="receiver-cont" style="align-self: flex-start; max-width: 72%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 0 18px 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;">
-            <!-- <article style="width: 100%;">
-                <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="98%" height="auto" style="border-radius: 15px; object-fit: cover;" />
-            </article> -->
+        <!-- <div class="receiver-cont" style="align-self: flex-start; max-width: 72%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 0 18px 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;">
+             
             <p style="white-space: pre-wrap; margin-block: 8px; color: rgba(237,232,224,.75); font-size: 16px;">Hey! I'm doing great, thanks for asking. How about you?Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
             <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
                 <span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: rgb(37, 134, 224);"></ion-icon></span>
@@ -130,17 +134,20 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         </div>
 
         
-        <div class="sender-cont" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="align-self: flex-end; max-width: 72%; background: <%= userReq.userColor %>51; border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px 0 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;">
-            <!-- <article style="width: 100%;">
-                <img src="/uploads/mwatiJS-1780147920696.jpeg" alt="" width="98%" height="auto" style="border-radius: 15px; object-fit: cover;" />
-            </article> -->
-            <p style="white-space: pre-wrap; margin-block: 4px; color: rgba(237,232,224,.95); font-size: 16px;">Hey! I'm doing great, thanks for asking. How about you?</p>
+        <div class="sender-cont" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="align-self: flex-end; max-width: 72%; background: <%= userReq.userColor %>41; border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px 0 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;">
+           
+            <p id="text" style="white-space: pre-wrap; margin-block: 4px; color: rgba(237,232,224,.95); font-size: 16px;">Hey! I'm doing great, thanks for asking. How about you?</p>
+
             <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
-                <span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: rgb(37, 134, 224);"></ion-icon></span>
-                <p>2:30 PM</p>
+
+                <span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: rgb(37, 134, 224);"></ion-icon></span>
+
+                <p id="localetime" >2:30 PM</p>
+
             </div>
+
         </div>
-      
+       -->
         
       
     </main>
@@ -150,8 +157,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
             <textarea id="text-area" type="text" placeholder="Message" style="background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 10px; padding: 10px; height: 85%; padding: 12px 16px; color: rgba(237,232,224,.85); flex: 1;"></textarea>
 
-            <div class="media-send-cont" style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; height: 100%; width: fit-content;">
-                <ion-icon name="attach" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 2.2rem; display: block; color: <%= userReq.userColor %>;"></ion-icon> 
+            <div class="media-send-cont" style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; height: 100%; width: fit-content;"> 
                 <button id="send-msg-btn" style="background-color: #1ed760; color: #050508; height: 45px; width: 45px; border-radius: 50%; font-weight: 600; display: none; justify-content: center; align-items: center;"><ion-icon name="send"></ion-icon></button>
             </div>
 
@@ -168,7 +174,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                 <div id="single-profile-info-cont" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 16px;">
 
-                    <img src="/uploads/brunoKiss-1780154542001.jpeg" alt="" width="100" height="100" style="border-radius: 50%; object-fit: cover;" />
+                    <img src="" alt="" width="100" height="100" style="border-radius: 50%; object-fit: cover;" />
 
                     <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
 
@@ -213,11 +219,196 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     // MESSAGING LOGIC WITH RETRIES OPTION
 
+   
+    const textArea = document.getElementById('text-area')
+    const sendMsgBtn = document.getElementById('send-msg-btn')
+    const chatContainer = document.getElementById('chat-container')
+
+    textArea.addEventListener('keyup', () => {
+        if (textArea.value.trim() !== '') {
+            sendMsgBtn.style.display = 'flex'
+            sendMsgBtn.disabled = false
+        } else {
+            sendMsgBtn.style.display = 'none'
+            sendMsgBtn.disabled = true
+            textArea.value = textArea.value.trimStart()
+        }
+    })
+ 
+    const MAX_LOCAL_MESSAGES = 200 
+    const currentUserId = '<%= parties.sender %>'
+    const recipientId = '<%= parties.recipient %>'
+
+    function generateOneOnOneRoomId(userA_Id, userB_Id) {
+        
+       // 1. Put both IDs into an array
+       const ids = [userA_Id, userB_Id]
+  
+       // 2. Sort them alphabetically (e.g., ['alice', 'bob'] instead of ['bob', 'alice'])
+       ids.sort()
+  
+       // 3. Join them with a delimiter to create a single immutable string
+      return `dm_${ids[0]}_${ids[1]}`
+}
     
+    function formatDividerDate(dateObj) {
+       const today = new Date();
+       const yesterday = new Date();
+       yesterday.setDate(today.getDate() - 1);
+
+       if (dateObj.toLocaleDateString() === today.toLocaleDateString()) {
+            return 'Today';
+       } else if (dateObj.toLocaleDateString() === yesterday.toLocaleDateString()) {
+            return 'Yesterday';
+       } else {
+            // Returns clean format like "June 22, 2026"
+            return dateObj.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+       }
+     }
+
+    const roomId = generateOneOnOneRoomId(currentUserId, recipientId)
+
+     let messageState = [ {id: crypto.randomUUID(),senderId: currentUserId,receiverId: roomId,text: 'Optic are shit guys',timestamp: Date.now(),status: 'seen'}, {id: crypto.randomUUID(),senderId: currentUserId,receiverId: roomId,text: 'Whatup buddy adnsbsdb sdbvsadvbsab sdcbsdbsdjb sbaksdjbsdkcb sdcdkjvbsabca',timestamp: Date.now(),status: 'delivered'}, {id: crypto.randomUUID(),senderId: roomId,receiverId: currentUserId,text: 'Hello too',timestamp: Date.now(),status: 'sent'} ]
+
+   
+    function saveAndRender () {
+       
+         messageState.sort((a,b) => a.timestamp - b.timestamp)
+
+         if (messageState.length > MAX_LOCAL_MESSAGES) {
+
+            messageState.slice(-MAX_LOCAL_MESSAGES)
+         }
+
+         try {
+            
+            localStorage.setItem('chat_history', JSON.stringify(messageState))
+
+         } catch (error) {
+            
+            if (error.name === 'QuotaExceededError') {
+                messageState.slice(-100)      // Cut for recovery
+                localStorage.setItem('chat_history', JSON.stringify(messageState))
+            } 
+         }
+
+         renderMessages()
+    }
+
+    function renderMessages () {
+
+         chatContainer.innerHTML = ''; // Wipe DOM to prevent rendering bugs
+
+         let previousMessageDateString = null;
+
+          messageState.forEach(msg => {
+             // 1. Convert the microsecond timestamp into a localized date string (e.g., "6/22/2026")
+             const currentMessageDate = new Date(msg.timestamp);
+             const currentMessageDateString = currentMessageDate.toLocaleDateString();
+
+             // 2. MIDNIGHT CHECK: If this day is different from the last message's day, inject a separator
+             if (currentMessageDateString !== previousMessageDateString) {
+                  const dateDivider = document.createElement('div');
+                  dateDivider.className = 'chat-date-divider';
+      
+                  // Optional enhancement: Render "Today" or "Yesterday" instead of raw dates
+                  dateDivider.textContent = formatDividerDate(currentMessageDate);
+      
+                  chatContainer.appendChild(dateDivider);
+      
+                  // Update our tracking anchor to the new day
+                  previousMessageDateString = currentMessageDateString
+              }
+
+              // 3. RENDER THE STANDARD CHAT BUBBLE (Existing Logic)
+              const msgElement = document.createElement('div');
+              const isMe = msg.senderId === currentUserId;
+              msgElement.className = `${isMe ? 'sender-cont' : 'receiver-cont'}`;
+              if (isMe) {
+                msgElement.style.backgroundColor = '<%= userReq.userColor %>41'
+              }
+    
+              let tickHtml = isMe ? (msg.status == 'seen' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: rgb(37, 134, 224);"></ion-icon></span>' : msg.status == 'delivered' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: grey;"></ion-icon></span>' : msg.status == 'sent' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-outline" style="font-size: 1.1rem; color: grey;"></ion-icon></span>' : '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="time-outline" style="font-size: 1.1rem; color: grey;"></ion-icon></span>' ) : '';
+
+              msgElement.innerHTML = ` 
+                                      <p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>
+
+                                         <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
+
+                                          ${tickHtml}
+
+                                          <p id="localetime" >${currentMessageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+
+                                         </div>  
+                                      
+                                     `;
+    
+              chatContainer.appendChild(msgElement);
+          });
+
+      }
 
 
 
 
+
+    // 2. THE ENTRY TRUCK: Fire actions the millisecond we connect
+    socket.on('connect', () => {
+
+       console.log('🔗 WebSocket Connection Established! Socket ID:', socket.id)
+
+       const joinPayload = { roomId: roomId, userId: currentUserId }
+
+       // Send credentials to backend to join the isolated chat room pipeline
+       socket.emit('joinRoom', joinPayload)
+
+       // Safe context zone: Start loading historical cache state data now
+    //    loadHistoryFromServer(currentUserId, roomId)
+  
+       // Enable the input form since the connection channel is ready
+       document.getElementById('text-area').disabled = false
+       document.getElementById('send-msg-btn').disabled = false
+});
+
+    
+    const createNewMessage = async () => {
+
+         if (!textArea.value.trim()) return;
+
+         const newMessage = {
+            id: crypto.randomUUID(),
+            senderId: currentUserId,
+            receiverId: roomId, // The roomId acts as the destination router target
+            text: textArea.value,
+            timestamp: Date.now(),
+            status: 'sending'
+         };
+
+         messageState.push(newMessage)
+         saveAndRender()
+
+          // EMIT EVENT: Safe to trigger since joinRoom registration already processed
+         
+         try {
+
+             const response = await socket.timeout(5000).emitWithAck('sendMessage', newMessage)
+
+             if (response.success) {
+                updateMessageStatus(newMessage.id, 'sent')
+             } else{
+                updateMessageStatus(newMessage.id, 'failed')
+             }
+            
+         } catch (error) {
+            
+            updateMessageStatus(newMessage.id, 'failed')
+         } 
+
+      textArea.value = '' // Reset form box
+
+    }
+
+    sendMsgBtn.addEventListener('click', renderMessages)
 
 
 
@@ -315,20 +506,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     })
 
-    const textArea = document.getElementById('text-area')
-    const sendMsgBtn = document.getElementById('send-msg-btn')
-
-    textArea.addEventListener('keyup', () => {
-        if (textArea.value.trim() !== '') {
-            sendMsgBtn.style.display = 'flex'
-            sendMsgBtn.disabled = false
-        } else {
-            sendMsgBtn.style.display = 'none'
-            sendMsgBtn.disabled = true
-            textArea.value = textArea.value.trimStart()
-        }
-    })
- 
+    
 
     const modalSingle = document.querySelector('.single-profile-content')
 

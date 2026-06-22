@@ -24,6 +24,7 @@ const Reply = require('./models/replies')
 const LikedPost = require('./models/userPostLikes')
 const LikedReply = require('./models/userReplyLikes')
 const Following = require('./models/following')
+const Chat = require('./models/dmBucket')
 
 const googleRoutes = require('./routes/auth-routes')
 
@@ -355,6 +356,32 @@ io.on('connection', (socket) => {
                    ack({ success: false, UIStatus: 'following', error: 'ACKTimeout/MongoDB error' })
            }
     })
+
+    socket.on('joinRoom', async (data) => {
+        // 1. Move this socket thread connection inside the target room channel boundary
+        socket.join(data.roomId)
+        console.log(`👤 User ${data.userId} joined room sandbox channel: ${data.roomId}`)
+
+        // 2. Update All unseen/Delivered bck msgs to status seen since user has opened chat window
+        try {
+
+            const UpdateAllMsgToSeen = await Chat.updateMany({ roomId: data.roomId, "messages.senderId": { $ne: data.userId } }, { $set: { "messages.$[elem].status": 'seen' } }, { arrayFilters: [{ "elem.senderId": { $ne: data.userId } }] })
+
+            // 3. Network Broadcast: If records were modified, alert the room to turn grey ticks blue
+            if (UpdateAllMsgToSeen.modifiedCount > 0) {
+                const emitPayload = { roomId: data.roomId, readerId: data.userId }
+
+               socket.to(data.roomId).emit('messages_marked_seen', emitPayload);
+            }
+            
+        } catch (error) {
+            
+                  console.error("Failed handling database sync upon room entry:", error);
+
+        }
+    })
+
+    
 
 })
 
