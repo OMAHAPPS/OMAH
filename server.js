@@ -403,11 +403,24 @@ io.on('connection', (socket) => {
                         roomId: newMessage.receiverId, userAId: senderId, userBId: recipientId, count: 1, messages: [updatedMessage]
                   }).save().then((newBucket) => {
                          // This safely targets only sockets registered inside this room via the step above!
-                         socket.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage, async (err, response) => {
+                         io.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage, async (err, response) => {
                               
                             if(!err) { // recipient Executed its acknowledgement function
 
-                                const msgDeliveredRcptPayload = { msgId: newMessage.id, croomId: newMessage.receiverId } 
+                                const msgDeliveredRcptPayload = { msgId: newMessage.id, roomId: newMessage.receiverId } 
+
+                                if (response.update == 'seen') {
+
+                                    try {
+
+                                       const updateMessageToSeen = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, "messages.id": newMessage.id }, { $set: { "message.$[elem],status": 'seen' } }, { arrayFilters: [{ "elem.id": newMessage.id }] }, { returnDocument: 'after' })
+                                       //notify the senders client to update single tick to blue tick
+                                       io.to(senderId).emit('message_read_receipt', msgDeliveredRcptPayload)
+                                        
+                                    } catch (error) {
+                                        console.log('Failed to update Message Seen status')
+                                    }
+                                } else if (response.update == 'delivered') {
 
                                 try {
 
@@ -419,7 +432,7 @@ io.on('connection', (socket) => {
                                 } catch (error) {
                                     console.log('Failed to update Message Delivery Status')
                                 }
-                                
+                            }
                             }  // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
                          });
 

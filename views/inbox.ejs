@@ -430,10 +430,10 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
        renderMessages();
     }
     
-    // window.addEventListener('DOMContentLoaded', () => {
-    //     clearChatHistory(recipientId)
+    window.addEventListener('DOMContentLoaded', () => {
+        clearChatHistory(recipientId)
 
-    // })
+    })
     
     function deduplicateAndSave () {
 
@@ -461,10 +461,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                 // serverMessages should be an array of objects matching your schema { id, senderId, receiverId, text, timestamp }
                 // Mark server-fetched messages as successfully 'sent'    
-                const validatedMessages = serverResponse.messages.map(msg => ({
-                    ...msg,
-                    status: 'sent'
-                }))
+                const validatedMessages = serverResponse.messages
     
                 // match with realtime messages to handle race conditions
                 messageState = [...messageState, ...validatedMessages]
@@ -551,7 +548,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     // ON RECEIVING MESSAGE BUT NOT CURRENTLY IN THE ROOM DOUBLE GREY TICK TRIGGER
     socket.on('receiveMessage_background', (incomingMsg, callback) => {
         
-         callback({success: true})  // critical to nullify the timeout sent from io.to(me) ACKNOWLEDGMENT TO SERVER
+        // callback({success: true})  // critical to nullify the timeout sent from io.to(me) ACKNOWLEDGMENT TO SERVER
 
          const messageExists = messageState.some(m => m.id === incomingMsg.id)
 
@@ -562,10 +559,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   incomingMsg.status = 'seen'
                  // EMIT IMMEDIATE SEEN RECEIPT TO SERVER   
                  socket.emit('message_read', { msgId: incomingMsg.id, roomId: roomId, userId: currentUserId });
-
+                  callback({ success: true, update: 'seen' })
             } else {  // receiver is not staring at chat ... just double grey tick
                   
                   incomingMsg.status = 'delivered'
+                  callback({ success: true, update: 'delivered' })
                   
             }
 
