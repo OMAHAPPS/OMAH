@@ -381,7 +381,115 @@ io.on('connection', (socket) => {
         }
     })
 
-    
+    socket.on('sendMessage', async (newMessage, ack) => {
+        
+        const senderId = newMessage.senderId
+        const recipientId = newMessage.receiverId.replace('dm_', '').split('_').find(uid => uid !== senderId)
+
+        try {
+
+            if (!newMessage || typeof newMessage !== 'object' || Array.isArray(newMessage)) {
+
+                ack({ success: false, error: 'Invalid Payload' })
+            }
+            
+            const ChatBucketExists = await Chat.findOne({ roomId: newMessage.receiverId })  // Check if these people have ever chatted before
+            const updatedMessage = {...newMessage, status: 'sent' } 
+            
+            if (!ChatBucketExists) {  // if not create a new chat Bucket instance
+                  
+                 
+                  const createNewBucket = new Chat({
+                        roomId: newMessage.receiverId, userAId: senderId, userBId: recipientId, count: 1, messages: [updatedMessage]
+                  }).save().then((newBucket) => {
+                         // This safely targets only sockets registered inside this room via the step above!
+                         socket.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage, async (err, response) => {
+                              
+                            if(!err) { // recipient Executed its acknowledgement function
+
+                                const msgDeliveredRcptPayload = { msgId: newMessage.id, croomId: newMessage.receiverId } 
+
+                                try {
+
+                                    const updateMessageToDelivered = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, "messages.id": newMessage.id }, { $set: { "messages.$[elem].status": 'delivered' } }, { arrayFilters: [{ "elem.id": newMessage.id }] }, { returnDocument: 'after' })  // Picks the exact message in the array and updates it
+                                    // Notify the senders client to update single tick to double grey
+                                    console.log(senderId)
+                                    io.to(senderId).emit('message_delivered_receipt', msgDeliveredRcptPayload)
+                                    
+                                } catch (error) {
+                                    console.log('Failed to update Message Delivery Status')
+                                }
+                                
+                            }  // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
+                         });
+
+                        //  ack({ success: true })
+
+                    }).catch((err) => {
+                         
+                         ack({ success: false, error: 'Failed to Create New Chat Bucket' })  
+                    })
+                  
+            } else {    //A Chat instance exists and we have to update the latest bucket
+                 
+                 const updatedChatBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage },  $inc: { count: 1 }  }, { upsert: true })
+
+                 io.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage, async (err, response) => {
+                              
+                            if(!err) { // recipient Executed its acknowledgement function
+
+                                const msgDeliveredRcptPayload = { msgId: newMessage.id, roomId: newMessage.receiverId } 
+
+                                try {
+
+                                    const updateMessageToDelivered = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, "messages.id": newMessage.id }, { $set: { "messages.$[elem].status": 'delivered' } }, { arrayFilters: [{ "elem.id": newMessage.id }] })  // Picks the exact message in the array and updates it
+                                    // Notify the senders client to update single tick to double grey
+                                    io.to(senderId).emit('message_delivered_receipt', msgDeliveredRcptPayload)
+                                    
+                                } catch (error) {
+                                    console.log('Failed to update Message Delivery Status')
+                                }
+                                
+                            }  // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
+                         });
+
+                //  ack({ success: true })
+                 
+            }
+
+
+        } catch (error) {
+
+            ack({ success: false, error: 'Database Update Error' })
+            
+        }
+        
+
+    })
+
+    socket.on('message_read', async ({ msgId, roomId, userId }) => {
+
+         const originalSenderId = roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
+         const emitPayload = { msgId: msgId, roomId: roomId }
+
+         try {  // Update message to seen status in db // might fail but emission to sender for Bluetick is essential
+
+             const result = await Chat.findOneAndUpdate({ roomId: roomId, "messages.id": msgId }, { $set: { "messages.$[elem].status": 'seen' } }, { arrayFilters: [{ "elem.id": msgId }] })
+
+             if (result.modifiedCount > 0) {
+
+                console.log(originalSenderId)
+
+                 io.to(originalSenderId).emit('message_read_receipt', emitPayload)
+             }
+            
+         } catch (error) {  // Mongodb failure to modify the Message ststus but receipient still read the message
+            
+              console.log('Mongod error to update ' + error)
+              
+              io.to(originalSenderId).emit('message_read_receipt', emitPayload)
+         }
+    })
 
 })
 
@@ -404,7 +512,25 @@ const notLoggedInCheck = (req, res, next) => {
       }
 }
 
+app.get('/api/dm-history/messages', async (req, res) => {
 
+     const roomId = req.query.roomId
+
+     try {
+
+        const recentHistoryChatBucket = await Chat.findOne({ roomId: roomId, count: { $lt: 500 } })
+        const messagesArray = recentHistoryChatBucket.messages
+        
+        res.json({ success: true, messages: messagesArray })
+        
+     } catch (error) {
+
+        console.log('Failed to retreive Messages From server')
+        res.json({ success: false, error: 'Failed to retrieve server Messages' })
+
+        
+     }
+})
 
 
 app.get('/', loginCheck, (req, res) => {

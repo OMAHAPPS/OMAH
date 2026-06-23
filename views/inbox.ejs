@@ -48,9 +48,10 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 @keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
 
 /* chatContainer styles */
-.chat-date-divider{font-family: 'Playfair Display', serif; height: 8%; width: 100%; display: flex; align-items: center; justify-content: center; color: rgba(237,232,224,.95); font-size: 0.9rem; }
+.chat-date-divider{font-family: 'Playfair Display', serif; height: 6%; width: 100%; display: flex; align-items: center; justify-content: center; color: rgba(237,232,224,.95); font-size: 0.9rem; }
 .receiver-cont{align-self: flex-start; max-width: 72%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 0 18px 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;}
 .sender-cont{align-self: flex-end; max-width: 72%; border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px 0 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;}
+.sender-cont.failed{border: 1px solid red}
 </style>
 </head>
 <body>
@@ -268,8 +269,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     const roomId = generateOneOnOneRoomId(currentUserId, recipientId)
 
-     let messageState = [ {id: crypto.randomUUID(),senderId: currentUserId,receiverId: roomId,text: 'Optic are shit guys',timestamp: Date.now(),status: 'seen'}, {id: crypto.randomUUID(),senderId: currentUserId,receiverId: roomId,text: 'Whatup buddy adnsbsdb sdbvsadvbsab sdcbsdbsdjb sbaksdjbsdkcb sdcdkjvbsabca',timestamp: Date.now(),status: 'delivered'}, {id: crypto.randomUUID(),senderId: roomId,receiverId: currentUserId,text: 'Hello too',timestamp: Date.now(),status: 'sent'} ]
-
+    let messageState = JSON.parse(localStorage.getItem(`chat_history_${recipientId}`)) || []
+    
    
     function saveAndRender () {
        
@@ -282,13 +283,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
          try {
             
-            localStorage.setItem('chat_history', JSON.stringify(messageState))
+            localStorage.setItem(`chat_history_${recipientId}`, JSON.stringify(messageState))
 
          } catch (error) {
             
             if (error.name === 'QuotaExceededError') {
                 messageState.slice(-100)      // Cut for recovery
-                localStorage.setItem('chat_history', JSON.stringify(messageState))
+                localStorage.setItem(`chat_history_${recipientId}`, JSON.stringify(messageState))
             } 
          }
 
@@ -324,13 +325,15 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               const msgElement = document.createElement('div');
               const isMe = msg.senderId === currentUserId;
               msgElement.className = `${isMe ? 'sender-cont' : 'receiver-cont'}`;
+
+              let tickHtml = isMe ? (msg.status == 'seen' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: rgb(37, 134, 224);"></ion-icon></span>' : msg.status == 'delivered' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: grey;"></ion-icon></span>' : msg.status == 'sent' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-outline" style="font-size: 1.1rem; color: grey;"></ion-icon></span>' : msg.status == 'sending' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="time-outline" style="font-size: 1.1rem; color: grey;"></ion-icon></span>' : '' ) : '';
+
               if (isMe) {
                 msgElement.style.backgroundColor = '<%= userReq.userColor %>41'
               }
-    
-              let tickHtml = isMe ? (msg.status == 'seen' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: rgb(37, 134, 224);"></ion-icon></span>' : msg.status == 'delivered' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: grey;"></ion-icon></span>' : msg.status == 'sent' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-outline" style="font-size: 1.1rem; color: grey;"></ion-icon></span>' : '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="time-outline" style="font-size: 1.1rem; color: grey;"></ion-icon></span>' ) : '';
-
-              msgElement.innerHTML = ` 
+              if (msg.status == 'failed') {
+                  msgElement.classList.add('failed')
+                   msgElement.innerHTML = ` 
                                       <p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>
 
                                          <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
@@ -339,19 +342,149 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                                           <p id="localetime" >${currentMessageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
 
-                                         </div>  
+                                         </div> 
+
+                                         
+                                         <button class="retry-btn" onclick="retryMessage('${msg.id}')" style="outline: none; cursor: pointer; border: none; position: absolute; bottom: 0; left: -65px; color: red; width: 70px; display: flex; align-items: center; justify-content: center; gap: 3px; font-size: .85rem;">
+                                            <ion-icon name="repeat-outline" style="pointer-event: none; color: red; font-size: 1.05rem;"></ion-icon>
+                                             Retry
+                                         </button>
                                       
                                      `;
+    
+
+              } else {
+
+                  msgElement.innerHTML = ` 
+                                          <p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>
+    
+                                             <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
+    
+                                              ${tickHtml}
+    
+                                              <p id="localetime" >${currentMessageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+    
+                                             </div> 
+    
+                                             
+                                             <button class="fs" style="outline: none; cursor: pointer; border: none; position: absolute; bottom: 0; left: -65px; color: red; width: 70px; display: none; align-items: center; justify-content: center; gap: 3px; font-size: .85rem;">
+                                                <ion-icon name="repeat-outline" style="color: red; font-size: 1.05rem;"></ion-icon>
+                                                 Retry
+                                             </button>
+                                          
+                                         `;
+        
+              }
+    
     
               chatContainer.appendChild(msgElement);
           });
 
       }
 
+    function updateMessageStatus (id, newStatus) {
+           
+           const msg = messageState.find(m => m.id === id)
 
+           if (msg) {
+              msg.status = newStatus
+           }
+           saveAndRender()
+    }
+    
+    const retryMessage = async (id) => {
 
+         const msg = messageState.find(m => m.id === id)
+         if (msg) {
+            msg.status = 'sending'
+         }
+         saveAndRender();
 
+         try {
 
+            const response = await socket.timeout(5000).emitWithAck('sendMessage', msg)
+
+            if (response.success) {
+                updateMessageStatus(msg.id, 'sent')
+            } else {
+                updateMessageStatus(msg.id, 'failed')
+                console.log(response.error)
+            }
+            
+         } catch (error) {
+             
+             updateMessageStatus(msg.id, 'failed')
+             console.log('ACK TIMEOUT')
+         }
+
+    }
+    
+    function clearChatHistory(recipientId) {
+       // 1. Clear the local runtime state variable
+       messageState = [];
+  
+       // 2. Remove only the specific chat key from local storage
+       localStorage.removeItem(`chat_history${recipientId}`);
+  
+       // 3. Update the UI to show an empty screen
+       renderMessages();
+    }
+    
+    // window.addEventListener('DOMContentLoaded', () => {
+    //     clearChatHistory(recipientId)
+
+    // })
+    
+    function deduplicateAndSave () {
+
+        const uniqueMap = new Map()
+
+        // Loop through state; newer duplicates overwrite older ones
+        messageState.forEach((msg) => {
+           uniqueMap.set(msg.id, msg)
+        })
+
+        // Convert map back into a clean sorted array
+        messageState = Array.from(uniqueMap.values())
+        // saveBack to localS AND RENDER
+        saveAndRender()
+    }
+
+    const loadHistoryFromServer = async (userId, roomId) => {
+         
+         try {
+
+            const response = await fetch(`/api/dm-history/messages?roomId=${roomId}`)
+            const serverResponse = await response.json()
+
+            if (serverResponse.success) {
+
+                // serverMessages should be an array of objects matching your schema { id, senderId, receiverId, text, timestamp }
+                // Mark server-fetched messages as successfully 'sent'    
+                const validatedMessages = serverResponse.messages.map(msg => ({
+                    ...msg,
+                    status: 'sent'
+                }))
+    
+                // match with realtime messages to handle race conditions
+                messageState = [...messageState, ...validatedMessages]
+    
+                // De-duplicate, sort, and save to LocalStorage again
+                deduplicateAndSave()
+            } else {
+                return;
+            }
+
+         } catch (error) {
+
+            console.log('Failed to recover Chat History: ' + error)
+            return;
+            
+         }
+    }
+
+    
+   
     // 2. THE ENTRY TRUCK: Fire actions the millisecond we connect
     socket.on('connect', () => {
 
@@ -363,7 +496,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
        socket.emit('joinRoom', joinPayload)
 
        // Safe context zone: Start loading historical cache state data now
-    //    loadHistoryFromServer(currentUserId, roomId)
+       loadHistoryFromServer(currentUserId, roomId)
   
        // Enable the input form since the connection channel is ready
        document.getElementById('text-area').disabled = false
@@ -385,6 +518,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
          };
 
          messageState.push(newMessage)
+         
+         textArea.value = '' // Reset form box
+         sendMsgBtn.style.display = 'none' // Hide sendMessage Btn 
          saveAndRender()
 
           // EMIT EVENT: Safe to trigger since joinRoom registration already processed
@@ -395,23 +531,108 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
              if (response.success) {
                 updateMessageStatus(newMessage.id, 'sent')
+                console.log('New message sent')
              } else{
                 updateMessageStatus(newMessage.id, 'failed')
+                console.log(response.error)
              }
             
          } catch (error) {
             
             updateMessageStatus(newMessage.id, 'failed')
+            console.log('ACK Timeout')
          } 
 
-      textArea.value = '' // Reset form box
-
+      
     }
 
-    sendMsgBtn.addEventListener('click', renderMessages)
+    sendMsgBtn.addEventListener('click', createNewMessage)
 
+    // ON RECEIVING MESSAGE BUT NOT CURRENTLY IN THE ROOM DOUBLE GREY TICK TRIGGER
+    socket.on('receiveMessage_background', (incomingMsg, callback) => {
+        
+         callback({success: true})  // critical to nullify the timeout sent from io.to(me) ACKNOWLEDGMENT TO SERVER
 
+         const messageExists = messageState.some(m => m.id === incomingMsg.id)
 
+         if (!messageExists) { // New message instance just about incoming
+
+            if (roomId === incomingMsg.receiverId) {  // receiver is currently inside Chat window... skip grey ticks and instantly update to SEEN /BLUETICKS
+                  
+                  incomingMsg.status = 'seen'
+                 // EMIT IMMEDIATE SEEN RECEIPT TO SERVER   
+                 socket.emit('message_read', { msgId: incomingMsg.id, roomId: roomId, userId: currentUserId });
+
+            } else {  // receiver is not staring at chat ... just double grey tick
+                  
+                  incomingMsg.status = 'delivered'
+                  
+            }
+
+            messageState.push(incomingMsg)
+            saveAndRender()
+
+         }
+    })
+    
+    socket.on('receiveMessage', (incomingMessage) => {
+          // Ensure we don't add duplicates if it's our own message reflected back
+          const exists = messageState.some(m => m.id === incomingMessage.id);
+          if (!exists) {
+          // Incoming messages from server must already have a timestamp
+          incomingMessage.status = 'sent'; 
+          messageState.push(incomingMessage);
+          saveAndRender();
+          }
+     });
+
+    socket.on('message_delivered_receipt', (data) => {
+         // Performance Guard: Only process if the update belongs to the active chat screen
+         if (data.roomId === roomId) {
+    
+            // 1. Locate the exact message object reference sitting inside your array state
+            const targetMsg = messageState.find(m => m.id === data.msgId);
+    
+           if (targetMsg) {
+               // 2. Flip the state flag. Because objects are passed by reference, 
+               // this alters it directly inside the master messageState array
+               targetMsg.status = 'delivered'
+      
+               // 3. Commit the change to localStorage and clear/redraw the DOM bubbles
+               saveAndRender() 
+            }
+          }
+    });
+
+    socket.on('message_read_receipt', (data) => {
+
+        // Perfomance Guard: Only update if you are in chat window to avoid getting wrong chatHistory
+         if (data.roomId === roomId) {
+
+             const readMsg = messageState.find(m => m.id === data.msgId)
+             
+             if (readMsg) {
+                readMsg.status = 'seen'
+                saveAndRender()
+             }
+         }
+    })
+    
+    socket.on('messages_marked_seen', (data) => {
+
+         if (data.roomId === roomId && data.readerId !== currentUserId) {
+                
+                messageState.forEach(msg => {
+
+                    if (msg.senderId === currentUserId) { // if i was the one who sent the messages i should see blue ticks
+                        
+                         msg.status = 'seen'
+                    }
+                })
+
+                saveAndRender()   // swaps grey ticks to blue ticks
+         }
+    })
 
 
     const dot = (col) => { return `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${col}; box-shadow:0 0 6px ${col}; animation: throb 1.8s ease-in-out infinite;flex-shrink:0"></div>`; }
