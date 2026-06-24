@@ -362,6 +362,8 @@ io.on('connection', (socket) => {
         socket.join(data.roomId)
         console.log(`👤 User ${data.userId} joined room sandbox channel: ${data.roomId}`)
 
+        const readerId = data.roomId.replace('dm_', '').split('_').find(uid => uid !== data.userId) 
+
         // 2. Update All unseen/Delivered bck msgs to status seen since user has opened chat window
         try {
 
@@ -369,9 +371,9 @@ io.on('connection', (socket) => {
 
             // 3. Network Broadcast: If records were modified, alert the room to turn grey ticks blue
             if (UpdateAllMsgToSeen.modifiedCount > 0) {
-                const emitPayload = { roomId: data.roomId, readerId: data.userId }
+                const emitPayload = { roomId: data.roomId, readerId: readerId }
 
-               socket.to(data.roomId).emit('messages_marked_seen', emitPayload);
+               io.to(data.roomId).emit('messages_marked_seen', emitPayload);
             }
             
         } catch (error) {
@@ -382,104 +384,91 @@ io.on('connection', (socket) => {
     })
 
     socket.on('sendMessage', async (newMessage, ack) => {
+
+        if (!newMessage || typeof newMessage !== 'object' || Array.isArray(newMessage)) {
+
+                ack({ success: false, newStatus: 'failed', error: 'Invalid Payload' })
+           }
         
         const senderId = newMessage.senderId
         const recipientId = newMessage.receiverId.replace('dm_', '').split('_').find(uid => uid !== senderId)
+        const updatedMessage = {...newMessage, status: 'sent' }
 
-        try {
+        try {  // THIS BLOCK SHOULD CARRY ALL UPDATES SUCCESS TO TRIGGER ack(success, with newStatus) 
 
-            if (!newMessage || typeof newMessage !== 'object' || Array.isArray(newMessage)) {
-
-                ack({ success: false, error: 'Invalid Payload' })
-            }
+             
+             const ChatBucketExists = await Chat.findOne({ roomId: newMessage.receiverId })  // Check if these people have ever chatted before 
             
-            const ChatBucketExists = await Chat.findOne({ roomId: newMessage.receiverId })  // Check if these people have ever chatted before
-            const updatedMessage = {...newMessage, status: 'sent' } 
-            
-            if (!ChatBucketExists) {  // if not create a new chat Bucket instance
-                  
-                 
-                  const createNewBucket = new Chat({
+             if (!ChatBucketExists) {  // if not create a new chat Bucket instance
+
+                   
+                       
+                   const createNewBucket = new Chat({
                         roomId: newMessage.receiverId, userAId: senderId, userBId: recipientId, count: 1, messages: [updatedMessage]
                   }).save().then((newBucket) => {
                          // This safely targets only sockets registered inside this room via the step above!
-                         io.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage, async (err, response) => {
+                         socket.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage,  (err, response) => {
                               
                             if(!err) { // recipient Executed its acknowledgement function
-
-                                const msgDeliveredRcptPayload = { msgId: newMessage.id, roomId: newMessage.receiverId } 
-
-                                if (response.update == 'seen') {
-
-                                    try {
-
-                                       const updateMessageToSeen = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, "messages.id": newMessage.id }, { $set: { "message.$[elem],status": 'seen' } }, { arrayFilters: [{ "elem.id": newMessage.id }] }, { returnDocument: 'after' })
-                                       //notify the senders client to update single tick to blue tick
-                                       io.to(senderId).emit('message_read_receipt', msgDeliveredRcptPayload)
-                                        
-                                    } catch (error) {
-                                        console.log('Failed to update Message Seen status')
-                                    }
-                                } else if (response.update == 'delivered') {
-
-                                try {
-
-                                    const updateMessageToDelivered = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, "messages.id": newMessage.id }, { $set: { "messages.$[elem].status": 'delivered' } }, { arrayFilters: [{ "elem.id": newMessage.id }] }, { returnDocument: 'after' })  // Picks the exact message in the array and updates it
-                                    // Notify the senders client to update single tick to double grey
-                                    console.log(senderId)
-                                    io.to(senderId).emit('message_delivered_receipt', msgDeliveredRcptPayload)
-                                    
-                                } catch (error) {
-                                    console.log('Failed to update Message Delivery Status')
-                                }
+     
+                                ack({ success: true, newStatus: 'delivered' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
+                               
                             }
-                            }  // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
-                         });
+                               ack({ success: true, newStatus: 'sent' })           // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
 
-                        //  ack({ success: true })
+                            })  
+                  });
 
-                    }).catch((err) => {
-                         
-                         ack({ success: false, error: 'Failed to Create New Chat Bucket' })  
-                    })
-                  
-            } else {    //A Chat instance exists and we have to update the latest bucket
-                 
-                 const updatedChatBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage },  $inc: { count: 1 }  }, { upsert: true })
+                } else {   //CHAT BUCKET EXISTS
 
-                 io.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage, async (err, response) => {
-                              
-                            if(!err) { // recipient Executed its acknowledgement function
+                    // Check if the Sent message already exists in a bucket to avoid double saves
 
-                                const msgDeliveredRcptPayload = { msgId: newMessage.id, roomId: newMessage.receiverId } 
+                    const messageExists = await Chat.findOne({ roomId: newMessage.receiverId, "messages.id": newMessage.id })
 
-                                try {
+                    if (messageExists) {
+                        console.log('Message already exists in DB NO RESAVES')
+                        return;
+                        
+                    } else {    // Update the bucket with upsert AND emit to receiver_background 
 
-                                    const updateMessageToDelivered = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, "messages.id": newMessage.id }, { $set: { "messages.$[elem].status": 'delivered' } }, { arrayFilters: [{ "elem.id": newMessage.id }] })  // Picks the exact message in the array and updates it
-                                    // Notify the senders client to update single tick to double grey
-                                    io.to(senderId).emit('message_delivered_receipt', msgDeliveredRcptPayload)
-                                    
-                                } catch (error) {
-                                    console.log('Failed to update Message Delivery Status')
-                                }
-                                
-                            }  // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
-                         });
+                        const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage }, $inc: { count: 1 } }, { upsert: true })
+                        
+                        console.log(UpdatedLatestBucket.messages)
 
-                //  ack({ success: true })
-                 
-            }
-
-
-        } catch (error) {
-
-            ack({ success: false, error: 'Database Update Error' })
-            
-        }
         
+                            // This safely targets only sockets registered inside this room via the step above!
+                            socket.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage,  (err, response) => {
+                                  
+                                if(!err) { // recipient Executed its acknowledgement function
+         
+                                    ack({ success: true, newStatus: 'delivered' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
+                                   
+                                }
+                                   ack({ success: true, newStatus: 'sent' })           // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
+    
+                                }) 
+                       
+
+                         
+                    }
+
+                }
+
+
+
+                } catch (error) {   // UPDATE BUCKET OR NEW BUCKET CREATION BOTH FAILED
+
+                    console.log(error)
+                    ack({ success: false, newStatus: 'failed' })
+
+                }
+                 
+            
 
     })
 
+    
+    // Updates the one message to status seen to DB FOR PERMANENT STORAGE TO SEEN /FOR TEMPORARY UI CONFIRMATION
     socket.on('message_read', async ({ msgId, roomId, userId }) => {
 
          const originalSenderId = roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
@@ -491,16 +480,41 @@ io.on('connection', (socket) => {
 
              if (result.modifiedCount > 0) {
 
-                console.log(originalSenderId)
+                console.log('I have Ackd Seen message From: ' + originalSenderId)
 
-                 io.to(originalSenderId).emit('message_read_receipt', emitPayload)
+                 socket.to(originalSenderId).emit('message_read_receipt', emitPayload)
              }
             
          } catch (error) {  // Mongodb failure to modify the Message ststus but receipient still read the message
             
               console.log('Mongod error to update ' + error)
               
-              io.to(originalSenderId).emit('message_read_receipt', emitPayload)
+              socket.to(originalSenderId).emit('message_read_receipt', emitPayload)
+         }
+    })
+
+    socket.on('message_delivered', async ({ msgId, roomId, userId }) => {
+
+         const originalSenderId = roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
+         const emitPayload = { msgId: msgId, roomId: roomId }
+
+         try {
+
+            const result = await Chat.findOneAndUpdate({ roomId: roomId, "messages.id": msgId }, { $set: { "messages.$[elem].status": 'delivered' } }, { arrayFilters: [{ "elem.id": msgId }] })
+
+            if (result.modifiedCount > 0) {
+                
+                 console.log('I have Ackd Seen message From: ' + originalSenderId)
+
+                 socket.to(originalSenderId).emit('message_delivered_receipt', emitPayload)
+            }
+            
+         } catch (error) {
+
+            console.log('Failed to update a Delivered/Seen Msg')
+
+            socket.to(originalSenderId).emit('message_delivered_receipt', emitPayload)
+            
          }
     })
 
