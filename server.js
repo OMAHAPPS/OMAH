@@ -367,14 +367,13 @@ io.on('connection', (socket) => {
         // 2. Update All unseen/Delivered bck msgs to status seen since user has opened chat window
         try {
 
-            const UpdateAllMsgToSeen = await Chat.updateMany({ roomId: data.roomId, "messages.senderId": { $ne: data.userId } }, { $set: { "messages.$[elem].status": 'seen' } }, { arrayFilters: [{ "elem.senderId": { $ne: data.userId } }] })
+              const UpdateAllMsgToSeen = await Chat.updateMany({ roomId: data.roomId, "messages.senderId": { $ne: data.userId } }, { $set: { "messages.$[elem].status": 'seen' } }, { arrayFilters: [{ "elem.senderId": { $ne: data.userId } }] })
 
-            // 3. Network Broadcast: If records were modified, alert the room to turn grey ticks blue
-            if (UpdateAllMsgToSeen.modifiedCount > 0) {
-                const emitPayload = { roomId: data.roomId, readerId: readerId }
+           
+              const emitPayload = { roomId: data.roomId, readerId: readerId }
 
-               io.to(data.roomId).emit('messages_marked_seen', emitPayload);
-            }
+              socket.to(data.roomId).emit('messages_marked_seen', emitPayload);
+            
             
         } catch (error) {
             
@@ -406,17 +405,7 @@ io.on('connection', (socket) => {
                    const createNewBucket = new Chat({
                         roomId: newMessage.receiverId, userAId: senderId, userBId: recipientId, count: 1, messages: [updatedMessage]
                   }).save().then((newBucket) => {
-                         // This safely targets only sockets registered inside this room via the step above!
-                         socket.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage,  (err, response) => {
-                              
-                            if(!err) { // recipient Executed its acknowledgement function
-     
-                                ack({ success: true, newStatus: 'delivered' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
-                               
-                            }
-                               ack({ success: true, newStatus: 'sent' })           // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
-
-                            })  
+                       
                   });
 
                 } else {   //CHAT BUCKET EXISTS
@@ -433,26 +422,22 @@ io.on('connection', (socket) => {
 
                         const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage }, $inc: { count: 1 } }, { upsert: true })
                         
-                        console.log(UpdatedLatestBucket.messages)
-
-        
-                            // This safely targets only sockets registered inside this room via the step above!
-                            socket.to(recipientId).timeout(4000).emit('receiveMessage_background', newMessage,  (err, response) => {
-                                  
-                                if(!err) { // recipient Executed its acknowledgement function
-         
-                                    ack({ success: true, newStatus: 'delivered' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
-                                   
-                                }
-                                   ack({ success: true, newStatus: 'sent' })           // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
-    
-                                }) 
-                       
-
                          
                     }
 
                 }
+
+                  // This safely targets only sockets registered inside this room via the step above!
+                  socket.to(newMessage.receiverId).timeout(4000).emit('receiveMessage_background', newMessage,  (err, response) => {
+                              
+                      if(!err) { // recipient Executed its acknowledgement function
+     
+                         ack({ success: true, newStatus: 'sent' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
+                               
+                       }
+                         ack({ success: true, newStatus: 'sent' })           // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
+
+                    })  
 
 
 
@@ -473,49 +458,75 @@ io.on('connection', (socket) => {
 
          const originalSenderId = roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
          const emitPayload = { msgId: msgId, roomId: roomId }
+         const newStatus = 'seen'
 
-         try {  // Update message to seen status in db // might fail but emission to sender for Bluetick is essential
+         const TargetMsgObject = await Chat.findOne({ roomId: roomId, "messages.id": msgId }, { "messages.$": 1 })
+         const updatedMsg = TargetMsgObject.messages[0]
 
-             const result = await Chat.findOneAndUpdate({ roomId: roomId, "messages.id": msgId }, { $set: { "messages.$[elem].status": 'seen' } }, { arrayFilters: [{ "elem.id": msgId }] })
+         if (updatedMsg.status === newStatus) {
 
-             if (result.modifiedCount > 0) {
+            console.log('SKIPPED MULTIPLE UPDATES')
+            return;
 
-                console.log('I have Ackd Seen message From: ' + originalSenderId)
+         } else {
 
-                 socket.to(originalSenderId).emit('message_read_receipt', emitPayload)
+             try {  // Update message to seen status in db // might fail but emission to sender for Bluetick is essential
+                          
+                     const result = await Chat.updateOne({ roomId: roomId, "messages.id": msgId }, { $set: { "messages.$[elem].status": newStatus } }, { arrayFilters: [{ "elem.id": msgId }] })
+                     
+                     socket.to(roomId).emit('message_read_receipt', emitPayload)
+                     console.log('Updated My message to seen')
+                
+             } catch (error) {  // Mongodb failure to modify the Message ststus but receipient still read the message
+                
+                  console.log('Mongod error to update ' + error)
+                  
+                  socket.to(roomId).emit('message_read_receipt', emitPayload)
              }
-            
-         } catch (error) {  // Mongodb failure to modify the Message ststus but receipient still read the message
-            
-              console.log('Mongod error to update ' + error)
-              
-              socket.to(originalSenderId).emit('message_read_receipt', emitPayload)
+
+
          }
+      
     })
 
     socket.on('message_delivered', async ({ msgId, roomId, userId }) => {
 
          const originalSenderId = roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
          const emitPayload = { msgId: msgId, roomId: roomId }
+         const newStatus = 'delivered'
 
-         try {
+         const targetUpdateDoc = await Chat.findOne({ roomId, roomId, "messages.id": msgId }, { "messages.$": 1 })
+         const acualMsg = targetUpdateDoc.messages[0]
 
-            const result = await Chat.findOneAndUpdate({ roomId: roomId, "messages.id": msgId }, { $set: { "messages.$[elem].status": 'delivered' } }, { arrayFilters: [{ "elem.id": msgId }] })
+         if (acualMsg.status === newStatus) {
 
-            if (result.modifiedCount > 0) {
+            console.log('SKIPPED MULTIPLE UPDATES')
+            return;
+
+         } else {
+
+             try {
+    
+                await Chat.findOneAndUpdate({ roomId: roomId, "messages.id": msgId }, { $set: { "messages.$[elem].status": newStatus } }, { arrayFilters: [{ "elem.id": msgId }] })
                 
-                 console.log('I have Ackd Seen message From: ' + originalSenderId)
+                socket.to(roomId).emit('message_delivered_receipt', emitPayload)
+                
+                console.log('Updated Messages to Delivered Once')
+                
+             } catch (error) {
+    
+                console.log('Failed to update a Delivered/ Msg')
+    
+                socket.to(roomId).emit('message_delivered_receipt', emitPayload)
+                
+             }
 
-                 socket.to(originalSenderId).emit('message_delivered_receipt', emitPayload)
-            }
-            
-         } catch (error) {
-
-            console.log('Failed to update a Delivered/Seen Msg')
-
-            socket.to(originalSenderId).emit('message_delivered_receipt', emitPayload)
-            
          }
+
+    })
+
+    socket.on('typing', (data) => {
+        io.to(data.receiverId).emit('typing-receipt', data.senderId )
     })
 
 })
