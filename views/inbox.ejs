@@ -222,7 +222,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
-    const socket = io({ auth: { userId: '<%= userReq._id %>' }, ackTimeout: 5000, retries: 3 })
+    const socket = io({ auth: { userId: '<%= userReq._id %>' }, ackTimeout: 3000, retries: 3 })
 
     // MESSAGING LOGIC WITH RETRIES OPTION
 
@@ -238,19 +238,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     const currentUserId = '<%= parties.sender %>'
     const recipientId = '<%= parties.recipient %>'
 
-    textArea.addEventListener('keyup', () => {
-        if (textArea.value.trim() !== '') {
-            sendMsgBtn.style.display = 'flex'
-            sendMsgBtn.disabled = false
-            
-        } else {
-            sendMsgBtn.style.display = 'none'
-            sendMsgBtn.disabled = true
-            textArea.value = textArea.value.trimStart()
-        }
-    })
-
-    
+  
         
     
 
@@ -284,6 +272,21 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     const roomId = generateOneOnOneRoomId(currentUserId, recipientId)
 
     let messageState = JSON.parse(localStorage.getItem(`chat_history_${recipientId}`)) || []
+    
+
+      textArea.addEventListener('keyup', () => {
+        if (textArea.value.trim() !== '') {
+            sendMsgBtn.style.display = 'flex'
+            sendMsgBtn.disabled = false
+            socket.emit('typing', roomId)
+            
+        } else {
+            sendMsgBtn.style.display = 'none'
+            sendMsgBtn.disabled = true
+            textArea.value = textArea.value.trimStart()
+        }
+    })
+
     
    
     function saveAndRender () {
@@ -456,7 +459,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     
     window.addEventListener('DOMContentLoaded', () => {
 
-          // clearChatHistory(recipientId)
+          //clearChatHistory(recipientId)
 
            const scrollToBottom = () => {
              chatContainer.scrollTo({

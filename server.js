@@ -400,13 +400,12 @@ io.on('connection', (socket) => {
             
              if (!ChatBucketExists) {  // if not create a new chat Bucket instance
 
-                   
-                       
+                               
                    const createNewBucket = new Chat({
                         roomId: newMessage.receiverId, userAId: senderId, userBId: recipientId, count: 1, messages: [updatedMessage]
                   }).save().then((newBucket) => {
                        
-                  });
+                  })
 
                 } else {   //CHAT BUCKET EXISTS
 
@@ -421,7 +420,7 @@ io.on('connection', (socket) => {
                     } else {    // Update the bucket with upsert AND emit to receiver_background 
 
                         const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage }, $inc: { count: 1 } }, { upsert: true })
-                        
+                      
                          
                     }
 
@@ -432,18 +431,20 @@ io.on('connection', (socket) => {
                               
                       if(!err) { // recipient Executed its acknowledgement function
      
-                         ack({ success: true, newStatus: 'sent' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
+                         ack({ success: true, newStatus: 'delivered' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
                                
                        }
-                         ack({ success: true, newStatus: 'sent' })           // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
+                          
+                         ack({success: true, newStatus: 'sent'})       // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
 
                     })  
 
-
-
+                 
+                        
                 } catch (error) {   // UPDATE BUCKET OR NEW BUCKET CREATION BOTH FAILED
 
                     console.log(error)
+
                     ack({ success: false, newStatus: 'failed' })
 
                 }
