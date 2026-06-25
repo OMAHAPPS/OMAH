@@ -550,7 +550,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
        
     })
 
-     socket.on('messages_marked_seen', (data) => {
+    socket.on('messages_marked_seen', (data) => {
 
          if (data.roomId === roomId && data.readerId === currentUserId) {
                 
@@ -566,7 +566,15 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
          }
      })
 
+    socket.on('typing', (roomId) => {
+       document.querySelector('#last-seen').textContent = 'Typing..'
+       document.querySelector('#last-seen').style.color = '<%= userReq.userColor %>'
+    })
 
+    socket.on('finished-typing', (roomId) => {
+         document.querySelector('#last-seen').textContent = 'Online'
+          document.querySelector('#last-seen').style.color = 'grey'
+    })
     
     const createNewMessage = async () => {
 
@@ -585,6 +593,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
          
          textArea.value = '' // Reset form box
          sendMsgBtn.style.display = 'none' // Hide sendMessage Btn 
+         socket.emit('stop-typing', roomId)
          saveAndRender()
          chatContainer.scrollTo({
             top: chatContainer.scrollHeight,

@@ -382,6 +382,14 @@ io.on('connection', (socket) => {
         }
     })
 
+    socket.on('typing', (roomId) => {
+        socket.to(roomId).emit('typing', roomId)
+    })
+
+    socket.on('stop-typing', (roomId) => {
+        socket.to(roomId).emit('finished-typing', roomId)
+    })
+
     socket.on('sendMessage', async (newMessage, ack) => {
 
         if (!newMessage || typeof newMessage !== 'object' || Array.isArray(newMessage)) {
@@ -405,6 +413,7 @@ io.on('connection', (socket) => {
                         roomId: newMessage.receiverId, userAId: senderId, userBId: recipientId, count: 1, messages: [updatedMessage]
                   }).save().then((newBucket) => {
                        
+                       ack({ success: true, newStatus: 'sent' })
                   })
 
                 } else {   //CHAT BUCKET EXISTS
@@ -420,7 +429,8 @@ io.on('connection', (socket) => {
                     } else {    // Update the bucket with upsert AND emit to receiver_background 
 
                         const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage }, $inc: { count: 1 } }, { upsert: true })
-                      
+                        
+                        ack({ success: true, newStatus: 'sent' })
                          
                     }
 
