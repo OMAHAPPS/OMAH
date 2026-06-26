@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.js"></script>
 
     <title>Home</title>
     <style>
@@ -37,6 +37,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 .tap{cursor:pointer;transition:transform .12s ease,opacity .12s ease;user-select:none;-webkit-user-select:none}
 .tap:active{transform:scale(.91)!important;opacity:.72!important}
 
+/* CUSTOM CLASSES */
+.stop-fetch.dm-link{text-decoration: none; position: relative; scroll-snap-align: start; width: 100%; text-align: left; display: flex; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both;}
+
 /* ── ANIMATIONS ── */
 @keyframes viewIn      {from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes emerge      {from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -52,6 +55,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 @keyframes storyPulse  {0%,100%{box-shadow:0 0 0 0 var(--sc)}50%{box-shadow:0 0 0 4px var(--sc)}}
 @keyframes heartbeat   {0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.06)}}
 @keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes spin        {100%{transform: rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -113,7 +117,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <!-- * /////  fetch New Posts Button /////  -->
 
-    <a href="/home" class="fetch-new" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="opacity: 1; z-index: 1; text-decoration: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); height: 40px; width: fit-content; border-radius: 20px; background-color: <%= user.userColor %>; padding-inline: 10px; transition: opacity 1.25s ease-out;">
+    <a href="/home" class="fetch-new" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="opacity: 1; z-index: 1; text-decoration: none; cursor: pointer; display: none; justify-content: space-between; align-items: center; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); height: 40px; width: fit-content; border-radius: 20px; background-color: <%= user.userColor %>; padding-inline: 10px; transition: opacity 1.25s ease-out;">
            <div class="logo-holders" style="position: relative; height: 25px; width: 60px;">
 
             <% const topPosts = posts.slice(0, 3) %>
@@ -351,6 +355,10 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               
               <!--* //////  Messages ////////  -->
               
+              <div class="load-msg" style="display: flex; justify-content: center; align-items: center; gap: 3px; position: absolute; left: 50%; top: 10%; transform: translateX(-50%);">
+                   <ion-icon name="aperture-sharp" style="font-size: 1.65rem; color: rgba(237, 232, 224, .85); animation: spin .5s infinite;"></ion-icon>
+                   <h2 class="fs" style="font-size: 1.1rem; color: rgba(237, 232, 224, .85);">Loading</h2>
+              </div>
              
                    <!-- ! IF MESSAGES IS EMPTY DISPLAY THIS -->
               <h2 id="comment" style="display: none; justify-content: center; align-items: center; flex-flow: column nowrap; font-size: 12px; color:rgba(237,232,224,.55); position: absolute; top: 30%; left: 50%; transform: translate(-50%);">
@@ -360,7 +368,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                
                <!-- ! ELSE MAP MESSAGES -->
                 
-               <a href="/inbox"  class="stop-fetch" style="text-decoration: none; scroll-snap-align: start; width: 100%; text-align: left; display: flex; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both"> 
+               <a href="/inbox"  class="stop-fetch" style="text-decoration: none; scroll-snap-align: start; width: 100%; text-align: left; display: none; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both"> 
                 
                          <!-- todo //// IF NO PROFILE PIC /// -->
                          <div class="tap" style="position: relative; height: 40px; width: 40px; border-radius: 50%; overflow: hidden;  border: 1px solid rgba(237,232,224,.6); display: none; justify-content: center; align-items: center;">
@@ -574,6 +582,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 const socket = io({ auth: { userId: '<%= user._id %>' } })  
 
 const postScrollContainer = document.getElementById('scroll-container-posts')
+const userId = '<%= user._id %>'
+const R2Base = '<%= R2BASE %>'
+const messageScrollContainer = document.getElementById('scroll-container-messages')
 
  document.querySelectorAll('.likes-cont-event').forEach((btn) => {
   
@@ -885,7 +896,7 @@ humanoidContainer.innerHTML = `
 
 
   
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   console.log('DOMcontentLoaded')
   if ('history' in window && 'scrollRestoration' in window) {
   console.log('ScrollRestoration present')
@@ -1337,7 +1348,79 @@ document.addEventListener('DOMContentLoaded', () => {
        
        
       }
-    })
+       
+      // AUTO FETCH USERMESSAGES
+
+       messageScrollContainer.innerHTML = `  <div class="load-msg" style="display: flex; justify-content: center; align-items: center; gap: 3px; position: absolute; left: 50%; top: 10%; transform: translateX(-50%);">
+                                               <ion-icon name="aperture-sharp" style="font-size: 1.65rem; color: rgba(237, 232, 224, .85); animation: spin .5s infinite;"></ion-icon>
+                                               <h2 class="fs" style="font-size: 1.1rem; color: rgba(237, 232, 224, .85);">Loading</h2>
+                                             </div>
+                                             <!-- ! IF MESSAGES IS EMPTY DISPLAY THIS -->
+                                             <h2 id="comment" style="display: none; justify-content: center; align-items: center; flex-flow: column nowrap; font-size: 12px; color:rgba(237,232,224,.55); position: absolute; top: 30%; left: 50%; transform: translate(-50%);">
+                                                Inbox is Empty
+                                                <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: flex; align-items: center; justify-content: center; padding: 10px 15px 10px 15px; background-color: transparent; margin-top: 20px; border: 1px dotted <%= user.userColor %>; border-radius: 10px; color: <%= user.userColor %>;"><ion-icon name="add-outline" style="color: <%= user.userColor %>; font-size: 1.2rem;"></ion-icon> Start Chat</span>
+                                             </h2>
+                                          `
+
+       document.querySelector('.load-msg').style.display = 'flex'
+
+       const data = await fetch(`/api/dm-history/all/${userId}`, {
+               method: 'GET',
+               headers: {
+                  "Content-Type": "application/json"
+               }
+       })
+    
+       const response = await data.json()
+
+       if (response.success) {
+       
+         document.querySelector('.load-msg').style.display = 'none'
+
+         if (response.messages.length === 0) {
+
+           document.querySelector('.load-msg').style.display = 'none'
+           document.querySelector('#comment').style.display = 'flex'   
+
+         }
+         response.messages.forEach((msgLink) => {
+            
+            const dmLink = document.createElement('a')
+            const newTimeString = new Date(msgLink.lastMsgTime)
+            const unreadCount = msgLink.unreadCount
+            const isMe = msgLink.lastMsgSenderId === userId
+            dmLink.className = 'stop-fetch dm-link'
+            dmLink.href = `/inbox/${msgLink.userId}`
+            
+             let UnreadCount = unreadCount !== 0 ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="height: 25px; width: 25px; padding: 5px; border-radius: 50%; display: grid; place-content: center; backGround: <%= user.userColor %>; color: White; font-size: 10px; position: absolute; right: 12px; bottom: 10px;">${unreadCount}</span>` : ''
+             let tickHtml = isMe ? (msgLink.lastMsgStatus == 'seen' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: rgb(37, 134, 224);"></ion-icon></span>' : msgLink.lastMsgStatus == 'delivered' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sent' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sending' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="time-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : '' ) : '';
+
+ 
+            dmLink.innerHTML = `
+                               <img src="${R2Base}/${msgLink.userDP !== 'none' ? msgLink.userDP : 'placeholder.jpg' }" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+
+                               <div style="flex: 1; min-width: 0;">
+                                   <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                                       <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">${msgLink.userName}</span>
+                                       <span style="font-size:9px;color:rgba(237,232,224,.85)">${newTimeString.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>    
+                                   </div>
+                                   <p style="font-size: 11px; color: rgba(237,232,224,.53); max-width: 80%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${tickHtml}${msgLink.lastText}</p>
+                               </div> 
+                               ${UnreadCount}
+                            `
+            messageScrollContainer.appendChild(dmLink)
+            
+          })
+
+        } else {
+         
+        document.querySelector('.load-msg').style.display = 'none'
+        document.querySelector('#comment').textContent = 'Failed to Load Messages'                                  
+        
+        }
+
+
+      })
 
 
 
@@ -2630,7 +2713,7 @@ let currentScrollTop = postScrollContainer.scrollTop
     const display = setTimeout(() => {
        fetchNewFeed.style.opacity = '0'
        clearTimeout(display)
-    }, 2000)
+    }, 4000)
 
   }else if (currentScrollTop < lastScrollTop) {
     
@@ -2638,7 +2721,7 @@ let currentScrollTop = postScrollContainer.scrollTop
     const displayUp = setTimeout(() => {
        fetchNewFeed.style.opacity = '0'
        clearTimeout(displayUp)
-    }, 2000)
+    }, 4000)
   } 
 
   lastScrollTop = currentScrollTop
@@ -2647,7 +2730,7 @@ let currentScrollTop = postScrollContainer.scrollTop
 
 
 
-messagesBtn.addEventListener('click', (e) => {
+messagesBtn.addEventListener('click', async (e) => {
     
     e.target.style.color = r.col
     e.target.style.borderBottom = `2px solid ${r.col}`
@@ -2663,6 +2746,73 @@ messagesBtn.addEventListener('click', (e) => {
 
     localStorage.setItem('storedDOMState', JSON.stringify(messageActive))
     localStorage.setItem('activeBtn', 'messagesBtn')
+
+    messageScrollContainer.innerHTML = ` <div class="load-msg" style="display: flex; justify-content: center; align-items: center; gap: 3px; position: absolute; left: 50%; top: 10%; transform: translateX(-50%);">
+                                           <ion-icon name="aperture-sharp" style="font-size: 1.65rem; color: rgba(237, 232, 224, .85); animation: spin .5s infinite;"></ion-icon>
+                                           <h2 class="fs" style="font-size: 1.1rem; color: rgba(237, 232, 224, .85);">Loading</h2>
+                                         </div>
+                                         <!-- ! IF MESSAGES IS EMPTY DISPLAY THIS -->
+                                         <h2 id="comment" style="display: none; justify-content: center; align-items: center; flex-flow: column nowrap; font-size: 12px; color:rgba(237,232,224,.55); position: absolute; top: 30%; left: 50%; transform: translate(-50%); z-index: 35;">
+                                             Inbox is Empty
+                                             <span style="display: flex; align-items: center; justify-content: center; padding: 10px 15px 10px 15px; background-color: transparent; margin-top: 20px; border: 1px dotted green; border-radius: 10px; color: #ede8e0;"><ion-icon name="add-outline" style="color: #ede8e0; font-size: 1.2rem;"></ion-icon> Start Chat</span>
+                                         </h2>
+                                        `
+
+    // document.querySelector('.load-msg').style.display = 'flex'
+
+    const data = await fetch(`/api/dm-history/all/${userId}`, {
+               method: 'GET',
+               headers: {
+                  "Content-Type": "application/json"
+               }
+    })
+    
+    const response = await data.json()
+
+    if (response.success) {
+       
+       document.querySelector('.load-msg').style.display = 'none'
+        
+
+       response.messages.forEach((msgLink) => {
+            
+            const dmLink = document.createElement('a')
+            const newTimeString = new Date(msgLink.lastMsgTime)
+            const unreadCount = msgLink.unreadCount
+            const isMe = msgLink.lastMsgSenderId === userId
+            dmLink.className = 'stop-fetch dm-link'
+            dmLink.href = `/inbox/${msgLink.userId}`
+            
+             let UnreadCount = unreadCount !== 0 ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="height: 25px; width: 25px; padding: 5px; border-radius: 50%; display: grid; place-content: center; backGround: <%= user.userColor %>; color: White; font-size: 10px; position: absolute; right: 12px; bottom: 10px;">${unreadCount}</span>` : ''
+             let tickHtml = isMe ? (msgLink.lastMsgStatus == 'seen' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: rgb(37, 134, 224);"></ion-icon></span>' : msgLink.lastMsgStatus == 'delivered' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sent' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sending' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="time-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : '' ) : '';
+
+ 
+            dmLink.innerHTML = `
+                               <img src="${R2Base}/${msgLink.userDP !== 'none' ? msgLink.userDP : 'placeholder.jpg' }" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+
+                               <div style="flex: 1; min-width: 0;">
+                                   <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                                       <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">${msgLink.userName}</span>
+                                       <span style="font-size:9px;color:rgba(237,232,224,.85)">${newTimeString.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>    
+                                   </div>
+                                   <p style="font-size: 11px; color: rgba(237,232,224,.53); max-width: 80%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${tickHtml}${msgLink.lastText}</p>
+                               </div> 
+                               ${UnreadCount}
+                            `
+            messageScrollContainer.appendChild(dmLink)
+          })    
+      
+    } else {
+         
+        document.querySelector('.load-msg').style.display = 'none'
+        messageScrollContainer.innerHTML = ` <h2 id="comment" style="display: flex; justify-content: center; align-items: center; flex-flow: column nowrap; font-size: 12px; color:rgba(237,232,224,.55); position: absolute; top: 30%; left: 50%; transform: translate(-50%); z-index: 35;">
+                                               Inbox is Empty
+                                               <span style="display: flex; align-items: center; justify-content: center; padding: 10px 15px 10px 15px; background-color: transparent; margin-top: 20px; border: 1px dotted green; border-radius: 10px; color: #ede8e0;"><ion-icon name="add-outline" style="color: #ede8e0; font-size: 1.2rem;"></ion-icon> Start Chat</span>
+                                             </h2>
+        `
+  
+    }
+
 
 })
 

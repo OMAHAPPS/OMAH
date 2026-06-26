@@ -14,6 +14,7 @@ const fs = require('fs')
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
+
 const passportSetup = require('./config/passport-config')
 
 const { GoogleGenAI } = require('@google/genai')
@@ -38,7 +39,7 @@ const PORT = 4000
 
 const dbURI = process.env.MONGODB_URI
 
-
+const { ObjectId } = mongoose.Types
 
 // MIDDLEWARE
 
@@ -362,14 +363,25 @@ io.on('connection', (socket) => {
         socket.join(data.roomId)
         console.log(`👤 User ${data.userId} joined room sandbox channel: ${data.roomId}`)
 
+        const FormatedObjectUserId = new ObjectId(data.userId)
+
         const readerId = data.roomId.replace('dm_', '').split('_').find(uid => uid !== data.userId) 
+
+        // Check if there is unseen meesaage in the arrayBucket first
+        const unseenMsgPresent = await Chat.findOne({ roomId: data.roomId, count: { $lt: 500 }, "messages.senderId": { $ne: FormatedObjectUserId }, "messages.status": { $ne: 'seen' } })
+
+        if (!unseenMsgPresent) { // if no unseen msgs by user skip updates
+            console.log('SKIPPED MULTIPLE UPDATE REPEAT')
+            return;
+        }
 
         // 2. Update All unseen/Delivered bck msgs to status seen since user has opened chat window
         try {
 
-              const UpdateAllMsgToSeen = await Chat.updateMany({ roomId: data.roomId, "messages.senderId": { $ne: data.userId } }, { $set: { "messages.$[elem].status": 'seen' } }, { arrayFilters: [{ "elem.senderId": { $ne: data.userId } }] })
-
-           
+              const UpdateAllMsgToSeen = await Chat.updateMany({ roomId: data.roomId, count: { $lt: 500 }, "messages.senderId": { $ne: FormatedObjectUserId } }, { $set: { "messages.$[elem].status": 'seen' } }, { arrayFilters: [{ "elem.senderId": { $ne: FormatedObjectUserId }, "elem.status": { $ne: 'seen' } }] })
+              
+              console.log(UpdateAllMsgToSeen.modifiedCount)
+                     
               const emitPayload = { roomId: data.roomId, readerId: readerId }
 
               socket.to(data.roomId).emit('messages_marked_seen', emitPayload);
@@ -581,6 +593,73 @@ app.get('/api/dm-history/messages', async (req, res) => {
 
         
      }
+})
+
+app.get('/api/dm-history/all/:id', async (req, res) => {
+
+    const userId = req.params.id
+    
+    try {
+
+        const allUserDms = await Chat.find({ count: { $lt: 500 }, $or: [ { userAId: userId }, { userBId: userId } ] })
+        
+        const sortedUserDms = allUserDms.sort((a,b) => b.updatedAt - a.updatedAt)
+
+        const uniqueMap = new Map()
+
+        sortedUserDms.forEach((dmDocument) => {
+ 
+             const recipientId = dmDocument.roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
+             uniqueMap.set(recipientId, dmDocument.roomId)
+        })
+
+        const uniqueRecipientIds = Array.from(uniqueMap.keys())
+        
+        const AllRecipientInfo = await Omaruser.find({ _id: { $in: uniqueRecipientIds } }).select('_id userDP userName')
+
+        const populatedDms = []
+
+        sortedUserDms.forEach((dmDocument) => {
+
+             const unreadMessageCount = dmDocument.messages.filter(msg => msg.status !== 'seen' && msg.senderId !== userId).length
+             const lastMessageText = dmDocument.messages.at(-1).text
+             const latMsgStatus = dmDocument.messages.at(-1).status
+             const lastMessagetimeStamp = dmDocument.messages.at(-1).timestamp
+             const lastMsgTime = new Date(lastMessagetimeStamp)
+             const lastMsgSenderId = dmDocument.messages.at(-1).senderId
+
+             const recipientId = dmDocument.roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
+             const userInDmInfoArray = AllRecipientInfo.filter((user) => user._id == recipientId)
+             const userInDmInfo = userInDmInfoArray[0]
+
+             const populatedObject = {
+                  
+                  unreadCount: unreadMessageCount,
+                  lastMsgStatus: latMsgStatus,
+                  lastMsgSenderId: lastMsgSenderId,
+                  lastText: lastMessageText,
+                  lastMsgTime: lastMsgTime,
+                  userDP: userInDmInfo.userDP,
+                  userName: userInDmInfo.userName,
+                  userId: userInDmInfo._id
+
+             }
+             
+
+             populatedDms.push(populatedObject)
+
+        })
+
+
+        res.json({ success: true, messages: populatedDms })
+        
+    } catch (error) {
+        console.log('FAILED TO RETRIEVE HISTORY')
+        res.json({ success: false, error: 'No messages Found' })
+    }
+
+
+
 })
 
 
