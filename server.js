@@ -396,68 +396,70 @@ io.on('connection', (socket) => {
 
                 ack({ success: false, newStatus: 'failed', error: 'Invalid Payload' })
            }
-        
+
+
         const senderId = newMessage.senderId
         const recipientId = newMessage.receiverId.replace('dm_', '').split('_').find(uid => uid !== senderId)
         const updatedMessage = {...newMessage, status: 'sent' }
 
-        try {  // THIS BLOCK SHOULD CARRY ALL UPDATES SUCCESS TO TRIGGER ack(success, with newStatus) 
+         try {  // THIS BLOCK SHOULD CARRY ALL UPDATES SUCCESS TO TRIGGER ack(success, with newStatus) 
 
              
-             const ChatBucketExists = await Chat.findOne({ roomId: newMessage.receiverId })  // Check if these people have ever chatted before 
+              const ChatBucketExists = await Chat.findOne({ roomId: newMessage.receiverId })  // Check if these people have ever chatted before 
             
-             if (!ChatBucketExists) {  // if not create a new chat Bucket instance
+              if (!ChatBucketExists) {  // if not create a new chat Bucket instance
 
                                
-                   const createNewBucket = new Chat({
-                        roomId: newMessage.receiverId, userAId: senderId, userBId: recipientId, count: 1, messages: [updatedMessage]
-                  }).save().then((newBucket) => {
+                    const createNewBucket = new Chat({
+                         roomId: newMessage.receiverId, userAId: senderId, userBId: recipientId, count: 1, messages: [updatedMessage]
+                   }).save().then((newBucket) => {
+                     console.log('newBucket created')
+                   
+                   })
+
+                 } else {   //CHAT BUCKET EXISTS
+
+                     // Check if the Sent message already exists in a bucket to avoid double saves
+
+                     const messageExists = await Chat.findOne({ roomId: newMessage.receiverId, "messages.id": newMessage.id })
+
+                     if (messageExists) {
+                         console.log('Message already exists in DB NO RESAVES')
+                         return;
+                        
+                     } else {    // Update the bucket with upsert AND emit to receiver_background 
+
+                         const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage }, $inc: { count: 1 } }, { upsert: true })
+                        
+                          console.log('Existing bucket Updated')
                        
-                       ack({ success: true, newStatus: 'sent' })
-                  })
-
-                } else {   //CHAT BUCKET EXISTS
-
-                    // Check if the Sent message already exists in a bucket to avoid double saves
-
-                    const messageExists = await Chat.findOne({ roomId: newMessage.receiverId, "messages.id": newMessage.id })
-
-                    if (messageExists) {
-                        console.log('Message already exists in DB NO RESAVES')
-                        return;
-                        
-                    } else {    // Update the bucket with upsert AND emit to receiver_background 
-
-                        const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage }, $inc: { count: 1 } }, { upsert: true })
-                        
-                        ack({ success: true, newStatus: 'sent' })
                          
-                    }
+                     }
 
-                }
+                 }
 
-                  // This safely targets only sockets registered inside this room via the step above!
-                  socket.to(newMessage.receiverId).timeout(4000).emit('receiveMessage_background', newMessage,  (err, response) => {
+                   // This safely targets only sockets registered inside this room via the step above!
+                   socket.to(newMessage.receiverId).timeout(4000).emit('receiveMessage_background', newMessage,  (err, response) => {
                               
-                      if(!err) { // recipient Executed its acknowledgement function
+                       if(!err) { // recipient Executed its acknowledgement function
      
-                         ack({ success: true, newStatus: 'delivered' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
+                          ack({ success: true, newStatus: 'delivered' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
                                
-                       }
+                        }
                           
-                         ack({success: true, newStatus: 'sent'})       // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
+                          ack({success: true, newStatus: 'sent'})       // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
 
-                    })  
+                     })  
 
-                 
+                
                         
-                } catch (error) {   // UPDATE BUCKET OR NEW BUCKET CREATION BOTH FAILED
+                 } catch (error) {   // UPDATE BUCKET OR NEW BUCKET CREATION BOTH FAILED
 
-                    console.log(error)
+                     console.log(error)
 
-                    ack({ success: false, newStatus: 'failed' })
+                     ack({ success: false, newStatus: 'failed' })
 
-                }
+                 }
                  
             
 
@@ -500,44 +502,44 @@ io.on('connection', (socket) => {
       
     })
 
-    socket.on('message_delivered', async ({ msgId, roomId, userId }) => {
+    // socket.on('message_delivered', async ({ msgId, roomId, userId }) => {
 
-         const originalSenderId = roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
-         const emitPayload = { msgId: msgId, roomId: roomId }
-         const newStatus = 'delivered'
+    //      const originalSenderId = roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
+    //      const emitPayload = { msgId: msgId, roomId: roomId }
+    //      const newStatus = 'delivered'
 
-         const targetUpdateDoc = await Chat.findOne({ roomId, roomId, "messages.id": msgId }, { "messages.$": 1 })
-         const acualMsg = targetUpdateDoc.messages[0]
+    //      const targetUpdateDoc = await Chat.findOne({ roomId, roomId, "messages.id": msgId }, { "messages.$": 1 })
+    //      const acualMsg = targetUpdateDoc.messages[0]
 
-         if (acualMsg.status === newStatus) {
+    //      if (acualMsg.status === newStatus) {
 
-            console.log('SKIPPED MULTIPLE UPDATES')
-            return;
+    //         console.log('SKIPPED MULTIPLE UPDATES')
+    //         return;
 
-         } else {
+    //      } else {
 
-             try {
+    //          try {
     
-                await Chat.findOneAndUpdate({ roomId: roomId, "messages.id": msgId }, { $set: { "messages.$[elem].status": newStatus } }, { arrayFilters: [{ "elem.id": msgId }] })
+    //             await Chat.findOneAndUpdate({ roomId: roomId, "messages.id": msgId }, { $set: { "messages.$[elem].status": newStatus } }, { arrayFilters: [{ "elem.id": msgId }] })
                 
-                socket.to(roomId).emit('message_delivered_receipt', emitPayload)
+    //             socket.to(roomId).emit('message_delivered_receipt', emitPayload)
                 
-                console.log('Updated Messages to Delivered Once')
+    //             console.log('Updated Messages to Delivered Once')
                 
-             } catch (error) {
+    //          } catch (error) {
     
-                console.log('Failed to update a Delivered/ Msg')
+    //             console.log('Failed to update a Delivered/ Msg')
     
-                socket.to(roomId).emit('message_delivered_receipt', emitPayload)
+    //             socket.to(roomId).emit('message_delivered_receipt', emitPayload)
                 
-             }
+    //          }
 
-         }
+    //      }
 
-    })
+    // })
 
     socket.on('typing', (data) => {
-        io.to(data.receiverId).emit('typing-receipt', data.senderId )
+        socket.to(data.receiverId).emit('typing-receipt', data.senderId )
     })
 
 })

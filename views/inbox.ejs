@@ -222,7 +222,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
-    const socket = io({ auth: { userId: '<%= userReq._id %>' }, ackTimeout: 3000, retries: 3 })
+    const socket = io({ auth: { userId: '<%= userReq._id %>' } })
 
     // MESSAGING LOGIC WITH RETRIES OPTION
 
@@ -459,7 +459,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     
     window.addEventListener('DOMContentLoaded', () => {
 
-          //clearChatHistory(recipientId)
+          clearChatHistory(recipientId)
 
            const scrollToBottom = () => {
              chatContainer.scrollTo({
@@ -602,28 +602,29 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
           // EMIT EVENT: Safe to trigger since joinRoom registration already processed
          
-         try {
-
-             const response = await socket.timeout(5000).emitWithAck('sendMessage', newMessage)
-
-             if (response.success) {
-                                           // ADD ALL ADDITIONAL INSTANCES NESTED TO ALWAYS RETURN THE ACK({}) BLOCK
-                // THIS SHOULD FIRE ONLY WHEN MESSAGE IS JUST SAVED BUT NOT DELIVERED    INTERCEPTS MIGHT OCCUR FOR UI
-                updateMessageStatus(newMessage.id, response.newStatus)
-                console.log('New message sent')
-
-
-             } else {  // THIS BLOCK WILL CARRY ALL SERVER INSTANCE ERRORS EVERY TIME THE SERVER FAILS TO SAVE OR UPDATE BUCKETS
-
-                updateMessageStatus(newMessage.id, response.newStatus)
-                console.log(response.error)
-             }
+        try {
             
-         } catch (error) {   // THIS BLOCK CARRIES ONLY THE INSTANCE OF ACK TIMEOUT I.E NO COMMUNICATION FROM SERVER FOR RETRIES TRIGGERS
-            
+            const response = await socket.timeout(5000).emitWithAck('sendMessage', newMessage)
+
+              if (response.success) {
+                                            // ADD ALL ADDITIONAL INSTANCES NESTED TO ALWAYS RETURN THE ACK({}) BLOCK
+                 // THIS SHOULD FIRE ONLY WHEN MESSAGE IS JUST SAVED BUT NOT DELIVERED    INTERCEPTS MIGHT OCCUR FOR UI
+                 updateMessageStatus(newMessage.id, response.newStatus)
+                 console.log('New message sent: ' + response.newStatus)
+
+
+              } else {  // THIS BLOCK WILL CARRY ALL SERVER INSTANCE ERRORS EVERY TIME THE SERVER FAILS TO SAVE OR UPDATE BUCKETS
+
+                 updateMessageStatus(newMessage.id, response.newStatus)
+                 console.log(response.error)
+              }
+
+        } catch (error) {
+
             updateMessageStatus(newMessage.id, 'failed')
-            console.log('ACK Timeout')
-         } 
+            console.log('ACK TIMEOUT')
+            
+        }
 
       
     }
@@ -635,7 +636,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
          callback({ received: true })  // critical to nullify the timeout sent from io.to(me) ACKNOWLEDGMENT TO SERVER
 
-         const messageExists = messageState.some(m => m.id === incomingMsg.id)
+          const messageExists = messageState.some(m => m.id === incomingMsg.id)
           console.log('I Have Successfully received Message from: ' + incomingMsg.senderId)
           
 
@@ -655,20 +656,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      document.querySelector('#alert-scroll').style.opacity = 0
                    }, 3000)
                 
-                   socket.emit('message_read', { msgId: incomingMsg.id, roomId: incomingMsg.receiverId, userId: currentUserId });
+                   socket.emit('message_read', { msgId: incomingMsg.id, roomId: incomingMsg.receiverId, userId: currentUserId })
                   
-             } else {  // receiver is not staring at chat ... just double grey tick
-                  
-                   incomingMsg.status = 'delivered'
-                   saveAndRender()
-                   console.log('Message delivered')
-                   socket.emit('message_delivered', { msgId: incomingMsg.id, roomId: incomingMsg.receiverId, userId: currentUserId })
-                  
-                  
-             }
-
-          } 
+                } 
     
+            }
     }) 
 
     socket.on('message_delivered_receipt', (data) => {
