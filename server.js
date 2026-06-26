@@ -368,12 +368,9 @@ io.on('connection', (socket) => {
         const readerId = data.roomId.replace('dm_', '').split('_').find(uid => uid !== data.userId) 
 
         // Check if there is unseen meesaage in the arrayBucket first
-        const unseenMsgPresent = await Chat.findOne({ roomId: data.roomId, count: { $lt: 500 }, "messages.senderId": { $ne: FormatedObjectUserId }, "messages.status": { $ne: 'seen' } })
+       //const unseenMsgPresent = await Chat.findOne({ roomId: data.roomId, count: { $lt: 500 }, "messages.senderId": { $ne: FormatedObjectUserId }, "messages.status": { $ne: 'seen' } })
 
-        if (!unseenMsgPresent) { // if no unseen msgs by user skip updates
-            console.log('SKIPPED MULTIPLE UPDATE REPEAT')
-            return;
-        }
+       
 
         // 2. Update All unseen/Delivered bck msgs to status seen since user has opened chat window
         try {
