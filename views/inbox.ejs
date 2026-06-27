@@ -222,7 +222,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
-    const socket = io({ auth: { userId: '<%= userReq._id %>' }, ackTimeout: 5000, retries: 3 })
+    const socket = io({ auth: { userId: '<%= userReq._id %>' } })
 
     // MESSAGING LOGIC WITH RETRIES OPTION
 
