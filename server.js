@@ -10,6 +10,7 @@ const flash = require('connect-flash')
 const multer = require('multer')
 const cors = require('cors')
 const path = require('path')
+const webpush = require('web-push')
 const fs = require('fs')
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
@@ -561,6 +562,63 @@ io.on('connection', (socket) => {
     })
 
 })
+
+
+// WEB PUSH NOTIFICATION SET-UP 
+const publicVapidKey = process.env.WEB_PUSH_PUBLIC_KEY
+const privateVapidKey = process.env.WEB_PUSH_PRIVATE_KEY
+
+webpush.setVapidDetails('mailto:alvintonae@gmail.com', publicVapidKey, privateVapidKey)
+
+const subscriptionDatabase = {}
+
+// Endpoint where the client sends its push subscription object
+app.post('/api/subscribe', (req, res) => {
+
+  const { userId, subscription } = req.body
+  
+  if (!userId || !subscription) {
+    return res.status(400).json({ error: 'Missing required parameters' });
+  }
+
+  subscriptionDatabase[userId] = subscription
+  res.status(201).json({ message: 'Subscription saved successfully' });
+
+});
+
+
+// Endpoint to trigger a DM notification (Replaces your background socket logic)
+app.post('/api/send-dm', async (req, res) => {
+
+    const { recipientId, senderName, message, url } = req.body
+
+    const subscription = subscriptionDatabase[recipientId];
+
+    if (!subscription) {
+
+      return res.status(404).json({ error: 'User offline or not subscribed' });
+     }
+
+    const payload = JSON.stringify({
+      title: `New message from ${senderName}`,
+      body: message,
+      url: url
+    })
+
+    try {
+       // Send the notification directly to the browser push service provider
+       await webpush.sendNotification(subscription, payload)
+
+       res.status(200).json({ success: true });
+
+    } catch (error) {
+
+       console.error('Push error:', error);
+       res.status(500).json({ error: 'Failed to deliver push notification' });
+    }
+});
+
+
 
 const loginCheck = (req, res, next) => {
 
@@ -1289,8 +1347,9 @@ app.get('/inbox/:id', notLoggedInCheck, async (req, res) => {
 
 
     const R2BASE = process.env.R2_PUBLIC_BASE_URL
+    const PUBLIC_VAPID_KEY = process.env.WEB_PUSH_PUBLIC_KEY
 
-      res.render('inbox', { userReq: userMessaging, userMessaged, followingStatus: isUserReqFollowing,  parties, origin: postOriginId, R2BASE })
+      res.render('inbox', { userReq: userMessaging, userMessaged, PUBLIC_VAPID_KEY, followingStatus: isUserReqFollowing,  parties, origin: postOriginId, R2BASE })
 })
 
 
