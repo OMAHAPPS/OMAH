@@ -59,11 +59,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
    <header style="position: relative; height: 10%; display: flex; align-items: center; gap: 12px; padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08);">
         
         <% if (origin) { %>
-            <a href="/post/<%= origin %>" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
+            <a class="leave-dm" href="/post/<%= origin %>" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
                 <ion-icon name="arrow-back-outline"></ion-icon>
             </a> 
         <% } else { %>
-            <a href="/home" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
+            <a class="leave-dm" href="/home" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
                 <ion-icon name="arrow-back-outline"></ion-icon>
             </a>     
         <% } %>
@@ -222,7 +222,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
-    const socket = io({ auth: { userId: '<%= userReq._id %>' } })
+    const socket = io({ auth: { userId: '<%= userReq._id %>' }, ackTimeout: 5000, retries: 3 })
 
     // MESSAGING LOGIC WITH RETRIES OPTION
 
@@ -459,7 +459,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     
     window.addEventListener('DOMContentLoaded', () => {
 
-          clearChatHistory(recipientId)
+          //clearChatHistory(recipientId)
 
            const scrollToBottom = () => {
              chatContainer.scrollTo({
@@ -478,9 +478,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
            // 3. Start monitoring the chat box layout 
            observer.observe(chatContainer, { 
-               childList: true, // Triggers when child message nodes are added/cleared
-               subtree: true    // Triggers if items change inside nested wrappers
-             })
+                   childList: true, // Triggers when child message nodes are added/cleared
+                   subtree: true    // Triggers if items change inside nested wrappers
+                 })
+
+           
         
      })
     
@@ -696,6 +698,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
          }
     })
 
+    // UNLOAD EVENT LISTENERS FOR HANDLING LEAVING ROOMS
+    
+   
     
     
    

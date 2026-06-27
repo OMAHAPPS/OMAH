@@ -115,6 +115,8 @@ io.on('connection', (socket) => {
     //DISconnect instance
     socket.on('disconnect', () => {
         console.log(`${socket.userId} Disconnected`)
+       
+        
     })
 
     socket.on('update-likes', async (data, ack) => {
@@ -362,15 +364,21 @@ io.on('connection', (socket) => {
         // 1. Move this socket thread connection inside the target room channel boundary
         socket.join(data.roomId)
         console.log(`👤 User ${data.userId} joined room sandbox channel: ${data.roomId}`)
+        
 
         const FormatedObjectUserId = new ObjectId(data.userId)
 
         const readerId = data.roomId.replace('dm_', '').split('_').find(uid => uid !== data.userId) 
 
         // Check if there is unseen meesaage in the arrayBucket first
-       //const unseenMsgPresent = await Chat.findOne({ roomId: data.roomId, count: { $lt: 500 }, "messages.senderId": { $ne: FormatedObjectUserId }, "messages.status": { $ne: 'seen' } })
+        // const unseenMsgPresent = await Chat.findOne({ roomId: data.roomId, count: { $lt: 500 }, messages: { $elemMatch: { senderId: { $ne: data.userId }, status: { $ne: 'seen' }}} })
 
-       
+        //  console.log(unseenMsgPresent)
+        
+        //  if (!unseenMsgPresent) {
+        //      console.log('SKIPPED MULTIPLE uPDATED')
+        //      return;
+        //  }
 
         // 2. Update All unseen/Delivered bck msgs to status seen since user has opened chat window
         try {
@@ -391,6 +399,7 @@ io.on('connection', (socket) => {
         }
     })
 
+   
     socket.on('typing', (roomId) => {
         socket.to(roomId).emit('typing', roomId)
     })
@@ -600,7 +609,7 @@ app.get('/api/dm-history/all/:id', async (req, res) => {
 
         const allUserDms = await Chat.find({ count: { $lt: 500 }, $or: [ { userAId: userId }, { userBId: userId } ] })
         
-        const sortedUserDms = allUserDms.sort((a,b) => b.updatedAt - a.updatedAt)
+        const sortedUserDms = allUserDms.sort((a,b) => b.messages.at(-1).timestamp - a.messages.at(-1).timestamp)
 
         const uniqueMap = new Map()
 

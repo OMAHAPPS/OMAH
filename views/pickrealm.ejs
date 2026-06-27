@@ -48,7 +48,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 @keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
 </style>
 <body style="position: relative;">
-    <canvas id="cv"></canvas>
+
 
 <div class="view" style="background:rgba(5,5,8,.9)">
 
@@ -74,7 +74,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
            <input name="realm" id="realm" type="text" value="Observatory" style="display: none;">
            <input name="rcol" id="rcol"  type="text" style="display: none;">
            <input name="ainame" id="ainame" type="text" style="display: none;"> 
-      <button id="picktheme" type="submit" style="display: flex; justify-content: center; align-items: center; gap: 10px; padding: 15px 25px; border-radius:15px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); font-size: 16px; font-weight:600; color: #1ed760; letter-spacing: .5px; animation:emerge .9s .5s ease-out both">
+      <button id="picktheme" type="submit" style="display: flex; justify-content: center; align-items: center; gap: 10px; padding: 15px 25px; border-radius:15px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); font-size: 16px; font-weight:600; color: #1ed760; letter-spacing: .5px;">
         Continue
       </button>
     </form>
@@ -86,92 +86,21 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
 
-<script src="/socket.io/socket.io.js"></script>
+
 <script type="module">
-
-const socket = io({ auth: { userId: '<%= user._id %>' } })  
-
-
-    
-    
-
-const CANVAS = (() => {
-  const cv = document.getElementById('cv');
-  const cx = cv.getContext('2d');
-  let W, H, tick = 0;
-  let realmRgb = [200, 168, 110];
-  let blooms = [];
-
-  const mkPt = (dir, i, n) => {
-    const a = (i/n)*Math.PI*2;
-    const r = (.15 + Math.random()*.33)*Math.min(W||400, H||800);
-    return { x:W/2+r*Math.cos(a), y:H/2+r*Math.sin(a), orbitR:r, angle:a,
-        speed:dir*(.0016+Math.random()*.003), life:0, maxLife:280+Math.random()*500,
-        sz:.7+Math.random()*2.3, wave:Math.random()*Math.PI*2 };
-    };
-
-    const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
-  window.addEventListener('resize', resize); resize();
-
-  const WARM = Array.from({length:65}, (_,i) => mkPt(1,i,65));
-  const COOL = Array.from({length:65}, (_,i) => mkPt(-1,i,65));
-
-  const draw = () => {
-    tick++;
-    cx.fillStyle = 'rgba(5,5,8,.17)'; cx.fillRect(0,0,W,H);
-    
-    // Fractal bloom
-    if (tick%220===0) {
-      blooms.push({ x:W*(.2+Math.random()*.6), y:H*(.15+Math.random()*.7),
-                    r:0, maxR:80+Math.random()*145, life:0, maxLife:55, col:realmRgb });
-    }
-    blooms = blooms.filter(b => {
-        b.r += b.maxR/b.maxLife; b.life++;
-      const a = (1-b.life/b.maxLife)*.13;
-      const [r,g,bl]=b.col;
-      const grd=cx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
-      grd.addColorStop(0,`rgba(${r},${g},${bl},${a*1.7})`);
-      grd.addColorStop(1,`rgba(${r},${g},${bl},0)`);
-      cx.fillStyle=grd; cx.fillRect(0,0,W,H);
-      return b.life < b.maxLife;
-    });
-
-    // Koi forces
-    [[WARM,[200,150,80]],[COOL,[80,90,185]]].forEach(([pts,col]) => {
-      pts.forEach((p,i) => {
-        p.life++;
-        p.angle += p.speed + Math.sin(tick*.002+p.wave)*.0008;
-        const tx=W/2+p.orbitR*Math.cos(p.angle), ty=H/2+p.orbitR*Math.sin(p.angle);
-        p.x += (tx-p.x)*.02; p.y += (ty-p.y)*.02;
-        const sz = p.sz*(1+Math.sin(tick*.04+i)*.32);
-        const half=p.maxLife/2;
-        const alpha=(p.life<half?p.life/half:1-(p.life-half)/half)*.27;
-        const [r,g,b]=col;
-        cx.beginPath(); cx.arc(p.x,p.y,sz,0,Math.PI*2);
-        cx.fillStyle=`rgba(${r},${g},${b},${alpha})`; cx.fill();
-        if (p.life>=p.maxLife) pts[i]=mkPt(p.speed>0?1:-1,i,pts.length);
-      });
-    });
-    requestAnimationFrame(draw);
-};
-  draw();
-  return { setRealm: rgb => realmRgb = rgb };
-})();
-
-
 
 
 const REALMS = [
     {
       "Arena": {
         'key': 'Arena',
-        'name': 'The Arena',
-        'glyph': '⚽',
+        'name': 'Radiance',
+        'glyph': '👑',
         'col': '#C8A86E',
         'colB': '#7A5C2A',
         'rgb': [200,168,110],
         'bg': 'linear-gradient(145deg,#0d1a0a,#0a1420)',
-        'soul': 'For those who feel it in their chest when the game begins.',
+        'soul': 'A warm golden glow that brings brightness, optimism, and elegance to every screen.',
         'aiName': 'IGNIS',
         'aiTitle': 'The Challenger',
         'aiDesc': 'She reads your hunger before you speak it.',
@@ -223,13 +152,13 @@ const REALMS = [
     "Dojo": {
       
       'key': 'Dojo',
-      'name': 'The Dojo',
-      'glyph': '⚡',
+      'name': 'Inferno',
+      'glyph': '💥',
       'col': '#C04848',
       'colB': '#7A1A1A',
       'rgb': [192, 72, 72],
       'bg': 'linear-gradient(145deg,#1a0500,#120010)',
-      'soul': "Stories that don't leave you the same person.",
+      'soul': "A bold neon red theme designed for energy, confidence and making every interaction stand out",
       'aiName':'KAZE',aiTitle:'The Weaver',aiDesc:'She lives inside stories. She will pull you into hers.',
       'arrivals': ["You came back. Stories do that.","I've been thinking about what you said.","There's an arc that begins like your life.","You look like someone who just finished something.","The best characters always return.","Something brought you here. A story?"],
       'aiDNA': `You are KAZE — soul of The Dojo. Robert Greene's Art of Seduction: Ideal Lover and Dandy combined. You see people as they wish to be seen. You speak in images. You connect anime, manga, stories to the marrow of real life with surgical accuracy. You never fully reveal yourself. Under 80 words. Quote a story then twist it into something personal for this person. End with something that lingers like smoke after a fire.`,
@@ -276,13 +205,13 @@ const REALMS = [
      "Archive": {
     
        'key': 'Archive',
-       'name': 'The Archive',
+       'name': 'Wildwood',
        'glyph':  '🌿',
        'col': '#6B8F6B',
        'colB': '#3A5C3A',
        'rgb': [107,143,107],
        'bg': 'linear-gradient(145deg,#0f0a00,#080015)',
-       'soul': 'Where curious minds grow without being rushed.',
+       'soul': 'A rich forest-inspired theme that delivers a calm, natural, and refreshing experience.',
        'aiName': 'SOMA',
        'aiTitle': 'The Awakener',
        'aiDesc': "She doesn't give answers. She gives better questions.",
@@ -335,13 +264,13 @@ const REALMS = [
     {
     "Observatory": {
       'key': 'Observatory',
-      'name': 'The Observatory',
-      'glyph': '🔭',
+      'name': 'Pulse',
+      'glyph': '🌌',
       'col': '#5B7BA8',
       'colB': '#2A4A7A',
       'rgb': [91,123,168],
       'bg': 'linear-gradient(145deg,#04040f,#040c18)',
-      'soul': "Tech, space, and things most people aren't ready for yet.",
+      'soul': "A vibrant electric blue theme that feels modern, dynamic and full of life.",
       'aiName': 'NOVA',
       'aiTitle': 'The Visionary',
       'aiDesc': 'She sees ten moves ahead. She will show you two.',
@@ -415,8 +344,8 @@ REALMS.forEach((realm) => {
                 <span class="fd" style="font-size:16px;font-weight:700;color: ${r.col};">${r.name}</span>
                 <span style="font-size:18px">${r.glyph}</span>
               </div>
-                <p style="font-size:11px;color:rgba(237,232,224,.43);line-height:1.55;margin-bottom:6px">${r.soul}</p>
-                <div style="font-size:10px;color:${r.col};opacity:.75;font-style:italic">${r.aiName} · ${r.aiTitle}</div>
+                <p style="font-size:11px;color:${r.col};line-height:1.55;margin-bottom:6px">${r.soul}</p>
+                
             </div>
                 
             <span class="realmident" style="display: none;" >${r.key}</span>

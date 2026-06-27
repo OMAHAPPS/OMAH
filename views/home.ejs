@@ -897,7 +897,7 @@ humanoidContainer.innerHTML = `
 
   
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('DOMcontentLoaded')
+ 
   if ('history' in window && 'scrollRestoration' in window) {
   console.log('ScrollRestoration present')
 
@@ -1337,7 +1337,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
             })
 
-          }, 75)
+          }, 100)
           sessionStorage.removeItem('storageKey')
        }
 
@@ -1397,7 +1397,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
  
             dmLink.innerHTML = `
-                               <img src="${R2Base}/${msgLink.userDP !== 'none' ? msgLink.userDP : 'placeholder.jpg' }" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+                               <img src="${msgLink.userDP !== 'none' ? `${R2Base}/${msgLink.userDP}` : 'placeholder.jpg' }" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
                                <div style="flex: 1; min-width: 0;">
                                    <div style="display:flex;justify-content:space-between;margin-bottom:3px">
