@@ -907,64 +907,64 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     
     // push notifications logic
 
-    const PUBLIC_VAPID_KEY = '<%= PUBLIC_VAPID_KEY %>' // Match your backend key
-    const CURRENT_USER_ID = "<%= userReq._id %>";
+//     const PUBLIC_VAPID_KEY = '<%= PUBLIC_VAPID_KEY %>' // Match your backend key
+//     const CURRENT_USER_ID = "<%= userReq._id %>";
 
 
-    // Helper function to safely convert VAPID keys for browser parsing
-    function urlBase64ToUint8Array(base64String) {
-        const padding = '='.repeat((4 - base64String.length % 4) % 4);
-        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
+//     // Helper function to safely convert VAPID keys for browser parsing
+//     function urlBase64ToUint8Array(base64String) {
+//         const padding = '='.repeat((4 - base64String.length % 4) % 4);
+//         const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+//         const rawData = window.atob(base64);
+//         const outputArray = new Uint8Array(rawData.length);
 
-        for (let i = 0; i < rawData.length; ++i) {
-           outputArray[i] = rawData.charCodeAt(i);
-        }
-        return outputArray;
-    }
+//         for (let i = 0; i < rawData.length; ++i) {
+//            outputArray[i] = rawData.charCodeAt(i);
+//         }
+//         return outputArray;
+//     }
 
 
-    async function configureWebPush() {
+//     async function configureWebPush() {
 
-        if ('serviceWorker' in navigator && 'PushManager' in window) {
+//         if ('serviceWorker' in navigator && 'PushManager' in window) {
 
-           try {                    // 1. Register background worker script
+//            try {                    // 1. Register background worker script
 
-           const registration = await navigator.serviceWorker.register('sw.js')
+//            const registration = await navigator.serviceWorker.register('sw.js')
       
-           // 2. Request browser system permission
-           const permission = await Notification.requestPermission()
+//            // 2. Request browser system permission
+//            const permission = await Notification.requestPermission()
 
-           if (permission !== 'granted') return;
+//            if (permission !== 'granted') return;
 
-           // 3. Subscribe the device token to the browser's notification gateway
-           const subscription = await registration.pushManager.subscribe({
-                    userVisibleOnly: true,      
-                    applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
-            })
+//            // 3. Subscribe the device token to the browser's notification gateway
+//            const subscription = await registration.pushManager.subscribe({
+//                     userVisibleOnly: true,      
+//                     applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+//             })
 
-            // 4. Send the credential subscription object securely to your Node.js backend
-            await fetch('/api/subscribe', {
-                   method: 'POST',
-                   body: JSON.stringify({
-                          userId: CURRENT_USER_ID,
-                          subscription: subscription
-                   }),
-                   headers: { 
-                    'Content-Type': 'application/json'
-                   }
-             })
+//             // 4. Send the credential subscription object securely to your Node.js backend
+//             await fetch('/api/subscribe', {
+//                    method: 'POST',
+//                    body: JSON.stringify({
+//                           userId: CURRENT_USER_ID,
+//                           subscription: subscription
+//                    }),
+//                    headers: { 
+//                     'Content-Type': 'application/json'
+//                    }
+//              })
 
-            console.log('Web Push tracking successfully established');
+//             console.log('Web Push tracking successfully established');
 
-            } catch (err) {
-                 console.error('Initialization error:', err);
-            }
-        }
-    }
+//             } catch (err) {
+//                  console.error('Initialization error:', err);
+//             }
+//         }
+//     }
 
-   // configureWebPush()
+//    // configureWebPush()
 
 
 

@@ -564,59 +564,59 @@ io.on('connection', (socket) => {
 })
 
 
-// WEB PUSH NOTIFICATION SET-UP 
-const publicVapidKey = process.env.WEB_PUSH_PUBLIC_KEY
-const privateVapidKey = process.env.WEB_PUSH_PRIVATE_KEY
+// // WEB PUSH NOTIFICATION SET-UP 
+// const publicVapidKey = process.env.WEB_PUSH_PUBLIC_KEY
+// const privateVapidKey = process.env.WEB_PUSH_PRIVATE_KEY
 
-webpush.setVapidDetails('mailto:alvintonae@gmail.com', publicVapidKey, privateVapidKey)
+// webpush.setVapidDetails('mailto:alvintonae@gmail.com', publicVapidKey, privateVapidKey)
 
-const subscriptionDatabase = {}
+// const subscriptionDatabase = {}
 
-// Endpoint where the client sends its push subscription object
-app.post('/api/subscribe', (req, res) => {
+// // Endpoint where the client sends its push subscription object
+// app.post('/api/subscribe', (req, res) => {
 
-  const { userId, subscription } = req.body
+//   const { userId, subscription } = req.body
   
-  if (!userId || !subscription) {
-    return res.status(400).json({ error: 'Missing required parameters' });
-  }
+//   if (!userId || !subscription) {
+//     return res.status(400).json({ error: 'Missing required parameters' });
+//   }
 
-  subscriptionDatabase[userId] = subscription
-  res.status(201).json({ message: 'Subscription saved successfully' });
+//   subscriptionDatabase[userId] = subscription
+//   res.status(201).json({ message: 'Subscription saved successfully' });
 
-});
+// });
 
 
-// Endpoint to trigger a DM notification (Replaces your background socket logic)
-app.post('/api/send-dm', async (req, res) => {
+// // Endpoint to trigger a DM notification (Replaces your background socket logic)
+// app.post('/api/send-dm', async (req, res) => {
 
-    const { recipientId, senderName, message, url } = req.body
+//     const { recipientId, senderName, message, url } = req.body
 
-    const subscription = subscriptionDatabase[recipientId];
+//     const subscription = subscriptionDatabase[recipientId];
 
-    if (!subscription) {
+//     if (!subscription) {
 
-      return res.status(404).json({ error: 'User offline or not subscribed' });
-     }
+//       return res.status(404).json({ error: 'User offline or not subscribed' });
+//      }
 
-    const payload = JSON.stringify({
-      title: `New message from ${senderName}`,
-      body: message,
-      url: url
-    })
+//     const payload = JSON.stringify({
+//       title: `New message from ${senderName}`,
+//       body: message,
+//       url: url
+//     })
 
-    try {
-       // Send the notification directly to the browser push service provider
-       await webpush.sendNotification(subscription, payload)
+//     try {
+//        // Send the notification directly to the browser push service provider
+//        await webpush.sendNotification(subscription, payload)
 
-       res.status(200).json({ success: true });
+//        res.status(200).json({ success: true });
 
-    } catch (error) {
+//     } catch (error) {
 
-       console.error('Push error:', error);
-       res.status(500).json({ error: 'Failed to deliver push notification' });
-    }
-});
+//        console.error('Push error:', error);
+//        res.status(500).json({ error: 'Failed to deliver push notification' });
+//     }
+// });
 
 
 
@@ -811,19 +811,19 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
         
      })
     
-     function FisheYates (array) {
+    //  function FisheYates (array) {
 
        
-        for(let i = array.length - 1; i > 0; i--) {
+    //     for(let i = array.length - 1; i > 0; i--) {
             
-        const j = Math.floor(Math.random() * (i + 1));
+    //     const j = Math.floor(Math.random() * (i + 1));
 
-             [array[i], array[j]] = [array[j], array[i]]
-        } 
-        return array
-     }
+    //          [array[i], array[j]] = [array[j], array[i]]
+    //     } 
+    //     return array
+    //  }
      
-     const sortedPostDataArray = FisheYates(postDataArray)
+     const sortedPostDataArray = postDataArray.sort((a,b) => b.createdAt - a.createdAt)
 
 
      const R2BaseUrl = process.env.R2_PUBLIC_BASE_URL 
@@ -1347,9 +1347,9 @@ app.get('/inbox/:id', notLoggedInCheck, async (req, res) => {
 
 
     const R2BASE = process.env.R2_PUBLIC_BASE_URL
-    const PUBLIC_VAPID_KEY = process.env.WEB_PUSH_PUBLIC_KEY
+    // const PUBLIC_VAPID_KEY = process.env.WEB_PUSH_PUBLIC_KEY
 
-      res.render('inbox', { userReq: userMessaging, userMessaged, PUBLIC_VAPID_KEY, followingStatus: isUserReqFollowing,  parties, origin: postOriginId, R2BASE })
+      res.render('inbox', { userReq: userMessaging, userMessaged, followingStatus: isUserReqFollowing,  parties, origin: postOriginId, R2BASE })
 })
 
 
