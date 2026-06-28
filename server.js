@@ -446,11 +446,25 @@ io.on('connection', (socket) => {
                  }
 
                    // This safely targets only sockets registered inside this room via the step above!
-                   socket.to(newMessage.receiverId).timeout(4000).emit('receiveMessage_background', newMessage,  (err, response) => {
+                   socket.to(newMessage.receiverId).timeout(4000).emit('receiveMessage_background', newMessage, async (err, response) => {
                               
                        if(!err) { // recipient Executed its acknowledgement function
      
                           ack({ success: true, newStatus: 'delivered' })        // JOIN ROOM EVENT WILL AUTOMATICALLY UPDATE ALL MSGS TO SEEN Update many
+
+                          try {      // Try and Update the Message to DELIVERED THEN EMIT THE ARRANGE DASHBOARD AND NOTIFICATION
+                             
+                             await Chat.updateOne({ roomId: newMessage.receiverId, "messages.id": newMessage.id }, { $set: { "messages.$[elem].status": 'delivered' } }, { arrayFilters: [{ "elem.id": newMessage.id }] }) 
+
+                             console.log('Updated IncomingMessage to delivered Status')
+
+                          } catch (error) {
+                            
+                            console.log('FAILED TO UPDATE MESSAGE TO dELIVERED')
+                            return;
+                          }
+
+                          io.to(`user-room-${recipientId}`).emit('arrange-dashboard', newMessage)
                                
                         }
                           
@@ -508,6 +522,8 @@ io.on('connection', (socket) => {
          }
       
     })
+    
+   
 
     // socket.on('message_delivered', async ({ msgId, roomId, userId }) => {
 
@@ -620,6 +636,7 @@ app.get('/api/dm-history/all/:id', async (req, res) => {
         sortedUserDms.forEach((dmDocument) => {
 
              const unreadMessageCount = dmDocument.messages.filter(msg => msg.status !== 'seen' && msg.senderId !== userId).length
+
              const lastMessageText = dmDocument.messages.at(-1).text
              const latMsgStatus = dmDocument.messages.at(-1).status
              const lastMessagetimeStamp = dmDocument.messages.at(-1).timestamp
@@ -637,6 +654,7 @@ app.get('/api/dm-history/all/:id', async (req, res) => {
                   lastMsgSenderId: lastMsgSenderId,
                   lastText: lastMessageText,
                   lastMsgTime: lastMsgTime,
+                  lastMsgTimestamp: lastMessagetimeStamp,
                   userDP: userInDmInfo.userDP,
                   userName: userInDmInfo.userName,
                   userId: userInDmInfo._id

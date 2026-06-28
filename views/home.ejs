@@ -368,7 +368,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                
                <!-- ! ELSE MAP MESSAGES -->
                 
-               <a href="/inbox"  class="stop-fetch" style="text-decoration: none; scroll-snap-align: start; width: 100%; text-align: left; display: none; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both"> 
+               <a href="/inbox"  class="stop-fetch" style="text-decoration: none; scroll-snap-align: start; width: 100%; text-align: left; display: none; align-items: center; gap: 11px; padding: 13px; border-radius: 16px; margin-bottom: 15px; background: transparent; animation:emerge .4s .6s ease-out both;"> 
                 
                          <!-- todo //// IF NO PROFILE PIC /// -->
                          <div class="tap" style="position: relative; height: 40px; width: 40px; border-radius: 50%; overflow: hidden;  border: 1px solid rgba(237,232,224,.6); display: none; justify-content: center; align-items: center;">
@@ -1425,7 +1425,62 @@ document.addEventListener('DOMContentLoaded', async () => {
       })
 
 
+// ALL SOCKET LISTENER EVENTS TO BE HERE
 
+socket.on('arrange-dashboard', async (incomingMsg) => {
+      
+     const incomingmsgTimestamp = incomingMsg.timestamp
+   
+
+     const data = await fetch(`/api/dm-history/all/${userId}`, {
+               method: 'GET',
+               headers: {
+                  "Content-Type": "application/json"
+               }
+     })
+    
+    const response = await data.json()
+
+    if (response.success) {
+
+         messageScrollContainer.innerHTML = '';   
+         response.messages.forEach((msgLink) => {
+              
+              const dmLink = document.createElement('a')
+              const newTimeString = new Date(msgLink.lastMsgTime)
+              const unreadCount = msgLink.unreadCount
+              const isMe = msgLink.lastMsgSenderId === userId
+              dmLink.className = 'stop-fetch dm-link'
+              dmLink.href = `/inbox/${msgLink.userId}`
+              
+               let UnreadCount = unreadCount !== 0 ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="height: 25px; width: 25px; padding: 5px; border-radius: 50%; display: grid; place-content: center; background: <%= user.userColor %>; color: White; font-size: 10px; position: absolute; right: 12px; bottom: 10px;">${unreadCount}</span>` : ''
+               let tickHtml = isMe ? (msgLink.lastMsgStatus == 'seen' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: rgb(37, 134, 224);"></ion-icon></span>' : msgLink.lastMsgStatus == 'delivered' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sent' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sending' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="time-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : '' ) : '';
+   
+   
+              dmLink.innerHTML = `
+                                 <img src="${msgLink.userDP !== 'none' ? `${R2Base}/${msgLink.userDP}` : 'placeholder.jpg' }" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+   
+                                 <div style="flex: 1; min-width: 0;">
+                                     <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                                         <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">${msgLink.userName}</span>
+                                         <span style="font-size:9px;color:rgba(237,232,224,.85)">${newTimeString.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>    
+                                     </div>
+                                     <p style="font-size: 11px; color: rgba(237,232,224,.53); max-width: 80%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${tickHtml}${msgLink.lastText}</p>
+                                 </div> 
+                                 ${UnreadCount}
+                              `
+                           
+              messageScrollContainer.appendChild(dmLink)
+            })    
+
+      
+      
+    } else {
+       return;
+    }
+     
+    
+})
 
 
 
@@ -2623,8 +2678,7 @@ window.addEventListener('load', () => {
     }, 5000)
 })
 
-// dotAnim.innerHTML = `${dot(r.col)}`
-// dotAnim.appendChild(span)
+
 
 
 
@@ -2791,7 +2845,7 @@ messagesBtn.addEventListener('click', async (e) => {
 
  
             dmLink.innerHTML = `
-                               <img src="${R2Base}/${msgLink.userDP !== 'none' ? msgLink.userDP : 'placeholder.jpg' }" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+                               <img src="${msgLink.userDP !== 'none' ? `${R2Base}/${msgLink.userDP}` : 'placeholder.jpg' }" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
                                <div style="flex: 1; min-width: 0;">
                                    <div style="display:flex;justify-content:space-between;margin-bottom:3px">

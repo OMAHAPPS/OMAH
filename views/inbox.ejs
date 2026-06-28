@@ -655,8 +655,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           const messageExists = messageState.some(m => m.id === incomingMsg.id)
           console.log('I Have Successfully received Message from: ' + incomingMsg.senderId)
           
-
-
+          
           if (!messageExists) { // New message instance just about incoming
 
              if (roomId === incomingMsg.receiverId) {  // receiver is currently inside Chat window... skip grey ticks and instantly update to SEEN /BLUETICKS
@@ -679,6 +678,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             }
     }) 
 
+   
     socket.on('message_delivered_receipt', (data) => {
          // Performance Guard: Only process if the update belongs to the active chat screen
          if (data.roomId === roomId) {
