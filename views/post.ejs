@@ -31,6 +31,16 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 .tap{cursor:pointer;transition:transform .12s ease,opacity .12s ease;user-select:none;-webkit-user-select:none}
 .tap:active{transform:scale(.91)!important;opacity:.72!important}
 
+/* -- CUSTOM STYLINGS -- */
+
+.reply-card-with-file::before{ content: ""; position: absolute; left: 35.5px; top: 36px; bottom: 50px; width: 1.5px; background-color: #e5e5e5; }
+
+.reply-card-with-file::after{ content: ""; position: absolute; left: 36px; bottom: 32px; width: 20px; height: 30px; border-left: 1.5px solid #e5e5e5; border-bottom: 2px solid #e5e5e5; border-bottom-left-radius: 18px;}
+
+.sub-replies-map::before{ content: ""; position: absolute; left: -31.5px; top: 0; width: 20px; height: 20px; border-left: .5px solid #e5e5e5; border-bottom: 2px solid #e5e5e5; border-bottom-left-radius: 18px;}
+
+.no-lines::before, .no-lines::after{ display: none; }
+
 /* ── ANIMATIONS ── */
 @keyframes viewIn      {from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes emerge      {from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -214,7 +224,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
         <% replies.map((reply) => { %>
 
-          <div class="reply-card-with-file" style="padding: 16px;">
+          <div class="reply-card-with-file no-lines" style="padding: 16px; position: relative;">
   
               <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
   
@@ -226,10 +236,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                  <div id="poster-userHandle" style="display: none;">@<%= reply.author.userHandle == 'none' ? reply.author.userName : reply.author.userHandle %></div>
   
                  <% if (reply.author.userDP !== 'none') { %>
-                   <img src="<%= R2BASE %>/<%= reply.author.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-               <% } else { %>
-                <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-               <% } %> 
+                   <img src="<%= R2BASE %>/<%= reply.author.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover; z-index: 2;" />
+                 <% } else { %>
+                   <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover; z-index: 2;" />
+
+                 <% } %> 
 
                <div id="poster-userId" style="display: none;"><%= reply.author.userId %></div>
                <div id="post-id" style="display: none;"><%= post._id %></div>
@@ -257,8 +268,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
   
                           <h2 style="font-size: 12px; color: rgba(237,232,224,.32); width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >Replying to <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;">@<%= poster.userHandle !== 'none' ? poster.userHandle : poster.userName %></span></h2>
   
-                          <div  class="follow-reply-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-content: center; padding: 15px; height: 30px; width: fit-content; border-radius: 15px; border: 1px solid <%= user.userColor %>; background-color: <%= user.userColor %>;">
-                             <h4 style="color: #050508; font-size: .75rem;">Follow</h4>
+                          <div id="eliipsis" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; place-content: center; width: fit-content; background-color: transparent;">
+                              <ion-icon name="ellipsis-vertical-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; color: <%= user.userColor %>;"></ion-icon>
                           </div>
                                
                 </div>
@@ -328,7 +339,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                       <% } %>
   
                     
-                      <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; padding: 5px 0; margin-top: 8px;">
+                   <div style="display:flex; align-items:center; justify-content: flex-start; gap:35px; padding: 5px 0; margin-top: 8px;">
                        
                        <button class="like-reply-cont" data-liked="false" style="outline: none; border: none; display: flex; align-items: center; justify-content: center;">
                            <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; pointer-events: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
@@ -338,17 +349,183 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                            <h3 class="mainPost-span" style="display: none;"><%= post._id %></h3>
 
                        </button>   
+
                        <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
                            <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                           <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.interactions %></span>
+                           <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.interactions %></span>  
                        </div>   
-                       <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                       <ion-icon name="flag-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                     
-                     </div>
+
+                       <button class="sub-reply-btn" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; height: fit-content; width: fit-content; padding: 5px 10px; border-radius: 10px; background-color: transparent; outline: none; color: <%= user.userColor %>;">Reply</button>
+                           
+                       
+                   </div>
+
+                   <!-- !! THIS SECTION HOLDS AND MAPS ALL SUBREPLIES -->
   
+                   <div class="sub-replies-cont" style="display: none; width: 100%; padding: 0 0 10px 0;">
+
+                        
+
+                        <section class="sub-replies-map no-lines" style="position: relative; width: 100%; padding: 5px 0 0 0;">
+
+                           
+                               <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
+  
+                                     <!-- ! element Placeholders for profile image and user info -->
+                                  <div id="poster-username" style="display: none;">Alvin</div>
+                                  <div id="poster-followers" style="display: none;">2K</div>
+                                  <div id="poster-following" style="display: none;">500</div>
+                                  <div id="poster-posts-length" style="display: none;">50</div>
+                                  <div id="poster-userHandle" style="display: none;">@VinnShelbyOBE</div>
+  
+                
+                                  <img src="/placeholder.jpg" alt="" width="30" height="30" style="border-radius: 50%; object-fit: cover;" />
+                   
+                 
+
+                                  <div id="poster-userId" style="display: none;"></div>
+                                  <div id="post-id" style="display: none;"></div>
+  
+                                  <div class="poster-info" style="text-decoration: none; flex:1; position: relative;">
+
+                                 
+                                  <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
+                                      Alvin 
+                                      <span style="color: rgba(237, 232, 224, .42);"> . 5d</span>
+                               
+                                  </div>
+  
+                                  <h2 style="font-size: 12px; color: rgba(237,232,224,.32); width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >Replying to <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;">@JanetMbithe</span></h2>
+  
+                                  <div id="eliipsis" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; place-content: center; width: fit-content; background-color: transparent;">
+                                     <ion-icon name="ellipsis-vertical-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>;"></ion-icon>
+                                  </div>
+                               
+                                </div>
+                          
+                               </div>
+
+                              <div class="sub-reply-info-wrapper" style="padding: 5px 0 5px 40px;">
+
+                                    <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, odio t! Conm reiciendis!</p>
+                                    
+                                    <article class="post-article" style="width: 100%; height: auto; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; background: transparent; scroll-snap-type: inline mandatory;">
+             
+                                          <img class="post-images" src="https://pub-4d616d04d586465385a8e29f389675d7.r2.dev/feed-images/1781187947809-Family.jpeg" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: inherit; scroll-snap-align: start; margin-right: 5px;" />
+             
+                                    </article>
+
+                                    <div style="display:flex; align-items:center; justify-content: flex-start; gap:35px; padding: 5px 0; margin-top: 8px;">
+                       
+                                       <button class="like-reply-cont" data-liked="false" style="outline: none; border: none; display: flex; align-items: center; justify-content: center;">
+                                          <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; pointer-events: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                          <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; pointer-event: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                          <span class="span-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.likes %></span>
+                                          <h3 class="postId-span" style="display: none;"><%= reply.replyId %></h3>
+                                          <h3 class="mainPost-span" style="display: none;"><%= post._id %></h3>
+
+                                       </button>   
+
+                                       <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                                          <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                          <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> 55</span>  
+                                       </div>   
+
+                    
+                           
+                       
+                                    </div>
+
+  
+                              </div>
+   
+                        </section>
+                        <section class="sub-replies-map no-lines" style="position: relative; width: 100%; padding: 5px 0 0 0;">
+
+                           
+                               <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
+  
+                                     <!-- ! element Placeholders for profile image and user info -->
+                                  <div id="poster-username" style="display: none;">Alvin</div>
+                                  <div id="poster-followers" style="display: none;">2K</div>
+                                  <div id="poster-following" style="display: none;">500</div>
+                                  <div id="poster-posts-length" style="display: none;">50</div>
+                                  <div id="poster-userHandle" style="display: none;">@VinnShelbyOBE</div>
+  
+                
+                                  <img src="/placeholder.jpg" alt="" width="30" height="30" style="border-radius: 50%; object-fit: cover;" />
+                   
+                 
+
+                                  <div id="poster-userId" style="display: none;"></div>
+                                  <div id="post-id" style="display: none;"></div>
+  
+                                  <div class="poster-info" style="text-decoration: none; flex:1; position: relative;">
+
+                                 
+                                  <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
+                                      Alvin 
+                                      <span style="color: rgba(237, 232, 224, .42);"> . 5d</span>
+                               
+                                  </div>
+  
+                                  <h2 style="font-size: 12px; color: rgba(237,232,224,.32); width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >Replying to <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;">@JanetMbithe</span></h2>
+  
+                                  <div id="eliipsis" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; place-content: center; width: fit-content; background-color: transparent;">
+                                     <ion-icon name="ellipsis-vertical-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>;"></ion-icon>
+                                  </div>
+                               
+                                </div>
+                          
+                               </div>
+
+                              <div class="sub-reply-info-wrapper" style="padding: 5px 0 5px 40px;">
+
+                                    <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, odio t! Conm reiciendis!</p>
+                                    
+                                    <article class="post-article" style="width: 100%; height: auto; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; background: transparent; scroll-snap-type: inline mandatory;">
+             
+                                          <img class="post-images" src="https://pub-4d616d04d586465385a8e29f389675d7.r2.dev/feed-images/1781187947809-Family.jpeg" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: inherit; scroll-snap-align: start; margin-right: 5px;" />
+             
+                                    </article>
+
+                                    <div style="display:flex; align-items:center; justify-content: flex-start; gap:35px; padding: 5px 0; margin-top: 8px;">
+                       
+                                       <button class="like-reply-cont" data-liked="false" style="outline: none; border: none; display: flex; align-items: center; justify-content: center;">
+                                          <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; pointer-events: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                          <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; pointer-event: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                          <span class="span-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.likes %></span>
+                                          <h3 class="postId-span" style="display: none;"><%= reply.replyId %></h3>
+                                          <h3 class="mainPost-span" style="display: none;"><%= post._id %></h3>
+
+                                       </button>   
+
+                                       <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                                          <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                          <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> 55</span>  
+                                       </div>   
+
+                    
+                           
+                       
+                                    </div>
+
+  
+                              </div>
+   
+                        </section>
+   
+                   </div>
+
+                   <button class="show-replies-btn" style="width: 100%; color: rgba(237,232,224,.85); background: transparent; height: 30px; display: flex; align-items: center; justify-content: flex-start;">
+                        <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- 2 replies --</h3>
+                   </button>
+                   <button class="hide-replies-btn" style="width: 100%; color: rgba(237,232,224,.85); background: transparent; height: 30px; display: none; align-items: center; justify-content: flex-start;">
+                        <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- Hide replies --</h3>
+                   </button>
                     
                 </div>
+
   
           </div>
 
@@ -368,7 +545,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     
     <!-- TODO ///////  VIEW POST REPLY /////// -->
 
-    <div class="view" id="view-to-post" style="display: none; background:rgba(5,5,8,.92)">
+    <div class="view" id="view-to-post" style="display: none; background:rgba(5,5,8,.95)">
 
       <div style="padding: 13px 16px;border-bottom:1px solid rgba(255,255,255,.05); display: flex; align-items:center; gap:10px; flex-shrink:0">
 
@@ -410,7 +587,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
       
               <div class="post-box" style="height: 88%; display: flex; flex-flow: column nowrap; overflow-x: hidden; overflow-y: scroll;">
  
-                  <textarea id="post-body" placeholder="Add Caption..." maxlength="500" style="padding: 16px; border-radius: 18px 18px 0 0; font-size: 15px; line-height: 1.72; color:rgba(237,232,224,.82); background:rgba(255,255,255,.02); border: 2px solid rgba(255,255,255,.07); flex-grow: 1;"></textarea>
+                  <textarea id="post-body" placeholder="Add Caption..." maxlength="500" style="padding: 16px; border-radius: 18px 18px 0 0; font-size: 15px; line-height: 1.72; color:rgba(237,232,224,.82); background:rgba(255,255,255,.05); border: 2px solid rgba(255,255,255,.07); flex-grow: 1;"></textarea>
                 
                    <!--! ///// IMAGE TO BE RENDERED IN JS AFTER MULTER UPLOAD ////  -->
                   <article id="image-article" style="width: clamp(350px, 100%, 600px); height: 60%; display: none; overflow-x: scroll; overflow-y: hidden; border-radius: 0 0 18px 18px; scroll-snap-type: inline mandatory;">
@@ -420,9 +597,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
               </div>   
 
-              <div style="text-align:right;font-size:10px;color:rgba(237,232,224,.2)">🔒 Stays within The Xikika.ke</div>
+              <div style="text-align:right;font-size:10px;color:rgba(237,232,224,.2)">🔒 Stays within Xikika.ke</div>
       </div>
   </div>
+
+ 
     
    <section id="profile-wrapper" style="display: none; position: absolute; top: 0; height: 100%; width: 100%; z-index: 4; gap: 12px; overflow-y: scroll; overflow-x: hidden;">
 
@@ -744,7 +923,8 @@ const correctPic = userDP !== 'none' ? `${R2BASE}/${userDP}` : '/placeholder.jpg
                               `
  
                               
-const viewToPostCont = document.getElementById('view-to-post')                              
+const viewToPostCont = document.getElementById('view-to-post')
+const subAddReplyBtns = document.querySelectorAll('.sub-reply-btn')                              
 const submitActionsCont = document.querySelector('.upload-actions')
 const submitVideoActionsCont = document.querySelector('.upload-video-actions')
 const labelImagesInput = document.querySelector('.label-images')
@@ -764,6 +944,21 @@ const imageArticle = document.getElementById('image-article')
 const imagePostInput = document.getElementById('post-image-input')
 const postSubmitPostBtn = document.getElementById('post-submit-btn')
 const inputPostElem = document.getElementById('#post-input-elem')
+
+
+subAddReplyBtns.forEach((btn) => {
+
+    btn.addEventListener('click', () => {
+ 
+        viewToPostCont.style.display = 'flex'
+       
+        
+    })
+})
+
+
+
+
 
 postPlaceholder.addEventListener('click', () => {
 
@@ -1753,6 +1948,61 @@ function back() {
 
 
 }
+
+
+function backSub() {
+
+}
+
+
+const showRepliesBtns = document.querySelectorAll('.show-replies-btn')
+const hideRepliesBtns = document.querySelectorAll('.hide-replies-btn')
+
+showRepliesBtns.forEach((btn) => {
+
+    btn.addEventListener('click', (e) => {
+
+        const mainReplyCard = e.target.closest('.reply-card-with-file')
+        const subRepliesCont = mainReplyCard.querySelector('.sub-replies-cont')
+        const subRepliesCards = subRepliesCont.querySelectorAll('.sub-replies-map')
+        const hideRepliesBtn = mainReplyCard.querySelector('.hide-replies-btn')
+        
+        subRepliesCards.forEach((card) => {
+           card.classList.remove('no-lines')
+        })
+        e.target.style.display = 'none'
+        hideRepliesBtn.style.display = 'flex'
+        mainReplyCard.classList.remove('no-lines')
+        subRepliesCont.style.display = 'block'
+
+    })
+})
+
+
+hideRepliesBtns.forEach((btn) => {
+    
+      btn.addEventListener('click', (e) => {
+
+        const mainReplyCard = e.target.closest('.reply-card-with-file')
+        const subRepliesCont = mainReplyCard.querySelector('.sub-replies-cont')
+        const subRepliesCards = subRepliesCont.querySelectorAll('.sub-replies-map')
+        const showRepliesBtn = mainReplyCard.querySelector('.show-replies-btn')
+        
+        
+        subRepliesCards.forEach((card) => {
+           card.classList.add('no-lines')
+        })
+        e.target.style.display = 'none'
+        showRepliesBtn.style.display = 'flex'
+        mainReplyCard.classList.add('no-lines')
+        subRepliesCont.style.display = 'none'
+
+  })
+})
+
+
+
+
 
 
 </script>
