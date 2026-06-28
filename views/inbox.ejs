@@ -471,7 +471,14 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
            // 2. Initialize the observer engine to listen for DOM child changes
            const observer = new MutationObserver(() => {
              scrollToBottom();
-        
+           
+             // ADD THE UNREAD MESSAGE ICON TO MAKE USER SCROLL TO BOTTOM
+             document.querySelector('#alert-scroll').style.display = 'flex'
+             document.querySelector('#alert-scroll').style.opacity = 1
+             setTimeout(() => {
+                document.querySelector('#alert-scroll').style.opacity = 0
+             }, 5000)
+             
            // Optional: Disconnect after first successful load if you only want it on page-load
            observer.disconnect() 
            })
@@ -656,7 +663,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                    document.querySelector('#alert-scroll').style.opacity = 1
                    setTimeout(() => {
                      document.querySelector('#alert-scroll').style.opacity = 0
-                   }, 3000)
+                   }, 5000)
                 
                    socket.emit('message_read', { msgId: incomingMsg.id, roomId: incomingMsg.receiverId, userId: currentUserId })
                   
