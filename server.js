@@ -40,7 +40,7 @@ const PORT = 4000
 
 const dbURI = process.env.MONGODB_URI
 
-const { ObjectId } = mongoose.Types
+
 
 // MIDDLEWARE
 
@@ -366,27 +366,15 @@ io.on('connection', (socket) => {
         socket.join(data.roomId)
         console.log(`👤 User ${data.userId} joined room sandbox channel: ${data.roomId}`)
         
-
-        const FormatedObjectUserId = new ObjectId(data.userId)
-
         const readerId = data.roomId.replace('dm_', '').split('_').find(uid => uid !== data.userId) 
 
-        // Check if there is unseen meesaage in the arrayBucket first
-        // const unseenMsgPresent = await Chat.findOne({ roomId: data.roomId, count: { $lt: 500 }, messages: { $elemMatch: { senderId: { $ne: data.userId }, status: { $ne: 'seen' }}} })
-
-        //  console.log(unseenMsgPresent)
-        
-        //  if (!unseenMsgPresent) {
-        //      console.log('SKIPPED MULTIPLE uPDATED')
-        //      return;
-        //  }
-
+      
         // 2. Update All unseen/Delivered bck msgs to status seen since user has opened chat window
         try {
 
-              const UpdateAllMsgToSeen = await Chat.updateMany({ roomId: data.roomId, count: { $lt: 500 }, "messages.senderId": { $ne: FormatedObjectUserId } }, { $set: { "messages.$[elem].status": 'seen' } }, { arrayFilters: [{ "elem.senderId": { $ne: FormatedObjectUserId }, "elem.status": { $ne: 'seen' } }] })
+              const UpdateAllMsgToSeen = await Chat.updateMany({ roomId: data.roomId, count: { $lt: 500 } }, { $set: { "messages.$[elem].status": 'seen' } }, { arrayFilters: [{ "elem.senderId": { $ne: data.userId }, "elem.status": { $ne: 'seen' } }] })
               
-              console.log(UpdateAllMsgToSeen.modifiedCount)
+              //console.log(UpdateAllMsgToSeen.modifiedCount)
                      
               const emitPayload = { roomId: data.roomId, readerId: readerId }
 
@@ -563,60 +551,6 @@ io.on('connection', (socket) => {
 
 })
 
-
-// // WEB PUSH NOTIFICATION SET-UP 
-// const publicVapidKey = process.env.WEB_PUSH_PUBLIC_KEY
-// const privateVapidKey = process.env.WEB_PUSH_PRIVATE_KEY
-
-// webpush.setVapidDetails('mailto:alvintonae@gmail.com', publicVapidKey, privateVapidKey)
-
-// const subscriptionDatabase = {}
-
-// // Endpoint where the client sends its push subscription object
-// app.post('/api/subscribe', (req, res) => {
-
-//   const { userId, subscription } = req.body
-  
-//   if (!userId || !subscription) {
-//     return res.status(400).json({ error: 'Missing required parameters' });
-//   }
-
-//   subscriptionDatabase[userId] = subscription
-//   res.status(201).json({ message: 'Subscription saved successfully' });
-
-// });
-
-
-// // Endpoint to trigger a DM notification (Replaces your background socket logic)
-// app.post('/api/send-dm', async (req, res) => {
-
-//     const { recipientId, senderName, message, url } = req.body
-
-//     const subscription = subscriptionDatabase[recipientId];
-
-//     if (!subscription) {
-
-//       return res.status(404).json({ error: 'User offline or not subscribed' });
-//      }
-
-//     const payload = JSON.stringify({
-//       title: `New message from ${senderName}`,
-//       body: message,
-//       url: url
-//     })
-
-//     try {
-//        // Send the notification directly to the browser push service provider
-//        await webpush.sendNotification(subscription, payload)
-
-//        res.status(200).json({ success: true });
-
-//     } catch (error) {
-
-//        console.error('Push error:', error);
-//        res.status(500).json({ error: 'Failed to deliver push notification' });
-//     }
-// });
 
 
 
