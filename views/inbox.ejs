@@ -92,7 +92,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 <div id="online-status" onclick="displayNav()" style="display: flex; align-items: center; gap:4px">
                    <div style="display: none; width: 6px; height: 6px; border-radius: 50%; background: #1ed760; box-shadow:0 0 6px #1ed760; animation: throb 1.8s ease-in-out infinite;"></div>
                    <span style="display: none; font-size: 11px; color: rgba(237,232,224,.45);">Online</span>
-                   <span id="last-seen" style="font-size: 11px; color: rgba(237,232,224,.45);">Last seen 2h ago</span>
+
+                   <span id="last-seen" style="font-size: 11px; color: rgba(237,232,224,.45);">Offline</span>
+
                 </div>
                 
             </div>
@@ -284,6 +286,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             sendMsgBtn.style.display = 'none'
             sendMsgBtn.disabled = true
             textArea.value = textArea.value.trimStart()
+            socket.emit('stop-typing', roomId)
         }
     })
 
@@ -576,13 +579,17 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
      })
 
     socket.on('typing', (roomId) => {
-       document.querySelector('#last-seen').textContent = 'Typing..'
-       document.querySelector('#last-seen').style.color = '<%= userReq.userColor %>'
+       document.querySelector('#online-status').innerHTML = `<div style="display: none; width: 6px; height: 6px; border-radius: 50%; background: #1ed760; box-shadow:0 0 6px #1ed760; animation: throb 1.8s ease-in-out infinite;"></div>
+                                                             <span style="display: none; font-size: 11px; color: rgba(237,232,224,.45);">Online</span>
+                                                             <span id="last-seen" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 11px; color: <%= userReq.userColor %>;">Typing...</span>
+                                                              `
+
     })
 
     socket.on('finished-typing', (roomId) => {
-         document.querySelector('#last-seen').textContent = 'Online'
-          document.querySelector('#last-seen').style.color = 'grey'
+         document.querySelector('#online-status').innerHTML = `<div style="display: block; width: 6px; height: 6px; border-radius: 50%; background: #1ed760; box-shadow:0 0 6px #1ed760; animation: throb 1.8s ease-in-out infinite;"></div>
+                                                               <span style="display: block; font-size: 11px; color: rgba(237,232,224,.45);">Online</span>
+                                                              `
     })
     
     const createNewMessage = async () => {
