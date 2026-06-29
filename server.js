@@ -794,7 +794,9 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
     const posterId = post.userId
     const posterData = await Omaruser.findOne({ _id: posterId })
     const user = await Omaruser.findOne({ _id: userid })
-    const replies = await Reply.find({ postId: postId })
+    const mainReplies = await Reply.find({ postId: postId, parentReplyId: 'none' }).lean()
+    const subReplies = await Reply.find({ postId: postId, parentReplyId: { $ne: 'none' } }).lean()
+    //console.log(subReplies)
     const userLiked = await LikedPost.findOne({ parentId: userid, posts: postId }) // to be reused in like logic
     let likedStatus = 'none'
     if (!userLiked) {
@@ -803,17 +805,52 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
         likedStatus = 'present'
         }
 
-    const requiredUserArray = replies.map((reply) => reply.userId)
+    const requiredUserArray = mainReplies.map((reply) => reply.userId)
 
-  const allUsers = await Omaruser.find({ _id: { $in: requiredUserArray  } }).select('_id totalFollowers totalFollowing totalPosts userName userDP userHandle')
+    const requiredsubRepliesUserArray = subReplies.map((subreply) => subreply.userId)
+    
+    const allSubUsers = await Omaruser.find({ _id: { $in: requiredsubRepliesUserArray } }).select('_id totalFollowers totalFollowing totalPosts userName userDP userHandle')
+
+     const allUsers = await Omaruser.find({ _id: { $in: requiredUserArray  } }).select('_id totalFollowers totalFollowing totalPosts userName userDP userHandle')
     
      const replyDataArray = []
+
+     const subrepliesArray = []
+
+     subReplies.forEach((subreply) => {
+    
+           const subReplyPosterInfoArray = allSubUsers.filter((user) => user.id == subreply.userId) 
+           const subReplyPosterInfo = subReplyPosterInfoArray[0]
+           const subrepliesObject = { 
+                      parentId: subreply.parentReplyId,
+                      subreplyId: subreply._id,
+                      createdAt: subreply.createdAt,
+                      videoUrl: subreply.videoUrl,
+                      images: subreply.images,
+                      likes: subreply.likes,
+                      interactions: subreply.interactions,
+                      reply: subreply.replystring,
+                      subReplyAuthor: {
+                         userName: subReplyPosterInfo.userName,
+                         userHandle: subReplyPosterInfo.userHandle,
+                         userDP: subReplyPosterInfo.userDP,
+                         totalFollowers: subReplyPosterInfo.totalFollowers,
+                         totalFollowing: subReplyPosterInfo.totalFollowing,
+                         totalPosts: subReplyPosterInfo.totalPosts,
+                         userId: subReplyPosterInfo._id
+                      }
+            }
+
+            subrepliesArray.push(subrepliesObject)
+     })
      
 
-     replies.forEach((reply) => {
+     mainReplies.forEach((reply) => {
 
           const userId = reply.userId
-
+          
+          const allSubReplies = subrepliesArray.filter((subreply) => subreply.parentId == String(reply._id))
+          
           const posterInfoArray = allUsers.filter((user) => user.id == userId )
           const posterInfo = posterInfoArray[0]
          
@@ -833,14 +870,17 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
                  userName: posterInfo.userName,
                  userHandle: posterInfo.userHandle,
                  userId: posterInfo._id
-             }
+             },
+             subreplies: allSubReplies
 
          }
 
        replyDataArray.push(newReplyObject)  
        
     })
-
+    
+    
+     
     const R2BaseUrl = process.env.R2_PUBLIC_BASE_URL 
 
     res.render('post', { post, user, poster: posterData, replies: replyDataArray, status: likedStatus, R2BASE: R2BaseUrl, query: optionalQuery })
@@ -1194,11 +1234,13 @@ app.patch('/post-update-user', async (req, res) => {
 
 app.post('/post/reply', async (req, res) => {
 
-    const { replystring, videoUrl, imagesrc, userid, postid } = req.body
+    const { replystring, videoUrl, imagesrc, userid, postid, replytype, parentreplyid } = req.body
 
     const reply = new Reply({
            userId: userid,
            postId: postid,
+           replyType: replytype,
+           parentReplyId: parentreplyid,
            replystring: replystring,
            videoUrl: videoUrl,
            images: imagesrc

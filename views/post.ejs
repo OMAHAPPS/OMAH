@@ -33,11 +33,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 /* -- CUSTOM STYLINGS -- */
 
-.reply-card-with-file::before{ content: ""; position: absolute; left: 35.5px; top: 36px; bottom: 50px; width: 1.5px; background-color: #e5e5e5; }
+.reply-card-with-file::before{ content: ""; position: absolute; left: 35.5px; top: 36px; bottom: 50px; width: 1.5px; background-color: rgba(237,232,224,.55); }
 
-.reply-card-with-file::after{ content: ""; position: absolute; left: 36px; bottom: 32px; width: 20px; height: 30px; border-left: 1.5px solid #e5e5e5; border-bottom: 2px solid #e5e5e5; border-bottom-left-radius: 18px;}
+.reply-card-with-file::after{ content: ""; position: absolute; left: 36px; bottom: 32px; width: 20px; height: 30px; border-left: 1.5px solid rgba(237,232,224,.55); border-bottom: 2px solid rgba(237,232,224,.55); border-bottom-left-radius: 18px;}
 
-.sub-replies-map::before{ content: ""; position: absolute; left: -31.5px; top: 0; width: 20px; height: 20px; border-left: .5px solid #e5e5e5; border-bottom: 2px solid #e5e5e5; border-bottom-left-radius: 18px;}
+.sub-replies-map::before{ content: ""; position: absolute; left: -31.5px; top: 0; width: 20px; height: 20px; border-left: .5px solid rgba(237,232,224,.55); border-bottom: 2px solid rgba(237,232,224,.55); border-bottom-left-radius: 18px;}
 
 .no-lines::before, .no-lines::after{ display: none; }
 
@@ -91,7 +91,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             <div class="poster-info" style="text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap:9px; margin-bottom:13px;">
 
               <!-- ! element Placeholders for profile image and user info -->
-               <div id="poster-username" style="display: none;"><%= poster.userName %></div>
+               <div id="poster-username-main" style="display: none;"><%= poster.userName %></div>
                <div id="poster-followers" style="display: none;"><%= poster.totalFollowers %></div>
                <div id="poster-following" style="display: none;"><%= poster.totalFollowing %></div>
                <div id="poster-posts-length" style="display: none;"><%= poster.totalPosts %></div>
@@ -244,6 +244,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                <div id="poster-userId" style="display: none;"><%= reply.author.userId %></div>
                <div id="post-id" style="display: none;"><%= post._id %></div>
+               <div id="reply-id-div" style="display: none;"><%= reply.replyId %></div>
   
                 <div class="poster-info" style="text-decoration: none; flex:1; position: relative;">
 
@@ -273,7 +274,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                           </div>
                                
                 </div>
-                          
+                          <!--! END OF POSTER HEADER  -->
                 </div>
 
                 <div class="reply-info-wrapper" style="padding: 5px 0 10px 50px;">
@@ -364,165 +365,191 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
   
                    <div class="sub-replies-cont" style="display: none; width: 100%; padding: 0 0 10px 0;">
 
+                          <% const subrepliesLength = reply.subreplies.length %>
+
+                          <% reply.subreplies.map((subreply) => { %>
+
+                            <section class="sub-replies-map no-lines" style="position: relative; width: 100%; padding: 5px 0 0 0;">
+    
+                               
+                                   <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
+      
+                                         <!-- ! element Placeholders for profile image and user info -->
+                                      <div id="poster-username" style="display: none;"><%= subreply.subReplyAuthor.userName %></div>
+                                      <div id="poster-followers" style="display: none;"><%= subreply.subReplyAuthor.totalFollowers %></div>
+                                      <div id="poster-following" style="display: none;"><%= subreply.subReplyAuthor.totalFollowing %></div>
+                                      <div id="poster-posts-length" style="display: none;"><%= subreply.subReplyAuthor.totalPosts %></div>
+                                      <div id="poster-userHandle" style="display: none;">@<%= subreply.subReplyAuthor.userHandle !== 'none' ? subreply.subReplyAuthor.userHandle : subreply.subReplyAuthor.userName %></div>
+      
+                                      <% if (subreply.subReplyAuthor.userDP !== 'none') { %>
+                                      <img src="<%= R2BASE %>/<%= subreply.subReplyAuthor.userDP %>" alt="" width="30" height="30" style="border-radius: 50%; object-fit: cover;" />
+                                      <% } else { %>
+                                      <img src="placeholder.jpg" alt="" width="30" height="30" style="border-radius: 50%; object-fit: cover;" />
+                                      <% } %>
+                                      
+                     
+    
+                                      <div id="poster-userId" style="display: none;"><%= subreply.subReplyAuthor.userId %></div>
+                                      <div id="post-id" style="display: none;"><%= post._id %></div>
+      
+                                      <div class="poster-info" style="text-decoration: none; flex:1; position: relative;">
+    
+                                     
+                                        <% const subreplyTimestamp = subreply.createdAt %>
+                                        <% const srdiff = new Date() - new Date(subreplyTimestamp) %>
+                                        <% const srdaysPast = Math.floor( (srdiff / 86400000) ) %>
+                                        <% const srhoursPast = Math.floor( (srdiff / 3600000) ) %>
+                                        <% const srminutesPast = Math.floor( (srdiff / 60000) ) %>
+
+                          <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
+                                   <%= subreply.subReplyAuthor.userName %> 
+                                   <% if (srdaysPast > 0) { %>
+                                   <span style="color: rgba(237, 232, 224, .42);"> . <%= srdaysPast %>d</span>
+                                   <% } else if (srhoursPast > 0) { %>
+                                   <span style="color: rgba(237, 232, 224, .42);"> . <%= srhoursPast %>h</span>
+                                   <% } else if (srminutesPast > 0) { %>
+                                   <span style="color: rgba(237, 232, 224, .42);"> . <%= srminutesPast %>m</span>
+                                   <% } else if (srminutesPast == 0) { %>
+                                   <span style="color: rgba(237, 232, 224, .42);"> . Just Now</span>
+                                   <% } %>
+                          </div>
+      
+                          <h2 style="font-size: 12px; color: rgba(237,232,224,.32); width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >Replying to <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;">@<%= reply.author.userName %></span></h2>
+      
+                          <div id="eliipsis" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; place-content: center; width: fit-content; background-color: transparent;">
+                              <ion-icon name="ellipsis-vertical-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>;"></ion-icon>
+                          </div>
+                                   
+                      </div>
+                              
+                    </div>
+    
+                    <div class="sub-reply-info-wrapper" style="padding: 5px 0 5px 40px;">
+    
+                    <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= subreply.reply %></p>
+
+
+                                        
+                    <% if (subreply.images.length !== 0) { %>
+
+
+                        <% if (subreply.images.length === 1) { %>
+                      
+                          <article class="post-article" style="width: 100%; height: auto; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; background: transparent; scroll-snap-type: inline mandatory;">
+     
+                                      
+                                 <% subreply.images.map((image) => { %>
+             
+                                   <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: inherit; scroll-snap-align: start; margin-right: 5px;" />
+             
+                                 <% }) %>
+              
+                          </article>
+
+                        <% } else { %>
+
+                          <article class="post-article" style="width: 100%; height: 300px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; background: transparent; scroll-snap-type: inline mandatory;">
+     
+                                      
+                                 <% subreply.images.map((image) => { %>
+             
+                                   <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; border-radius: inherit; scroll-snap-align: start; margin-right: 5px;" />
+             
+                                 <% }) %>
+              
+                          </article>
+
+                        <% } %>
+  
+  
+                     <% } else if (subreply.videoUrl !== 'none') { %> 
+  
+                       <video id="player" controls preload="none" style="display: block; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
+                             src="<%=R2BASE %>/<%= subreply.videoUrl %>"  data-src="">
+                          Your browser does not support the video tag. 
+                      </video>
+  
+                      <% } else { %>
+                        <article class="post-article" style="width: auto; height: 200px; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; display: none; background: transparent;">
+    
+                                
+                              
+                                <% post.images.map((image) => { %>
+            
+                                  <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
+            
+                                <% }) %>
+             
+                        </article>
+                        <video id="player" controls preload="none" style="display: none; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
+                                 src="" type="video/mp4" data-src="">
+                                   Your browser does not support the video tag. 
+                        </video>
+  
+                      <% } %>
+    
+                    <div style="display:flex; align-items:center; justify-content: flex-start; gap:35px; padding: 5px 0; margin-top: 8px;">
+                           
+                                           <button class="like-reply-cont" data-liked="false" style="outline: none; border: none; display: flex; align-items: center; justify-content: center;">
+                                              <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; pointer-events: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                              <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; pointer-event: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                              <span class="span-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= subreply.likes %></span>
+                                              <h3 class="postId-span" style="display: none;"><%= subreply.subreplyId %></h3>
+                                              <h3 class="mainPost-span" style="display: none;"><%= post._id %></h3>
+    
+                                           </button>   
+    
+                                           <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                                              <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                              <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= subreply.interactions %></span>  
+                                           </div>   
+    
                         
-
-                        <section class="sub-replies-map no-lines" style="position: relative; width: 100%; padding: 5px 0 0 0;">
-
-                           
-                               <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
-  
-                                     <!-- ! element Placeholders for profile image and user info -->
-                                  <div id="poster-username" style="display: none;">Alvin</div>
-                                  <div id="poster-followers" style="display: none;">2K</div>
-                                  <div id="poster-following" style="display: none;">500</div>
-                                  <div id="poster-posts-length" style="display: none;">50</div>
-                                  <div id="poster-userHandle" style="display: none;">@VinnShelbyOBE</div>
-  
-                
-                                  <img src="/placeholder.jpg" alt="" width="30" height="30" style="border-radius: 50%; object-fit: cover;" />
-                   
-                 
-
-                                  <div id="poster-userId" style="display: none;"></div>
-                                  <div id="post-id" style="display: none;"></div>
-  
-                                  <div class="poster-info" style="text-decoration: none; flex:1; position: relative;">
-
-                                 
-                                  <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
-                                      Alvin 
-                                      <span style="color: rgba(237, 232, 224, .42);"> . 5d</span>
                                
-                                  </div>
-  
-                                  <h2 style="font-size: 12px; color: rgba(237,232,224,.32); width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >Replying to <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;">@JanetMbithe</span></h2>
-  
-                                  <div id="eliipsis" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; place-content: center; width: fit-content; background-color: transparent;">
-                                     <ion-icon name="ellipsis-vertical-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>;"></ion-icon>
-                                  </div>
-                               
-                                </div>
-                          
-                               </div>
-
-                              <div class="sub-reply-info-wrapper" style="padding: 5px 0 5px 40px;">
-
-                                    <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, odio t! Conm reiciendis!</p>
-                                    
-                                    <article class="post-article" style="width: 100%; height: auto; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; background: transparent; scroll-snap-type: inline mandatory;">
-             
-                                          <img class="post-images" src="https://pub-4d616d04d586465385a8e29f389675d7.r2.dev/feed-images/1781187947809-Family.jpeg" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: inherit; scroll-snap-align: start; margin-right: 5px;" />
-             
-                                    </article>
-
-                                    <div style="display:flex; align-items:center; justify-content: flex-start; gap:35px; padding: 5px 0; margin-top: 8px;">
-                       
-                                       <button class="like-reply-cont" data-liked="false" style="outline: none; border: none; display: flex; align-items: center; justify-content: center;">
-                                          <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; pointer-events: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                                          <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; pointer-event: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                                          <span class="span-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.likes %></span>
-                                          <h3 class="postId-span" style="display: none;"><%= reply.replyId %></h3>
-                                          <h3 class="mainPost-span" style="display: none;"><%= post._id %></h3>
-
-                                       </button>   
-
-                                       <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                                          <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                                          <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> 55</span>  
-                                       </div>   
-
-                    
                            
-                       
-                                    </div>
-
-  
-                              </div>
-   
-                        </section>
-                        <section class="sub-replies-map no-lines" style="position: relative; width: 100%; padding: 5px 0 0 0;">
-
-                           
-                               <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:13px;">
-  
-                                     <!-- ! element Placeholders for profile image and user info -->
-                                  <div id="poster-username" style="display: none;">Alvin</div>
-                                  <div id="poster-followers" style="display: none;">2K</div>
-                                  <div id="poster-following" style="display: none;">500</div>
-                                  <div id="poster-posts-length" style="display: none;">50</div>
-                                  <div id="poster-userHandle" style="display: none;">@VinnShelbyOBE</div>
-  
-                
-                                  <img src="/placeholder.jpg" alt="" width="30" height="30" style="border-radius: 50%; object-fit: cover;" />
-                   
-                 
-
-                                  <div id="poster-userId" style="display: none;"></div>
-                                  <div id="post-id" style="display: none;"></div>
-  
-                                  <div class="poster-info" style="text-decoration: none; flex:1; position: relative;">
-
-                                 
-                                  <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
-                                      Alvin 
-                                      <span style="color: rgba(237, 232, 224, .42);"> . 5d</span>
-                               
-                                  </div>
-  
-                                  <h2 style="font-size: 12px; color: rgba(237,232,224,.32); width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >Replying to <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;">@JanetMbithe</span></h2>
-  
-                                  <div id="eliipsis" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; place-content: center; width: fit-content; background-color: transparent;">
-                                     <ion-icon name="ellipsis-vertical-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>;"></ion-icon>
-                                  </div>
-                               
-                                </div>
-                          
-                               </div>
-
-                              <div class="sub-reply-info-wrapper" style="padding: 5px 0 5px 40px;">
-
-                                    <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, odio t! Conm reiciendis!</p>
-                                    
-                                    <article class="post-article" style="width: 100%; height: auto; border-radius: 12px; overflow-x: scroll; overflow-y: hidden; margin-top: 13px; display: flex; background: transparent; scroll-snap-type: inline mandatory;">
-             
-                                          <img class="post-images" src="https://pub-4d616d04d586465385a8e29f389675d7.r2.dev/feed-images/1781187947809-Family.jpeg" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: inherit; scroll-snap-align: start; margin-right: 5px;" />
-             
-                                    </article>
-
-                                    <div style="display:flex; align-items:center; justify-content: flex-start; gap:35px; padding: 5px 0; margin-top: 8px;">
-                       
-                                       <button class="like-reply-cont" data-liked="false" style="outline: none; border: none; display: flex; align-items: center; justify-content: center;">
-                                          <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; pointer-events: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                                          <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; pointer-event: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                                          <span class="span-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= reply.likes %></span>
-                                          <h3 class="postId-span" style="display: none;"><%= reply.replyId %></h3>
-                                          <h3 class="mainPost-span" style="display: none;"><%= post._id %></h3>
-
-                                       </button>   
-
-                                       <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                                          <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                                          <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> 55</span>  
-                                       </div>   
-
-                    
-                           
-                       
-                                    </div>
-
-  
-                              </div>
-   
-                        </section>
-   
+                    </div>
+    
+      
                    </div>
+       
+                 </section>
 
-                   <button class="show-replies-btn" style="width: 100%; color: rgba(237,232,224,.85); background: transparent; height: 30px; display: flex; align-items: center; justify-content: flex-start;">
-                        <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- 2 replies --</h3>
-                   </button>
-                   <button class="hide-replies-btn" style="width: 100%; color: rgba(237,232,224,.85); background: transparent; height: 30px; display: none; align-items: center; justify-content: flex-start;">
-                        <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- Hide replies --</h3>
-                   </button>
+                 <% }) %>
+
+
+                       
+
+                        
+   
+                  </div>
+
+                  <% if (subrepliesLength === 0) { %>
+
+                    <button class="show-replies-btn" style="width: 100%; color: rgba(237,232,224,.55); background: transparent; height: 30px; display: none; align-items: center; justify-content: flex-start;">
+                         <% if (subrepliesLength === 1) { %>
+                           <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- <%= subrepliesLength %> reply --</h3>
+                           <% } else { %>
+                             <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- <%= subrepliesLength %> replies --</h3>
+                         <% } %>
+                    </button>
+                    <button class="hide-replies-btn" style="width: 100%; color: rgba(237,232,224,.55); background: transparent; height: 30px; display: none; align-items: center; justify-content: flex-start;">
+                         <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- Hide replies --</h3>
+                    </button>
+
+                  <% } else { %>
+
+                    <button class="show-replies-btn" style="width: 100%; color: rgba(237,232,224,.55); background: transparent; height: 30px; display: flex; align-items: center; justify-content: flex-start;">
+                         <% if (subrepliesLength === 1) { %>
+                           <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- <%= subrepliesLength %> reply --</h3>
+                           <% } else { %>
+                             <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- <%= subrepliesLength %> replies --</h3>
+                         <% } %>
+                    </button>
+                    <button class="hide-replies-btn" style="width: 100%; color: rgba(237,232,224,.55); background: transparent; height: 30px; display: none; align-items: center; justify-content: flex-start;">
+                         <h3 class="fd" style="pointer-events: none; font-size: 15px;">-- Hide replies --</h3>
+                    </button>
+                  <% } %>
+
                     
                 </div>
 
@@ -549,7 +576,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
       <div style="padding: 13px 16px;border-bottom:1px solid rgba(255,255,255,.05); display: flex; align-items:center; gap:10px; flex-shrink:0">
 
-          <button onclick="back()" class="back" style="padding: 7px 14px; border-radius: 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.6)">
+          <button id="cancel-post" onclick="back()" class="back" style="padding: 7px 14px; border-radius: 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(237,232,224,.6)">
             ✕ Cancel
           </button>
           <div class="fd" style="flex:1;font-size:16px;font-weight:700;color:rgba(237,232,224,.8)">
@@ -559,6 +586,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           <form id="post-form" action="/post" method="post">
             <input id="userid" name="userid" value="<%= user._id %>" type="text" style="display: none;">
             <input id="postid" name="postid" value="<%= post._id %>" type="text" style="display: none;">
+            <input id="replytype" name="replytype" type="text" style="display: none;" value="parent" />
+            <input id="parentreplyid" name="parentreplyid" type="text" style="display: none;" value="none" />
             <input id="post-input-elem" name="poststring" type="text" style="display: none;">
             <input id="post-image-input" name="imagesrc" type="text" style="display: none;" value="none" />
              
@@ -572,7 +601,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     <div style="font-size:16px;font-weight:600;color:rgba(237,232,224,.8)">
                        <%= user.userName %>
                     </div>
-                    <div <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:13px;color: <%= user.userColor %>;">
+                    <div id="respond-to" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:13px;color: <%= user.userColor %>;">
                       Replying to @<%= post.userName %>
                     </div>
                  </div>
@@ -944,15 +973,33 @@ const imageArticle = document.getElementById('image-article')
 const imagePostInput = document.getElementById('post-image-input')
 const postSubmitPostBtn = document.getElementById('post-submit-btn')
 const inputPostElem = document.getElementById('#post-input-elem')
+const cancelPostBtn = document.getElementById('cancel-post')
 
+const replyTypeInput = document.getElementById('replytype')
+const parentReplyInput = document.getElementById('parentreplyid')
+const respondCont = document.getElementById('respond-to')
+const mainPostUsernameDiv = document.getElementById('poster-username-main')
 
 subAddReplyBtns.forEach((btn) => {
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
  
-        viewToPostCont.style.display = 'flex'
-       
+        const parentReplyCard = e.target.closest('.reply-card-with-file')
+        const replyInfoBtn = parentReplyCard.querySelector('.info-button')
+        const replyIdDiv = replyInfoBtn.querySelector('#reply-id-div')
+        const replyAuthorDiv = replyInfoBtn.querySelector('#poster-username')
         
+        replyTypeInput.value = 'child'
+        parentReplyInput.value = replyIdDiv.textContent
+        console.log(replyTypeInput.value)
+        console.log(parentReplyInput.value)
+
+        respondCont.textContent = `Replying to @${replyAuthorDiv.textContent}`
+
+        postPlaceholder.style.pointerEvents = 'none'
+
+        viewToPostCont.style.display = 'block'
+         
     })
 })
 
@@ -961,6 +1008,10 @@ subAddReplyBtns.forEach((btn) => {
 
 
 postPlaceholder.addEventListener('click', () => {
+    
+    respondCont.textContent = `Replying to @${mainPostUsernameDiv.textContent}`
+    console.log(replyTypeInput.value)
+    console.log(parentReplyInput.value)
 
     viewToPostCont.style.display = 'block'  
   })
@@ -1305,6 +1356,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                           status.textContent = 'Complete'
                           status.style.color = '#1ed760'
                           text.style.color = '#1ed760'
+                          cancelPostBtn.style.display = 'none'
                          
                         }
 
@@ -1351,7 +1403,9 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                              replystring: formatTextAreaValue,
                              videoUrl: videokey,
                              userid: document.getElementById('userid').value,
-                             postid: document.getElementById('postid').value
+                             postid: document.getElementById('postid').value,
+                             replytype: replyTypeInput.value,
+                             parentreplyid: parentReplyInput.value
                     })
                   })
   
@@ -1442,7 +1496,9 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                     body: JSON.stringify({
                              replystring: formatTextAreaValue,
                              userid: document.getElementById('userid').value,
-                             postid: document.getElementById('postid').value
+                             postid: document.getElementById('postid').value,
+                             replytype: replyTypeInput.value,
+                             parentreplyid: parentReplyInput.value
                     })
                   })
         const responseStringOnly = await completePostStringOnly.json()
@@ -1549,7 +1605,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             
             let uploadedBytes = 0
 
-        function uploadSingleFile (file, uploadInfo, index, fileProgress, totalBytes, status, progress, text, wrapper) {
+        function uploadSingleFile (file, uploadInfo, index, fileProgress, totalBytes, status, progress, text, wrapper, cancelPostBtn) {
                 // CREATE UI and track successful and failed file uploads
                 return new Promise((resolve, reject) => {
 
@@ -1580,6 +1636,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                           status.textContent = 'Complete'
                           status.style.color = '#1ed760'
                           text.style.color = '#1ed760'
+                          cancelPostBtn.style.display = 'none'
                          
                         }
   
@@ -1628,7 +1685,7 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
             
 
             const uploadedKeys = await Promise.all(uploadUrls.map((uploadinfo, index) => {
-                      return  uploadSingleFile(files[index], uploadinfo, index, fileProgress, totalBytes, status, progress, text, wrapper)
+                      return  uploadSingleFile(files[index], uploadinfo, index, fileProgress, totalBytes, status, progress, text, wrapper, cancelPostBtn)
 
                   }))     
              
@@ -1645,7 +1702,9 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
                              replystring: formatTextAreaValue,
                              imagesrc: uploadedKeys,
                              userid: document.getElementById('userid').value,
-                             postid: document.getElementById('postid').value
+                             postid: document.getElementById('postid').value,
+                             replytype: replyTypeInput.value,
+                             parentreplyid: parentReplyInput.value
                     })
                   })
   
@@ -1906,6 +1965,9 @@ function back() {
     textArea.value = ''
     inputFile.value = ''
     inputVideo.value = ''
+    replyTypeInput.value = 'parent'
+    parentReplyInput.value = 'none'
+    postPlaceholder.style.pointerEvents = 'auto'
     imageArticle.innerHTML = ''
     submitActionsCont.style.display = 'none'
     submitVideoActionsCont.style.display = 'none'
