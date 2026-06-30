@@ -2831,7 +2831,23 @@ messagesBtn.addEventListener('click', async (e) => {
                                          </h2>
                                         `
 
-    // document.querySelector('.load-msg').style.display = 'flex'
+     function formatDividerDate(dateObj) {
+              const today = new Date();
+              const yesterday = new Date();
+              yesterday.setDate(today.getDate() - 1);
+
+              if (dateObj.toLocaleDateString() === today.toLocaleDateString()) {
+                    return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              } else if (dateObj.toLocaleDateString() === yesterday.toLocaleDateString()) {
+                    return 'Yesterday';
+              } else {
+                 // Returns clean format like "June 22, 2026"
+                 return dateObj.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+              }
+          }
+                                    
+
+    document.querySelector('.load-msg').style.display = 'flex'
 
     const data = await fetch(`/api/dm-history/all/${userId}`, {
                method: 'GET',
@@ -2866,7 +2882,7 @@ messagesBtn.addEventListener('click', async (e) => {
                                <div style="flex: 1; min-width: 0;">
                                    <div style="display:flex;justify-content:space-between;margin-bottom:3px">
                                        <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">${msgLink.userName}</span>
-                                       <span style="font-size:9px;color:rgba(237,232,224,.85)">${newTimeString.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>    
+                                       <span style="font-size:9px;color:rgba(237,232,224,.85)">${formatDividerDate(newTimeString)}</span>    
                                    </div>
                                    <p style="font-size: 11px; color: rgba(237,232,224,.53); max-width: 80%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${tickHtml}${msgLink.lastText}</p>
                                </div> 

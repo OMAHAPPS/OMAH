@@ -35,6 +35,7 @@ const googleRoutes = require('./routes/auth-routes')
 const app = express()
 const server = createServer(app)
 const mongoose = require('mongoose')
+const { count } = require('node:console')
 
 const PORT = 4000
 
@@ -436,7 +437,7 @@ io.on('connection', (socket) => {
                         
                      } else {    // Update the bucket with upsert AND emit to receiver_background 
 
-                         const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage }, $inc: { count: 1 } }, { upsert: true })
+                         const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage }, $inc: { count: 1 }, $setOnInsert: { userAId: senderId, userBId: recipientId } }, { upsert: true, new: true, runValidators: true })
                         
                           console.log('Existing bucket Updated')
                        
@@ -595,14 +596,48 @@ app.get('/api/dm-history/messages', async (req, res) => {
 
      try {
 
-        const recentHistoryChatBucket = await Chat.findOne({ roomId: roomId, count: { $lt: 500 } })
-        const messagesArray = recentHistoryChatBucket.messages
-        
-        res.json({ success: true, messages: messagesArray })
+        const recentHistoryChatBucket = await Chat.findOne({ roomId: roomId, count: { $lt: 500 } }).lean()
+        const latestFullBucketArray = await Chat.find({ roomId: roomId, count: 500 }).sort({ _id: -1 }).limit(1).exec()
+        const recentBucketLength = recentHistoryChatBucket.count
+        const latestFullBucketDoc = latestFullBucketArray[0]
+        const recentMessages = recentHistoryChatBucket.messages
+
+        let messagesArray = []
+
+        if (!latestFullBucketDoc) {
+
+            if (!recentHistoryChatBucket) {
+
+                messagesArray = []
+                res.json({ success: true, messages: messagesArray, })
+
+            } else {
+                
+                messagesArray = recentMessages
+                res.json({ success: true, messages: messagesArray, })
+            }
+
+        } else {
+
+            
+            const latestFullBucketMsgs = latestFullBucketDoc.messages
+            if (recentBucketLength < 299) {  // COMBINE THE TWO BUCKETS
+                             
+               messagesArray = [...latestFullBucketMsgs, ...recentMessages]
+               res.json({ success: true, messages: messagesArray, })
+            } else {
+    
+                messagesArray = recentMessages
+                res.json({ success: true, messages: messagesArray, })
+            }
+            
+        }
+    
         
      } catch (error) {
 
         console.log('Failed to retreive Messages From server')
+        console.log(error)
         res.json({ success: false, error: 'Failed to retrieve server Messages' })
 
         
