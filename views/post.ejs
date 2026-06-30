@@ -133,7 +133,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             </div>
 
  
-              <p style="font-size: 16px;line-height:1.68;color:rgba(237,232,224,.85);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
+              <p style="font-size: 18px;line-height:1.68;color:rgba(237,232,224,.85);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
 
                      <% if (post.images.length !== 0) { %>
 
@@ -279,7 +279,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                 <div class="reply-info-wrapper" style="padding: 5px 0 10px 50px;">
   
-                    <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= reply.reply %></p>
+                    <p style="font-size: 16px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= reply.reply %></p>
 
                     <% if (reply.images.length !== 0) { %>
 
@@ -426,7 +426,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     
                     <div class="sub-reply-info-wrapper" style="padding: 5px 0 5px 40px;">
     
-                    <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:12px; white-space: pre-wrap;"><%= subreply.reply %></p>
+                    <p style="font-size: 13px;line-height:1.68;color:rgba(237,232,224,.8);margin-bottom:10px; white-space: pre-wrap;"><%= subreply.reply %></p>
 
 
                                         
@@ -491,21 +491,19 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     <div style="display:flex; align-items:center; justify-content: flex-start; gap:35px; padding: 5px 0; margin-top: 8px;">
                            
                                            <button class="like-reply-cont" data-liked="false" style="outline: none; border: none; display: flex; align-items: center; justify-content: center;">
-                                              <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; pointer-events: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                                              <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; pointer-event: none; font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                                              <span class="span-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= subreply.likes %></span>
+                                              <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; pointer-events: none; font-size: 17px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                              <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; pointer-event: none; font-size: 17px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                              <span class="span-text" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; font-size: 12px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= subreply.likes %></span>
                                               <h3 class="postId-span" style="display: none;"><%= subreply.subreplyId %></h3>
                                               <h3 class="mainPost-span" style="display: none;"><%= post._id %></h3>
     
                                            </button>   
     
                                            <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                                              <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                                              <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= subreply.interactions %></span>  
+                                              <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 17px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                              <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 12px; color: <%= user.userColor %>; font-weight: 600; margin-left: 3px;"> <%= subreply.interactions %></span>  
                                            </div>   
     
-                        
-                               
                            
                     </div>
     
