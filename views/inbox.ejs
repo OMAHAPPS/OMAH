@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" >
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/toast.css">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <title>Inbox</title>
@@ -496,6 +497,35 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
      })
     
+    function switchChatRoom (recipientId) {
+     window.location.href = `/inbox/${recipientId}`
+    } 
+
+    function showCustomInAppToast(toastPayload) {
+
+        const toast = document.createElement('div')
+        toast.className = 'custom-in-app-toast'
+        toast.innerHTML = `<img src="${toastPayload.senderDP}" width="40" height="40" style="border-radius: 50%;"/>
+                            <div class="info-wrapper" style="display: flex; flex-flow: column nowrap;">
+
+                            <div class="toast-header">💬 New Message</div>
+                            <div class="toast-body"><strong>${toastPayload.senderName}:</strong> ${toastPayload.text}</div>
+
+                            </div>
+                          `
+        document.body.appendChild(toast)
+  
+        // Click actions let the user leap seamlessly into the new chat window room
+        toast.onclick = () => {
+            switchChatRoom(toastPayload.recipient)
+            toast.remove()
+        }
+
+        setTimeout(() => toast.remove(), 4000) // Evaporate after 4 seconds
+     }
+    
+
+    
     function deduplicateAndSave () {
 
         const uniqueMap = new Map()
@@ -592,6 +622,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                                                               `
     })
     
+
     const createNewMessage = async () => {
 
          if (!textArea.value.trim()) return;
@@ -678,7 +709,20 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             }
     }) 
 
-   
+    // 2. SOCKET.IO REALTIME FLOW: Runs strictly if user has app open
+    socket.on('receiveMessage_realtime', (incomingMsg) => {
+         // If user is currently viewing the chat where the message landed, append directly
+        if (roomId === incomingMsg.receiverId) {
+         return;
+        } else {
+           // 🎴 IN-APP CUSTOM POPUP UI INTERACTION
+           console.log('IM SHOWING TOAST')
+           // User is browsing an alternate room/screen inside your app right now
+          showCustomInAppToast(incomingMsg)
+        }
+     })
+
+     
     socket.on('message_delivered_receipt', (data) => {
          // Performance Guard: Only process if the update belongs to the active chat screen
          if (data.roomId === roomId) {

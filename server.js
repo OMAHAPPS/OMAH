@@ -11,6 +11,14 @@ const multer = require('multer')
 const cors = require('cors')
 const path = require('path')
 
+const webpush = require('web-push')
+
+webpush.setVapidDetails(
+  'mailto:jeremydurov@gmail.com', // Must be a valid email or URL
+  process.env.WEB_PUSH_PUBLIC_KEY,
+  process.env.WEB_PUSH_PRIVATE_KEY
+);
+
 const fs = require('fs')
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
@@ -160,7 +168,7 @@ io.on('connection', (socket) => {
               if (!userLikedPostBefore) {
 
                   const updatedPost = await Post.findByIdAndUpdate(data.postId, { $inc: { likes: 1, interactions: 2 } }, { returnDocument: 'after' } )
-                  const UpdatedUserLiked = await LikedPost.findOneAndUpdate({ parentId: userLikingId, count: { $lt: 500 } }, { $push: { posts: data.postId }, $inc: { count: 1 } }, { upsert: true })
+                  const UpdatedUserLiked = await LikedPost.findOneAndUpdate({ parentId: userLikingId, count: { $lt: 500 } }, { $addToSet: { posts: data.postId }, $inc: { count: 1 } }, { upsert: true })
 
                 ack({ success: true, newLikesCount: updatedPost.likes, UIStatus: 'like' })
             
@@ -232,7 +240,7 @@ io.on('connection', (socket) => {
 
                   const updatedReply = await Reply.findByIdAndUpdate(data.replyId, { $inc: { likes: 1, interactions: 2 } }, { returnDocument: 'after' } )
                   const updateMainPost = await Post.findByIdAndUpdate(data.mainPostId, { $inc: { interactions: 2 } }, { returnDocument: 'after' })
-                  const UpdatedUserLiked = await LikedReply.findOneAndUpdate({ parentId: userLikingId, count: { $lt: 500 } }, { $push: { replies: data.replyId }, $inc: { count: 1 } }, { upsert: true })
+                  const UpdatedUserLiked = await LikedReply.findOneAndUpdate({ parentId: userLikingId, count: { $lt: 500 } }, { $addToSet: { replies: data.replyId }, $inc: { count: 1 } }, { upsert: true })
 
                 ack({ success: true, newLikesCount: updatedReply.likes, UIStatus: 'like' })
             
@@ -301,7 +309,7 @@ io.on('connection', (socket) => {
 
             } else {          // REQUSER HAS A BUCKET ALREADY
                    
-                const updatedReqUserbucket = await Following.findOneAndUpdate({ parentId: userReqId, count: { $lt: 500 } }, { $push: { following: data.recipientId }, $inc: { count: 1 } }, { upsert: true })
+                const updatedReqUserbucket = await Following.findOneAndUpdate({ parentId: userReqId, count: { $lt: 500 } }, { $addToSet: { following: data.recipientId }, $inc: { count: 1 } }, { upsert: true })
                 const updatedReqUserFCount = await Omaruser.findByIdAndUpdate(userReqId, { $inc: { totalFollowing: 1 } })
                 const updatedRecipientFollwers = await Omaruser.findByIdAndUpdate(data.recipientId, { $inc: { totalFollowers: 1 } })
 
@@ -409,6 +417,12 @@ io.on('connection', (socket) => {
         const senderId = newMessage.senderId
         const recipientId = newMessage.receiverId.replace('dm_', '').split('_').find(uid => uid !== senderId)
         const updatedMessage = {...newMessage, status: 'sent' }
+        const messageText = newMessage.text
+        const recipientUser = await Omaruser.findOne({ _id: recipientId }).lean()
+        const senderUserName = recipientUser.userName
+        const R2Base = process.env.R2_PUBLIC_BASE_URL
+        const senderDP = recipientUser.userDP !== 'none' ? `${R2Base}/${recipientUser.userDP}` : `${R2Base}/feed-images/1781109238815-Xikika_ICON.jpeg`
+
 
          try {  // THIS BLOCK SHOULD CARRY ALL UPDATES SUCCESS TO TRIGGER ack(success, with newStatus) 
 
@@ -437,7 +451,7 @@ io.on('connection', (socket) => {
                         
                      } else {    // Update the bucket with upsert AND emit to receiver_background 
 
-                         const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $push: { messages: updatedMessage }, $inc: { count: 1 }, $setOnInsert: { userAId: senderId, userBId: recipientId } }, { upsert: true, new: true, runValidators: true })
+                         const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $addToSet: { messages: updatedMessage }, $inc: { count: 1 }, $setOnInsert: { userAId: senderId, userBId: recipientId } }, { upsert: true, runValidators: true })
                         
                           console.log('Existing bucket Updated')
                        
@@ -465,13 +479,57 @@ io.on('connection', (socket) => {
                             return;
                           }
 
-                          io.to(`user-room-${recipientId}`).emit('arrange-dashboard', newMessage)
+                          // 1. Check live Socket.io channels to see if the recipient has an open tab right now
+                          const recipientSockets = await io.in(`user-room-${recipientId}`).fetchSockets()
+                            
+                            if (recipientSockets.length > 0) {
+                              // 🟢 USER IS ACTIVE: Route message in-app over real-time WebSockets
+                              console.log('Im emitting receive realtime')
+                              const toastPayload = { senderName: senderUserName, text: newMessage.text, senderDP: senderDP, recipient: senderId }
+                              io.to(`user-room-${recipientId}`).emit('receiveMessage_realtime', toastPayload)
+
+                            } else {
+                              // 🔴 USER IS INACTIVE: Look up their registered background device tokens in MongoDB
+
+                            
+                             if (recipientUser && recipientUser.pushSubscriptions && recipientUser.pushSubscriptions.length > 0) {
+
+                                    const payload = JSON.stringify({
+                                             title: `New Message from ${senderUserName}`,
+                                             body: messageText,
+                                             icon: senderDP,
+                                             data: { roomId: newMessage.receiverId }
+                                        })
+
+                                // Loop and fire push notification alerts to all their saved devices concurrent streams
+                                recipientUser.pushSubscriptions.forEach((sub) => {
+
+                                   webpush.sendNotification(sub, payload)
+                                   .catch(async (err) => { // 🧹 AUTOMATIC DATABASE CLEANUP: Remove invalid/expired tokens (Error 404 or 410)
+
+                                       if (err.statusCode === 404 || err.statusCode === 410) {
+
+                                           console.log(`🧹 Removing expired subscription endpoint for user: ${recipientId}`)
+              
+                                           await Omaruser.updateOne({ _id: recipientId }, { $pull: { pushSubscriptions: { endpoint: sub.endpoint } } })
+
+                                        } else {
+
+                                           console.error("Unexpected Web Push delivery glitch:", err)
+                                        }
+
+                                    })
+                                 })
+                              }
+                            }
+
+                             io.to(`user-room-${recipientId}`).emit('arrange-dashboard', newMessage)
                                
-                        }
+                          }
                           
                           ack({success: true, newStatus: 'sent'})       // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
 
-                     })  
+                    })  
 
                 
                         
@@ -1427,4 +1485,34 @@ app.patch('/handle',  async (req, res) => {
     }
 
 
+})
+
+app.get('/api/vapid-public-key', (req, res) => {
+
+     const publicKey = process.env.WEB_PUSH_PUBLIC_KEY
+     res.json({ success: true, publicKey: publicKey })
+})
+
+app.post('/api/notifications/subscribe', async (req, res) => {
+
+    const { userId, subscription } = req.body
+
+     if (!userId || !subscription || !subscription.endpoint) {
+
+       return res.json({ error: 'Missing critical subscription payload parameters' })
+     }
+
+
+      try {
+
+          // 🔍 ATOMIC UPGRADE: Find user and push the subscription object ONLY if it doesn't already exist
+          await Omaruser.findOneAndUpdate({ _id: userId }, { $addToSet: { pushSubscriptions: subscription } })
+
+          res.json({ success: true, message: "Device notification token synced successfully." })
+
+        } catch (error) {
+
+           console.error("Failed to save push token to MongoDB:", error)
+           res.json({ error: "Internal server registry error" })
+        }
 })

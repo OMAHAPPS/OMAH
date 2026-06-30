@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/toast.css">
     <script type="module" src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.js"></script>
 
@@ -812,6 +813,8 @@ const realm = document.getElementById('realmElem').textContent
 const r = REALMS[realm]
 
 
+const currentUserId = '<%= user._id %>'
+
 
 function charSVG(realmKey, size=150, speaking=false){
 
@@ -1440,6 +1443,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       })
 
+function switchChatRoom (recipientId) {
+     window.location.href = `/inbox/${recipientId}`
+}      
+
+function showCustomInAppToast(toastPayload) {
+
+        const toast = document.createElement('div')
+        toast.className = 'custom-in-app-toast'
+        toast.innerHTML = `<img src="${toastPayload.senderDP}" width="40" height="40" style="border-radius: 50%;"/>
+                            <div class="info-wrapper" style="display: flex; flex-flow: column nowrap;">
+
+                            <div class="toast-header">💬 New Message</div>
+                            <div class="toast-body"><strong>${toastPayload.senderName}:</strong> ${toastPayload.text}</div>
+
+                            </div>
+                          `
+        document.body.appendChild(toast)
+  
+        // Click actions let the user leap seamlessly into the new chat window room
+        toast.onclick = () => {
+            switchChatRoom(toastPayload.recipient)
+            toast.remove()
+        }
+
+        setTimeout(() => toast.remove(), 10000) // Evaporate after 4 seconds
+     }
+    
+     
 
 // ALL SOCKET LISTENER EVENTS TO BE HERE
 
@@ -1498,7 +1529,14 @@ socket.on('arrange-dashboard', async (incomingMsg) => {
     
 })
 
-
+// 2. SOCKET.IO REALTIME FLOW: Runs strictly if user has app open
+socket.on('receiveMessage_realtime', (incomingMsg) => {
+         
+           // 🎴 IN-APP CUSTOM POPUP UI INTERACTION
+           console.log('IM SHOWING TOAST')
+           // User is browsing an alternate room/screen inside your app right now
+          showCustomInAppToast(incomingMsg)
+     })
 
     // WITHOUT DOMCONTENTLOADED
  const postImages = document.querySelectorAll('.post-images')
@@ -2675,11 +2713,25 @@ postSubmitPostBtn.addEventListener('click', async (e) => {
 
 })
 
+// Security Utility: URL Base64 transformer array converter
+function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4)
+        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
+        const rawData = window.atob(base64)
+        const outputArray = new Uint8Array(rawData.length)
+        for (let i = 0; i < rawData.length; ++i) {
+             outputArray[i] = rawData.charCodeAt(i);
+         }
+
+        return outputArray;   
+       } 
 
 
-window.addEventListener('load', () => {
-    localStorage.setItem('newFileNames', JSON.stringify([]))
+
+window.addEventListener('load', async () => {
+    // localStorage.setItem('newFileNames', JSON.stringify([]))
     setTimeout(() => {
+
         
        document.getElementById('ai-icon').style.opacity = '0'
        document.getElementById('ai-text').style.opacity = '0'
@@ -2692,9 +2744,58 @@ window.addEventListener('load', () => {
        
                 
     }, 5000)
+
+      if ('serviceWorker' in navigator && 'PushManager' in window) {
+
+
+           try {
+              // Register the service worker file
+              const registration = await navigator.serviceWorker.register('/sw.js')
+              console.log('Service Worker registered safely.')
+
+              // Request native browser permission to show notifications
+              const permission = await Notification.requestPermission()
+
+              if (permission === 'granted') {
+        
+                // Fetch the public VAPID key from backend
+                const keyRes = await fetch('/api/vapid-public-key', {
+                      method: 'GET',
+                      headers: {
+                        "Content-Type": "application/json"
+                      }
+                })
+                const data = await keyRes.json()
+                const publicKey = data.publicKey
+
+                // Convert key format to handle security handshake boundaries
+                const convertedPublicKey = urlBase64ToUint8Array(publicKey)
+
+                // Tell browser push manager to generate a token endpoint
+                const subscription = await registration.pushManager.subscribe({
+                   userVisibleOnly: true,
+                   applicationServerKey: convertedPublicKey
+                })
+
+                // Pass subscription details to backend database map
+                await fetch('/api/notifications/subscribe', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ userId: currentUserId, subscription: subscription })
+                            })
+                }
+
+            } catch (err) {
+
+               console.error('Push subscription pipeline setup failed:', err);
+            }
+         }
+
+
+
 })
 
-
+ 
 
 
 

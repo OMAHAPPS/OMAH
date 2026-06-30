@@ -12,7 +12,8 @@ const omahSchema = new Schema({
        userHandle: { type: String, default: 'none', required: false },
        totalPosts: { type: Number, default: 0, required: false },
        totalFollowers: { type: Number, default: 0, required: false },
-       totalFollowing: { type: Number, default: 0, required: false }
+       totalFollowing: { type: Number, default: 0, required: false },
+       pushSubscriptions: { type: Array, default: [], required: false }
 
 })
 
