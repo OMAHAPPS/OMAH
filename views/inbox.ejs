@@ -156,7 +156,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
       
     </main>
-    <footer style="position: relative; height: 10%; padding-left: 12px; display: flex; align-items: center; gap: 12px; flex-shrink: 0 !important;">
+    <footer style="position: relative; height: 10%; padding-left: 12px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; transform: translateY(calc(-1 * var(--keyboard-height))); transition: transform .18s ease;">
 
         <div class="cont" style="height: 100%; width: 95%; display: flex; align-items: center; gap: 12px;">
 
@@ -243,7 +243,10 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     const recipientId = '<%= parties.recipient %>'
 
   
-        
+    visualViewport.addEventListener('resize', () => {
+        const keyboardHeight = window.innerHeight - visualViewport.height
+        document.documentElement.style.setProperty("--keyboard-height", keyboardHeight + "px")
+    })    
     
 
     function generateOneOnOneRoomId(userA_Id, userB_Id) {
