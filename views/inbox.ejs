@@ -507,12 +507,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         const toast = document.createElement('div')
         toast.className = 'custom-in-app-toast'
         toast.innerHTML = `
-                             <img src="${toastPayload.senderDP}" width="50" height="50" style="border-radius: 50%; margin-right: 12px;"/>
+                             <img src="${toastPayload.senderDP}" width="50" height="50" style="border-radius: 50%; margin-right: 6px;"/>
                              <div class="info-wrapper" style="display: flex; flex-flow: column nowrap; width: 60%;">
                                <div class="toast-header">${toastPayload.senderName}~ </div>
                                <p class="toast-body">${toastPayload.text}</p>
                              </div> 
-                             <img src="https://pub-4d616d04d586465385a8e29f389675d7.r2.dev/feed-images/1781109238815-Xikika_ICON.jpeg" width="25" height="25" style="border-radius: 40%; position: absolute; top: 50%; right: 10px; transform: translateY(-50%);"/> 
+                             <img src="https://pub-4d616d04d586465385a8e29f389675d7.r2.dev/feed-images/1781109238815-Xikika_ICON.jpeg" width="30" height="30" style="border-radius: 40%; position: absolute; top: 50%; right: 10px; transform: translateY(-50%);"/> 
                            
                           `
         document.body.appendChild(toast)
