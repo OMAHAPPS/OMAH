@@ -507,7 +507,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         const toast = document.createElement('div')
         toast.className = 'custom-in-app-toast'
         toast.innerHTML = `
-                             <img src="${toastPayload.senderDP}" width="50" height="50" style="border-radius: 50%; margin-right: 6px;"/>
+                             <img src="${toastPayload.senderDP}" width="50" height="50" style="border-radius: 50%; margin-right: 4px;"/>
                              <div class="info-wrapper" style="display: flex; flex-flow: column nowrap; width: 60%;">
                                <div class="toast-header">${toastPayload.senderName}~ </div>
                                <p class="toast-body">${toastPayload.text}</p>
