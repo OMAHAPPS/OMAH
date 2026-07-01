@@ -58,7 +58,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 </head>
 <body>
 
-   <header style="position: sticky; top: 0; height: 10%; display: flex; align-items: center; gap: 12px; padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08);">
+   <header style="position: sticky; top: 0; height: 15%; display: flex; align-items: center; gap: 12px; padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08);">
         
         <% if (origin) { %>
             <a class="leave-dm" href="/post/<%= origin %>" style="font-size: 20px; font-weight: 700; color: rgba(237,232,224,.85); display: flex; align-items: center; gap:6px">
@@ -124,7 +124,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
    </header>
 
-    <main id="chat-container" style="height: 80%; display: flex; flex-direction: column; gap: 12px; padding: 16px; overflow-y: scroll; overflow-x: hidden; scroll-snap-type: y mandatory; scroll-padding-block: 10px;">
+    <main id="chat-container" style="height: 70%; display: flex; flex-direction: column; gap: 12px; padding: 16px; overflow-y: scroll; overflow-x: hidden; scroll-snap-type: y mandatory; scroll-padding-block: 10px;">
 
        
         
@@ -156,11 +156,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
       
     </main>
-    <footer style="position: relative; height: 10%; padding-left: 12px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+    <footer style="position: relative; height: 15%; padding-left: 12px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
 
         <div class="cont" style="height: 100%; width: 95%; display: flex; align-items: center; gap: 12px;">
 
-            <textarea id="text-area" type="text" placeholder="Message" style="background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 10px; padding: 12px; height: 100%; padding: 12px 16px; color: rgba(237,232,224,.85); flex: 1;"></textarea>
+            <textarea id="text-area" type="text" placeholder="Message" style="background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 10px; padding: 12px; height: 95%; padding: 12px 16px; color: rgba(237,232,224,.85); flex: 1;"></textarea>
 
             <div class="media-send-cont" style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; height: 100%; width: fit-content;"> 
                 <button id="send-msg-btn" style="background-color: #1ed760; color: #050508; height: 45px; width: 45px; border-radius: 50%; font-weight: 600; display: none; justify-content: center; align-items: center;"><ion-icon name="send"></ion-icon></button>
