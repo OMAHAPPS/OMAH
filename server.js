@@ -216,7 +216,7 @@ io.on('connection', (socket) => {
             if (!userHasLikedBefore) {
 
                 const newLikeInstanceForUser = new LikedReply({
-                     parentId: userLikingId, count: 1, posts: [data.replyId] 
+                     parentId: userLikingId, count: 1, replies: [data.replyId] 
                     }).save().then( async (newBucket) => {
 
                         console.log(`new Bucket Created For User: ${newBucket.parentId}`)
@@ -821,6 +821,11 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
     const userData = await Omaruser.findOne({ _id: id })
 
     const allPosts = await Post.find()
+
+    // FOR YOU POSTS
+
+   
+    
     
     // const allPosts = allPostsNS.sort((a, b) =>  b.createdAt - a.createdAt )
 
@@ -877,6 +882,8 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
     //     } 
     //     return array
     //  }
+
+
      
      const sortedPostDataArray = postDataArray.sort((a,b) => b.createdAt - a.createdAt)
 

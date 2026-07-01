@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0," >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" >
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="/toast.css">
     <link rel="icon" href="/XIKIKA-KE.png" type="images/x-icon" width="400" height="400">
@@ -156,7 +156,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
       
     </main>
-    <footer style="position: relative; height: 10%; padding-left: 12px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; transform: translateY(calc(-1 * var(--keyboard-height))); transition: transform .18s ease;">
+    <footer style="position: relative; height: 10%; padding-left: 12px; padding-bottom: 10px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
 
         <div class="cont" style="height: 100%; width: 95%; display: flex; align-items: center; gap: 12px;">
 
@@ -243,10 +243,6 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     const recipientId = '<%= parties.recipient %>'
 
   
-    visualViewport.addEventListener('resize', () => {
-        const keyboardHeight = window.innerHeight - visualViewport.height
-        document.documentElement.style.setProperty("--keyboard-height", keyboardHeight + "px")
-    })    
     
 
     function generateOneOnOneRoomId(userA_Id, userB_Id) {
