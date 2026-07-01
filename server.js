@@ -418,10 +418,11 @@ io.on('connection', (socket) => {
         const recipientId = newMessage.receiverId.replace('dm_', '').split('_').find(uid => uid !== senderId)
         const updatedMessage = {...newMessage, status: 'sent' }
         const messageText = newMessage.text
+        const senderUser = await Omaruser.findOne({ _id: senderId }).lean()
         const recipientUser = await Omaruser.findOne({ _id: recipientId }).lean()
-        const senderUserName = recipientUser.userName
+        const senderUserName = senderUser.userName
         const R2Base = process.env.R2_PUBLIC_BASE_URL
-        const senderDP = recipientUser.userDP !== 'none' ? `${R2Base}/${recipientUser.userDP}` : `${R2Base}/feed-images/1781109238815-Xikika_ICON.jpeg`
+        const senderDP = senderUser.userDP !== 'none' ? `${R2Base}/${senderUser.userDP}` : `${R2Base}/feed-images/1781109238815-Xikika_ICON.jpeg`
 
 
          try {  // THIS BLOCK SHOULD CARRY ALL UPDATES SUCCESS TO TRIGGER ack(success, with newStatus) 
@@ -436,7 +437,7 @@ io.on('connection', (socket) => {
                          roomId: newMessage.receiverId, userAId: senderId, userBId: recipientId, count: 1, messages: [updatedMessage]
                    }).save().then((newBucket) => {
                      console.log('newBucket created')
-                   
+                     
                    })
 
                  } else {   //CHAT BUCKET EXISTS
@@ -446,20 +447,22 @@ io.on('connection', (socket) => {
                      const messageExists = await Chat.findOne({ roomId: newMessage.receiverId, "messages.id": newMessage.id })
 
                      if (messageExists) {
+
                          console.log('Message already exists in DB NO RESAVES')
-                         return;
+                         
+                        
                         
                      } else {    // Update the bucket with upsert AND emit to receiver_background 
 
                          const UpdatedLatestBucket = await Chat.findOneAndUpdate({ roomId: newMessage.receiverId, count: { $lt: 500 } }, { $addToSet: { messages: updatedMessage }, $inc: { count: 1 }, $setOnInsert: { userAId: senderId, userBId: recipientId } }, { upsert: true, runValidators: true })
                         
                           console.log('Existing bucket Updated')
-                       
+                         
                          
                      }
 
                  }
-
+                
                    // This safely targets only sockets registered inside this room via the step above!
                    socket.to(newMessage.receiverId).timeout(4000).emit('receiveMessage_background', newMessage, async (err, response) => {
                               
@@ -479,13 +482,26 @@ io.on('connection', (socket) => {
                             return;
                           }
 
-                          // 1. Check live Socket.io channels to see if the recipient has an open tab right now
-                          const recipientSockets = await io.in(`user-room-${recipientId}`).fetchSockets()
+                          
+                             io.to(`user-room-${recipientId}`).emit('arrange-dashboard', newMessage)
+                               
+                          } else {
+                            return;
+                          }
+                          
+                         
+                    })  
+                    
+                     
+
+                    // 3. Send a push notification to the recipient if they are not currently connected via WebSocket
+                    // 1. Check live Socket.io channels to see if the recipient has an open tab right now
+                    const recipientSockets = await io.in(`user-room-${recipientId}`).fetchSockets()
                             
-                            if (recipientSockets.length > 0) {
+                         if (recipientSockets.length > 0) {
                               // 🟢 USER IS ACTIVE: Route message in-app over real-time WebSockets
                               console.log('Im emitting receive realtime')
-                              const toastPayload = { senderName: senderUserName, text: newMessage.text, senderDP: senderDP, recipient: senderId }
+                              const toastPayload = { senderName: senderUserName, text: newMessage.text, senderDP: senderDP, senderId: senderId, roomId: newMessage.receiverId }
                               io.to(`user-room-${recipientId}`).emit('receiveMessage_realtime', toastPayload)
 
                             } else {
@@ -498,7 +514,7 @@ io.on('connection', (socket) => {
                                              title: `New Message from ${senderUserName}`,
                                              body: messageText,
                                              icon: senderDP,
-                                             data: { roomId: newMessage.receiverId }
+                                             data: { senderId: senderId }
                                         })
 
                                 // Loop and fire push notification alerts to all their saved devices concurrent streams
@@ -523,16 +539,10 @@ io.on('connection', (socket) => {
                               }
                             }
 
-                             io.to(`user-room-${recipientId}`).emit('arrange-dashboard', newMessage)
-                               
-                          }
-                          
-                          ack({success: true, newStatus: 'sent'})       // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
+                    ack({ success: true, newStatus: 'sent' })  // ACKNOWLEDGE TO SENDER THAT MESSAGE WAS SUCCESSFULLY SAVED TO DB
+                                                      // IF ERROR THE MESSAGE STATUS REMAINS AS SENT SINGLE TICK
 
-                    })  
 
-                
-                        
                  } catch (error) {   // UPDATE BUCKET OR NEW BUCKET CREATION BOTH FAILED
 
                      console.log(error)

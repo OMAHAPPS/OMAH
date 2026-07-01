@@ -1443,31 +1443,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       })
 
-function switchChatRoom (recipientId) {
-     window.location.href = `/inbox/${recipientId}`
+function switchChatRoom (senderId) {
+     window.location.href = `/inbox/${senderId}`
 }      
 
 function showCustomInAppToast(toastPayload) {
 
         const toast = document.createElement('div')
         toast.className = 'custom-in-app-toast'
-        toast.innerHTML = `<img src="${toastPayload.senderDP}" width="40" height="40" style="border-radius: 50%;"/>
-                            <div class="info-wrapper" style="display: flex; flex-flow: column nowrap;">
-
-                            <div class="toast-header">💬 New Message</div>
-                            <div class="toast-body"><strong>${toastPayload.senderName}:</strong> ${toastPayload.text}</div>
-
-                            </div>
+        toast.innerHTML = `
+                             <img src="${toastPayload.senderDP}" width="50" height="50" style="border-radius: 50%;"/>
+                             <div class="info-wrapper" style="display: flex; flex-flow: column nowrap; width: 60%;">
+                               <div class="toast-header">${toastPayload.senderName}~ </div>
+                               <p class="toast-body">${toastPayload.text}</p>
+                             </div> 
+                             <img src="https://pub-4d616d04d586465385a8e29f389675d7.r2.dev/feed-images/1781109238815-Xikika_ICON.jpeg" width="40" height="40" style="border-radius: 40%; position: absolute; top: 50%; right: 10px; transform: translateY(-50%);"/> 
+                          
                           `
         document.body.appendChild(toast)
   
         // Click actions let the user leap seamlessly into the new chat window room
         toast.onclick = () => {
-            switchChatRoom(toastPayload.recipient)
+            switchChatRoom(toastPayload.senderId)
             toast.remove()
         }
 
-        setTimeout(() => toast.remove(), 10000) // Evaporate after 4 seconds
+        setTimeout(() => toast.remove(), 6000) // Evaporate after 4 seconds
      }
     
      
@@ -1530,12 +1531,12 @@ socket.on('arrange-dashboard', async (incomingMsg) => {
 })
 
 // 2. SOCKET.IO REALTIME FLOW: Runs strictly if user has app open
-socket.on('receiveMessage_realtime', (incomingMsg) => {
+socket.on('receiveMessage_realtime', (toastPayload) => {
          
            // 🎴 IN-APP CUSTOM POPUP UI INTERACTION
            console.log('IM SHOWING TOAST')
            // User is browsing an alternate room/screen inside your app right now
-          showCustomInAppToast(incomingMsg)
+          showCustomInAppToast(toastPayload)
      })
 
     // WITHOUT DOMCONTENTLOADED

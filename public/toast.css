@@ -6,12 +6,13 @@
   background: #ffffff;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 20px 14px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  gap: 10px;
   width: 95%;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Playfair Display', serif;
   cursor: pointer;
   z-index: 10000;
   animation: slideUpFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -20,19 +21,19 @@
 
 
 .toast-header {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: bold;
   color: black;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+ 
   margin-bottom: 4px;
 }
 .toast-body {
-  font-size: 13px;
+  font-size: 14px;
   color: #333333;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 70%;
 }
 @keyframes slideUpFadeIn {
   from { transform: translateY(20px); opacity: 0; }
