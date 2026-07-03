@@ -561,17 +561,18 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     </main>
         <!--TODO ////// SHARE REPLY CONTAINER ////  -->
-      <div class="sharePost" style="display: block; position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
+      <div class="sharePost" style="display: block; position: fixed; bottom: 0; left: 0; right: 0; z-index: 5; padding: 10px 14px; background: linear-gradient(to top,rgba(5,5,8,.96) 50%,transparent);">
          
-      <button id="share-link" class="tap" style="width: 100%; padding: 15px 10px; border-radius: 14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap:10px;">
-          <!-- ! RENDERED IN JAVASCRIPT -->
-      </button>
+          <button id="share-link" class="tap" style="position: relative; width: 100%; padding: 15px 10px; border-radius: 14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap:10px;">
+             <!-- ! RENDERED IN JAVASCRIPT -->
+             
+          </button>
 
     </div>
     
     <!-- TODO ///////  VIEW POST REPLY /////// -->
 
-    <div class="view" id="view-to-post" style="display: none; background:rgba(5,5,8,.95)">
+    <div class="view" id="view-to-post" style="display: block; background:rgba(5,5,8,.95);">
 
       <div style="padding: 13px 16px;border-bottom:1px solid rgba(255,255,255,.05); display: flex; align-items:center; gap:10px; flex-shrink:0">
 
@@ -913,6 +914,18 @@ const userDP = '<%= user.userDP %>'
 const correctPic = userDP !== 'none' ? `${R2BASE}/${userDP}` : '/placeholder.jpg'   
 
  shareAvatarCont.innerHTML = `<img src="${correctPic}" width="32" height="32" style="border-radius: 50%;"/>
+
+                                <div class="gif-container" style="position: absolute; bottom: 110%; left: 0; width: 100%; z-index: 10; height: fit-content; background-color: black; transition: height .3s ease-out;">
+                                    <div style="height: 50px; width: 100%; display: flex; align-items: center; justify-content: space-evenly;" > 
+                                      <button id="emojis" onclick="openGifs()" style=""><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" style="fill: ${r.col};transform: msFilter"><path d="M12 22c5.514 0 10-4.486 10-10S17.514 2 12 2 2 6.486 2 12s4.486 10 10 10zm3.493-13a1.494 1.494 0 1 1-.001 2.987A1.494 1.494 0 0 1 15.493 9zm-4.301 6.919a4.108 4.108 0 0 0 1.616 0c.253-.052.505-.131.75-.233.234-.1.464-.224.679-.368.208-.142.407-.306.591-.489.183-.182.347-.381.489-.592l1.658 1.117a6.027 6.027 0 0 1-1.619 1.621 6.003 6.003 0 0 1-2.149.904 6.116 6.116 0 0 1-2.414-.001 5.919 5.919 0 0 1-2.148-.903 6.078 6.078 0 0 1-1.621-1.622l1.658-1.117c.143.211.307.41.488.59a3.988 3.988 0 0 0 2.022 1.093zM8.5 9a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 8.5 9z"></path></svg></button>
+                                      <button id="gifs" style=""><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" style="fill: ${r.col};transform: msFilter"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-2.667 15.772A4.512 4.512 0 0 1 9.984 18c-.737 0-1.271-.186-1.644-.546-.371-.348-.575-.875-.569-1.469.006-1.344.983-2.111 2.309-2.111.521 0 .924.103 1.121.198l-.191.731c-.222-.096-.498-.174-.941-.174-.762 0-1.338.432-1.338 1.308 0 .833.522 1.325 1.271 1.325.21 0 .378-.024.45-.061v-.846h-.624v-.713h1.505v2.13zm1.634.186h-.918v-4.042h.918v4.042zm3.262-3.292h-1.553v.923h1.451v.744h-1.451v1.625h-.918v-4.042h2.471v.75zM14 9h-1V4l5 5h-4z"></path></svg></button>
+                                      <button id="stickers" style=""><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" style="fill: ${r.col};transform: msFilter"><path d="M18.5 11c-4.136 0-7.5 3.364-7.5 7.5 0 .871.157 1.704.432 2.482l9.551-9.551A7.462 7.462 0 0 0 18.5 11z"></path><path d="M12 2C6.486 2 2 6.486 2 12c0 4.583 3.158 8.585 7.563 9.69A9.431 9.431 0 0 1 9 18.5C9 13.262 13.262 9 18.5 9c1.12 0 2.191.205 3.19.563C20.585 5.158 16.583 2 12 2z"></path></svg></button>
+                                    </div>
+                                    <div class="holder-container" style="height: 0px; width: 100%; padding-inline: 8px; opacity: 0; transition: all .3s ease-out;">
+                                    </div>
+                                    
+                                </div>
+
                                 <span id="post-placeholder" style="flex: 1; font-size: 14px; color:rgba(237,232,224,.28); text-align: left;">Post Reply.........</span>
 
                                  <form action="/post/reply" method="POST" enctype="multipart/form-data" id="file-form" style="display: flex; width: fit-content; justify-content: flex-end;">
@@ -950,6 +963,13 @@ const correctPic = userDP !== 'none' ? `${R2BASE}/${userDP}` : '/placeholder.jpg
                              </form> 
                               `
  
+function openGifs() {
+
+    document.querySelector('.holder-container').style.opacity = '1'
+    document.querySelector('.holder-container').style.height = '250px'
+}                              
+
+
                               
 const viewToPostCont = document.getElementById('view-to-post')
 const subAddReplyBtns = document.querySelectorAll('.sub-reply-btn')                              
@@ -1019,9 +1039,13 @@ textArea.addEventListener('keyup', () => {
   if (textArea.value.trim() !== '' || imageArticle.children.length !== 0 ) {
     postSubmitPostBtn.disabled = false
     postSubmitPostBtn.style.display = 'block'
+    document.querySelector('.holder-container').style.opacity = '0'
+    document.querySelector('.holder-container').style.height = '0px'
   } else {
     postSubmitPostBtn.disabled = true
     postSubmitPostBtn.style.display = 'none'
+    
+
     textArea.value = textArea.value.trimStart()
   }
 })

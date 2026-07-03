@@ -1628,8 +1628,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                postLink.style.boxShadow = `0 2px 18px rgba(0,0,0,.32)`
                postLink.href = `/post/${post.postId}`
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
-               const posterUserHandle = post.poster.userHandle !== 'none' ? post.poster.userHandle : post.poster.userName
-               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
+               const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
+               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
                const timestamp = post.createdAt 
@@ -1720,7 +1720,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                postLink.style.boxShadow = `0 2px 18px rgba(0,0,0,.32)`
                postLink.href = `/post/${post.postId}`
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
-               const posterUserHandle = post.poster.userHandle !== 'none' ? post.poster.userHandle : post.poster.userName
+               const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
                const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
@@ -3542,7 +3542,7 @@ forYouBtn.addEventListener('click', async (e) => {
                postLink.style.boxShadow = `0 2px 18px rgba(0,0,0,.32)`
                postLink.href = `/post/${post.postId}`
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
-               const posterUserHandle = post.poster.userHandle !== 'none' ? post.poster.userHandle : post.poster.userName
+               const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
                const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
@@ -3634,7 +3634,7 @@ forYouBtn.addEventListener('click', async (e) => {
                postLink.style.boxShadow = `0 2px 18px rgba(0,0,0,.32)`
                postLink.href = `/post/${post.postId}`
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
-               const posterUserHandle = post.poster.userHandle !== 'none' ? post.poster.userHandle : post.poster.userName
+               const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
                const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
