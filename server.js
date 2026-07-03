@@ -1533,3 +1533,186 @@ app.post('/api/notifications/subscribe', async (req, res) => {
            res.json({ error: "Internal server registry error" })
         }
 })
+
+
+app.get('/api/following/:id', async (req, res) => {
+
+      const userId = req.params.id
+      
+      try {
+
+           const result = await Following.aggregate([
+                  { $match: { parentId: userId } },
+                  { $unwind: "$following" },
+                  { $group: { _id: null, followingIds: { $addToSet: "$following" } } },
+                  { $project: { _id: 0, followingIds: 1 } }
+                ])
+
+           const usersFollowingIds = result[0]?.followingIds || []
+
+           if (usersFollowingIds.length === 0) {
+
+            res.json({ success: false, result: 'Follow People to Access Posts' })
+
+      } else {
+
+         
+
+          const posts = await Post.find({ userId: { $in: usersFollowingIds }, createdAt: { $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } }).limit(50).lean()
+          
+          if (posts.length === 0) {
+
+              res.json({ success: false, result: 'No Recent Posts' })
+          }
+
+          const sortedPosts = posts.sort((a,b) => b.createdAt - a.createdAt)
+
+          const allUsers = await Omaruser.find({ _id: { $in: usersFollowingIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+          
+          const postDataArray = []
+
+          sortedPosts.forEach((post) => {
+
+             const userId = post.userId
+
+             const posterInfoArray = allUsers.filter((user) => user.id == userId )
+             const posterInfo = posterInfoArray[0]
+             
+             const newPostObject = {
+                 postId: post._id,
+                 userId: post.userId,
+                 createdAt: post.createdAt,  
+                 videoUrl: post.videoUrl,
+                 images: post.images,
+                 likes: post.likes,
+                 interactions: post.interactions,
+                 replies: post.replies,
+                 userHandle: post.userHandle,
+                 post: post.post,
+                 userName: post.userName,
+                 poster: {
+                    totalFollowers: posterInfo.totalFollowers,
+                    totalFollowing: posterInfo.totalFollowing,
+                    totalPosts: posterInfo.totalPosts,
+                    userDP: posterInfo.userDP,
+                    userHandle: posterInfo.userHandle
+                    }
+
+              }
+             
+              postDataArray.push(newPostObject)
+         
+        
+          })
+
+          res.json({ success: true, result: postDataArray })  // RETURNS AN ARRAY OF POSTS FROM FOLLOWED USERS IN THE LAST 15 DAYS
+
+      }
+        
+      } catch (error) {
+
+        console.log('MONGODB ERROR: ' + error)
+
+        res.json({ success: false, result: 'Server Error~!!'  })
+        
+      }
+
+   
+
+
+      
+})
+
+app.get('/api/interactions/:id', async (req, res) => {
+
+     const userId = req.params.id
+
+     try {
+
+         const likedPostIdsResult = LikedPost.aggregate([
+                     { $match: { parentId: userId } },
+                     { $unwind: "$posts"},
+                     { $group: { _id: null, likedPostIds: { $addToSet: "$posts" } } },
+                     { $project: { _id: 0, likedPostIds: 1 } }
+                 ])
+
+    const likedResultArray = likedPostIdsResult[0]?.likedPostIds || []  
+    
+    const allRepliedToPostIds = await Reply.aggregate([
+                     { $match: { userId: userId } },
+                     { $group: { _id: null, repliedToPostIds: { $addToSet: "$postId"}} },
+                     { $project: { _id: 0, repliedToPostIds: 1 } }
+                 ])
+    
+    const repliedResultArray = allRepliedToPostIds[0]?.repliedToPostIds || [] 
+    
+    const allInteractedPostIds = [...new Set([...likedResultArray, ...repliedResultArray])]
+
+    if (allInteractedPostIds.length === 0) {
+
+        res.json({ success: false, result: 'No Interactions Yet' })
+
+    } else {
+       
+        const interactedPosts = await Post.find({ _id: { $in: allInteractedPostIds }, createdAt: { $gt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) } }).lean()  
+
+        const sortedInteractions = interactedPosts.sort((a,b) => b.createdAt - a.createdAt)
+
+        const selfExcludedInteractions = sortedInteractions.filter((post) => post.userId !== userId)
+
+        const uniqueUserIds = [...new Set(selfExcludedInteractions.map((d) => d.userId ))]
+        
+        const allUsers = await Omaruser.find({ _id: { $in: uniqueUserIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+        
+        const postDataArray = []
+
+        selfExcludedInteractions.forEach((post) => {
+
+             const userId = post.userId
+
+             const posterInfoArray = allUsers.filter((user) => user.id == userId )
+             const posterInfo = posterInfoArray[0]
+             
+             const newPostObject = {
+                 postId: post._id,
+                 userId: post.userId,
+                 createdAt: post.createdAt,  
+                 videoUrl: post.videoUrl,
+                 images: post.images,
+                 likes: post.likes,
+                 interactions: post.interactions,
+                 replies: post.replies,
+                 userHandle: post.userHandle,
+                 post: post.post,
+                 userName: post.userName,
+                 poster: {
+                    totalFollowers: posterInfo.totalFollowers,
+                    totalFollowing: posterInfo.totalFollowing,
+                    totalPosts: posterInfo.totalPosts,
+                    userDP: posterInfo.userDP,
+                    userHandle: posterInfo.userHandle
+                    }
+
+              }
+             
+              postDataArray.push(newPostObject)
+         
+        
+          }) 
+
+
+        res.json({ success: true, result: postDataArray })   // all userInteracted posts for the past two months per request
+       // console.log(postDataArray)
+    }
+        
+     } catch (error) {
+
+        console.log('MONGODB ERROR: ' + error)
+
+        res.json({ success: false, result: 'Server Error~!!'  })
+        
+     }
+     
+    
+
+})

@@ -33,7 +33,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 /* ── LAYOUT ── */
 .view{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;overflow:hidden;animation:viewIn .42s cubic-bezier(.22,.61,.36,1) both}
 .scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
-.glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.post-article{z-index: 5; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; background: transparent;}
 
 /* ── INTERACTIONS ── */
 .tap{cursor:pointer;transition:transform .12s ease,opacity .12s ease;user-select:none;-webkit-user-select:none}
@@ -411,441 +411,17 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
             <div class="scrollable-content" style="height: 108%; width: 100%; overflow-y: hidden; overflow-x: hidden; padding: 14px 0; display: flex; gap: 5px; flex-grow: 1; scroll-snap-type: x mandatory; scroll-behavior: smooth;">
 
-                <div class="load-trending" style="display: none; justify-content: center; align-items: center; gap: 3px; position: absolute; left: 50%; top: 10%; transform: translateX(-50%);">
+                <div class="load-trending" style="display: flex; justify-content: center; align-items: center; gap: 3px; position: absolute; left: 50%; top: 10%; transform: translateX(-50%);">
                    <ion-icon name="aperture-sharp" style="font-size: 1.65rem; color: rgba(237, 232, 224, .85); animation: spin .5s infinite;"></ion-icon>
                    <h2 class="fs" style="font-size: 1.1rem; color: rgba(237, 232, 224, .85);">Loading</h2>
                 </div>
 
-                <div class="following-container" style="height: 100%; width: 100%; background: transparent; display: flex; flex-shrink: 0; flex-flow: column nowrap; gap: 12px; overflow-y: scroll; overflow-x: hidden; padding: 8px 2px; scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-snap-align: start; transition: all 0.3s ease-in-out;">
-                    <!-- ! RENDERED IN JAVASCRIPT -->
-
-                      <!--! IF NO POSTS DISPLAY THIS MESSGAE -->
-        
-        <% if (posts.length == 0) { %>
-
-          <div class="no-post" style="display: block; text-align: center; padding:40px 0; color: rgba(237,232,224,.22); font-size: 13px;">No Posts yet. Be the first to Share a post.</div>
-          
-          
-          <% } else { %>
-            <!-- !video instance structure -->
-         
-          <% posts.map((post) => { %>
-          
-          
-        <a href="/post/<%= post.postId %>"  class="<%= post.videoUrl !== 'none' ? 'glass' : 'glass-images'  %> stop-fetch" style="width: 100%; text-decoration: none; margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
-
-            
-
-            <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
-
-             
-               <div id="poster-username" style="display: none;"><%= post.userName %></div>
-               <div id="poster-followers" style="display: none;"><%= post.poster.totalFollowers %></div>
-               <div id="poster-following" style="display: none;"><%= post.poster.totalFollowing %></div>
-               <div id="poster-posts-length" style="display: none;"><%= post.poster.totalPosts %></div>
-               <div id="poster-userHandle" style="display: none;">@<%= post.poster.userHandle == 'none' ? post.userName : post.poster.userHandle %></div>
-               
-               <% if (post.poster.userDP !== 'none') { %>
-                <img src="<%= R2BASE %>/<%= post.poster.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-               <% } else { %>
-                <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-               <% } %> 
-
-
-              <div id="post-id" style="display: none;"><%= post.postId %></div>
-              <div id="poster-id" style="display: none;"><%= post.userId %></div>
-              
-
-              <div style="flex:1">
-                
-                    <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
-
-                                 <h2 style="font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);"><%= post.userName %> </h2>
-                                 <% if (post.userName == user.userName) { %>
-                                   <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                   <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@<%= post.poster.userHandle !== 'none' ? post.poster.userHandle : post.userName  %></span>
-                                 <% } %>
-                        </div>
-                              <% const timestamp = post.createdAt %>
-                              <% const diff = new Date() - new Date(timestamp) %>
-                              <% const daysPast = Math.floor( (diff / 86400000) ) %>
-                              <% const hoursPast = Math.floor( (diff / 3600000) ) %>
-                              <% const minutesPast = Math.floor( (diff / 60000) ) %>
-
-                              <% if (daysPast > 0) { %>
-                               <div style="font-size:12px;color: rgba(237, 232, 224, .65);margin-top:2px;"><%= daysPast %>d</div>
-                               <% } else if (hoursPast > 0) { %>
-                                 <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top: 2px;"><%= hoursPast %>h</div>
-                                 <% } else if (minutesPast > 0) { %>
-                                   <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;"><%= minutesPast %>m</div>
-                                   <% } else if (minutesPast == 0) { %>
-                                     <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;">Just now</div>
-                                  <% } %>
-                  </div>
-                        
-              </div>
- 
-              <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
-
-                 <%  if (post.videoUrl !== 'none') { %>
-
-                  <video id="player" controls preload="none" style="display: block; width: 100%; max-height: 500px; border-radius: 12px; margin-top: 13px; object-fit: cover; object-position: center; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
-                           src="<%=R2BASE %>/<%= post.videoUrl %>" type="video/mp4" data-src="/uploads/Expressions.mp4">
-                        Your browser does not support the video tag. 
-                    </video>
-            
-
-                  
-                 <% } else if (post.images.length === 0) { %>
-
-                    <article class="post-article" style="width: 100%; height: 200px; border-radius: 12px; margin-top: 13px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
-                    </article>
-
-                        <% } else if (post.images.length === 1) { %>
-
-                          <article class="post-article" style="z-index: 5; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; background: transparent;">
-
-
-                              <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div>   
-                            
-                            <% post.images.map((image) => { %>
-        
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px;" />
-        
-                            <% }) %>
-         
-                          </article>
-                          
-
-                        <% } else if (post.images.length === 2) { %>
-
-                          <article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-top: 13px; display: flex; background: transparent;">
-
-                            <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div> 
-        
-                            <% post.images.map((image) => { %>
-        
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
-        
-                            <% }) %>
-         
-                          </article>
-
-                        <% } else if (post.images.length === 3) { %>
-
-                          <article class="post-article" style="z-index: 5;width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; gap: 3px; background: transparent;">
-
-                            <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div> 
-
-                             <% const images = post.images %>
-
-                             <img class="post-images" src="<%= R2BASE %>/<%= images[0] %>" alt="N" style="height: 100%; width: 49%; object-fit: cover; object-position: center; border-radius: 12px 0 0 12px;" />
-        
-                             <div class="stacked" style="display: flex; flex-flow: column nowrap; gap: 3px; height: 100%; width: calc(50% - 5px); border-radius: 0 12px 12px 0; background: transparent;">
-                               <img class="post-images" src="<%= R2BASE %>/<%= images[1] %>" alt="N" style="width: calc(100% -1px); height: calc(50% - 2px); border-radius: 0 12px 0 0; object-fit: cover; object-position: center;" />
-                               <img class="post-images" src="<%= R2BASE %>/<%= images[2] %>" alt="N" style="width: calc(100% - 1px); height: calc(50% - 2px); border-radius: 0 0 12px 0; object-fit: cover; object-position: center;" />
-
-                             </div>
-        
-                          </article>
-
-                        <% } else if (post.images.length === 4) { %>
-
-                          <article class="post-article" style="z-index: 5;overflow: hidden; width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; flex-wrap: wrap; gap: 3px; overflow: hidden; background: transparent;">
-
-                            <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div>  
-        
-                            <% post.images.map((image) => { %>
-        
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1.5px); height: calc(50% - 1.5px); border-radius: 1px solid red; object-fit: cover; object-position: center;"/>
-        
-                            <% }) %>
-         
-                          </article>
-
-                        <% } else { %>
-
-                          <article class="post-article" style="z-index: 5; width: 100%; height: 250px; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
-
-                           <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div> 
-        
-                            <% post.images.map((image) => { %>
-        
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; margin-right: 3px;" />
-        
-                            <% }) %>
-         
-                          </article>
-
-                        <% } %>
-
-
-
-                 
-                   <!-- ! Likes and counts container -->
-
-              <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px; margin-top: 5px;">
-                     <button data-liked="false" class="likes-cont-event" style="padding: 12px 18px; display: flex; align-items: center; justify-content: center;">
-                         <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: block; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out ;"></ion-icon>
-                         <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: none; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out;" ></ion-icon>
-                         <h3 class="like-h3" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.likes %></h3>
-                         <h3 class="postId-span" style="display: none;"><%= post.postId %></h3>
-                     </button>   
-                     <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
-                       <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                       <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.replies %></h3>
-                     </div>
-                     <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.interactions %></span>
-                     </div> 
-
-                     <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                     <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                   
-              </div>
-        </a> 
-                
-                <% }) %>
-                        
-              <% } %>
-                
+                <div class="following-container" style="height: 100%; width: 100%; background: transparent; display: none; flex-shrink: 0; flex-flow: column nowrap; gap: 12px; overflow-y: scroll; overflow-x: hidden; padding: 8px 2px; scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-snap-align: start; transition: all 0.3s ease-in-out;">
+                    <!-- ! RENDERED IN JAVASCRIPT -->   
 
                 </div>
-                <div class="interactions-container" style="height: 100%; width: 100%; background: red; display: flex; flex-shrink: 0; flex-flow: column nowrap; gap: 12px; overflow-y: scroll; overflow-x: hidden; padding: 8px 2px; scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-snap-align: start; transition: all 0.3s ease-in-out; background: transparent;">
+                <div class="interactions-container" style="height: 100%; width: 100%; background: red; display: none; flex-shrink: 0; flex-flow: column nowrap; gap: 12px; overflow-y: scroll; overflow-x: hidden; padding: 8px 2px; scroll-snap-type: y mandatory; scroll-behavior: smooth; scroll-snap-align: start; transition: all 0.3s ease-in-out; background: transparent;">
                     <!-- ! RENDERED IN JAVASCRIPT -->
-
-                      
-        <% if (posts.length == 0) { %>
-
-          <div class="no-post" style="display: block; text-align: center; padding:40px 0; color: rgba(237,232,224,.22); font-size: 13px;">No Posts yet. Be the first to Share a post.</div>
-          
-          
-          <% } else { %>
-            <!-- !video instance structure -->
-         
-          <% posts.map((post) => { %>
-          
-          
-        <a href="/post/<%= post.postId %>"  class="<%= post.videoUrl !== 'none' ? 'glass' : 'glass-images'  %> stop-fetch" style="width: 100%; text-decoration: none; margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
-
-            
-
-            <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
-
-             
-               <div id="poster-username" style="display: none;"><%= post.userName %></div>
-               <div id="poster-followers" style="display: none;"><%= post.poster.totalFollowers %></div>
-               <div id="poster-following" style="display: none;"><%= post.poster.totalFollowing %></div>
-               <div id="poster-posts-length" style="display: none;"><%= post.poster.totalPosts %></div>
-               <div id="poster-userHandle" style="display: none;">@<%= post.poster.userHandle == 'none' ? post.userName : post.poster.userHandle %></div>
-               
-               <% if (post.poster.userDP !== 'none') { %>
-                <img src="<%= R2BASE %>/<%= post.poster.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-               <% } else { %>
-                <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-               <% } %> 
-
-
-              <div id="post-id" style="display: none;"><%= post.postId %></div>
-              <div id="poster-id" style="display: none;"><%= post.userId %></div>
-              
-
-              <div style="flex:1">
-                
-                    <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
-
-                                 <h2 style="font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);"><%= post.userName %> </h2>
-                                 <% if (post.userName == user.userName) { %>
-                                   <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                   <% } else { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@<%= post.poster.userHandle !== 'none' ? post.poster.userHandle : post.userName  %></span>
-                                 <% } %>
-                        </div>
-                              <% const timestamp = post.createdAt %>
-                              <% const diff = new Date() - new Date(timestamp) %>
-                              <% const daysPast = Math.floor( (diff / 86400000) ) %>
-                              <% const hoursPast = Math.floor( (diff / 3600000) ) %>
-                              <% const minutesPast = Math.floor( (diff / 60000) ) %>
-
-                              <% if (daysPast > 0) { %>
-                               <div style="font-size:12px;color: rgba(237, 232, 224, .65);margin-top:2px;"><%= daysPast %>d</div>
-                               <% } else if (hoursPast > 0) { %>
-                                 <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top: 2px;"><%= hoursPast %>h</div>
-                                 <% } else if (minutesPast > 0) { %>
-                                   <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;"><%= minutesPast %>m</div>
-                                   <% } else if (minutesPast == 0) { %>
-                                     <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;">Just now</div>
-                                  <% } %>
-                  </div>
-                        
-              </div>
- 
-              <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
-
-                 <%  if (post.videoUrl !== 'none') { %>
-
-                  <video id="player" controls preload="none" style="display: block; width: 100%; max-height: 500px; border-radius: 12px; margin-top: 13px; object-fit: cover; object-position: center; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
-                           src="<%=R2BASE %>/<%= post.videoUrl %>" type="video/mp4" data-src="/uploads/Expressions.mp4">
-                        Your browser does not support the video tag. 
-                    </video>
-            
-
-                  
-                 <% } else if (post.images.length === 0) { %>
-
-                    <article class="post-article" style="width: 100%; height: 200px; border-radius: 12px; margin-top: 13px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
-                    </article>
-
-                        <% } else if (post.images.length === 1) { %>
-
-                          <article class="post-article" style="z-index: 5; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; background: transparent;">
-
-
-                              <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div>   
-                            
-                            <% post.images.map((image) => { %>
-        
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px;" />
-        
-                            <% }) %>
-         
-                          </article>
-                          
-
-                        <% } else if (post.images.length === 2) { %>
-
-                          <article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-top: 13px; display: flex; background: transparent;">
-
-                            <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div> 
-        
-                            <% post.images.map((image) => { %>
-        
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
-        
-                            <% }) %>
-         
-                          </article>
-
-                        <% } else if (post.images.length === 3) { %>
-
-                          <article class="post-article" style="z-index: 5;width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; gap: 3px; background: transparent;">
-
-                            <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div> 
-
-                             <% const images = post.images %>
-
-                             <img class="post-images" src="<%= R2BASE %>/<%= images[0] %>" alt="N" style="height: 100%; width: 49%; object-fit: cover; object-position: center; border-radius: 12px 0 0 12px;" />
-        
-                             <div class="stacked" style="display: flex; flex-flow: column nowrap; gap: 3px; height: 100%; width: calc(50% - 5px); border-radius: 0 12px 12px 0; background: transparent;">
-                               <img class="post-images" src="<%= R2BASE %>/<%= images[1] %>" alt="N" style="width: calc(100% -1px); height: calc(50% - 2px); border-radius: 0 12px 0 0; object-fit: cover; object-position: center;" />
-                               <img class="post-images" src="<%= R2BASE %>/<%= images[2] %>" alt="N" style="width: calc(100% - 1px); height: calc(50% - 2px); border-radius: 0 0 12px 0; object-fit: cover; object-position: center;" />
-
-                             </div>
-        
-                          </article>
-
-                        <% } else if (post.images.length === 4) { %>
-
-                          <article class="post-article" style="z-index: 5;overflow: hidden; width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; flex-wrap: wrap; gap: 3px; overflow: hidden; background: transparent;">
-
-                            <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div>  
-        
-                            <% post.images.map((image) => { %>
-        
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1.5px); height: calc(50% - 1.5px); border-radius: 1px solid red; object-fit: cover; object-position: center;"/>
-        
-                            <% }) %>
-         
-                          </article>
-
-                        <% } else { %>
-
-                          <article class="post-article" style="z-index: 5; width: 100%; height: 250px; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
-
-                           <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div> 
-        
-                            <% post.images.map((image) => { %>
-        
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: auto; height: 100%; object-fit: contain; margin-right: 3px;" />
-        
-                            <% }) %>
-         
-                          </article>
-
-                        <% } %>
-
-
-
-                 
-                   <!-- ! Likes and counts container -->
-
-              <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px; margin-top: 5px;">
-                     <button data-liked="false" class="likes-cont-event" style="padding: 12px 18px; display: flex; align-items: center; justify-content: center;">
-                         <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: block; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out ;"></ion-icon>
-                         <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: none; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out;" ></ion-icon>
-                         <h3 class="like-h3" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.likes %></h3>
-                         <h3 class="postId-span" style="display: none;"><%= post.postId %></h3>
-                     </button>   
-                     <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
-                       <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                       <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.replies %></h3>
-                     </div>
-                     <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.interactions %></span>
-                     </div> 
-
-                     <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                     <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
-                   
-              </div>
-        </a> 
-                
-                <% }) %>
-                        
-              <% } %>
 
                 </div>
 
@@ -1022,6 +598,7 @@ const socket = io({ auth: { userId: '<%= user._id %>' } })
 const postScrollContainer = document.getElementById('scroll-container-posts')
 const userId = '<%= user._id %>'
 const R2Base = '<%= R2BASE %>'
+const userName = '<%= user.userName %>'
 const messageScrollContainer = document.getElementById('scroll-container-messages')
 
  document.querySelectorAll('.likes-cont-event').forEach((btn) => {
@@ -1247,6 +824,10 @@ const mainForYouContainer = document.querySelector('#scroll-container-for-you')
 const followingTabBtn = document.getElementById('following-tab')    // has border properties
 const interactionsTabBtn = document.getElementById('interactions-tab') // has border properties
 const forYouWholeContainr = document.getElementById('.scrollable-content')
+const loadingForYouSpin = document.querySelector('.load-trending')
+const noPostsFollowing = document.querySelector('.no-post-following')
+const noPostsInteractions = document.querySelector('.no-post-interactions')
+
 
 
   const modal = document.querySelector('.profile-content')
@@ -1257,8 +838,16 @@ const scrollThreshold = 10; // Adjust this value as needed
 followingContainer.addEventListener('scroll', () => {
   const scrollTop = followingContainer.scrollTop
   const scrollDistance = Math.abs(scrollTop - lastScrollTopPosition)
- 
-  if (scrollDistance > scrollThreshold) {
+  
+  if (scrollTop == 0) {
+    
+    // Scrolling up
+          forYouTabsContainer.style.height = '8%'
+          forYouTabsContainer.style.opacity = '1'
+          mainForYouContainer.style.height = '92%'
+    
+
+  } else if (scrollDistance > scrollThreshold) {
          
        if (scrollTop > lastScrollTopPosition) {
           // Scrolling down
@@ -1286,8 +875,15 @@ const interactionsScrollThreshold = 10; // Adjust this value as needed
 interactionsContainer.addEventListener('scroll', () => {
   const scrollTop = interactionsContainer.scrollTop
   const scrollDistance = Math.abs(scrollTop - lastInteractionsScrollTopPosition)
- 
-  if (scrollDistance > interactionsScrollThreshold) {
+
+  if (scrollTop === 0) {
+
+    // Scrolling up
+          forYouTabsContainer.style.height = '8%'
+          forYouTabsContainer.style.opacity = '1'
+          mainForYouContainer.style.height = '92%'
+
+  } else if (scrollDistance > interactionsScrollThreshold) {
          
        if (scrollTop > lastInteractionsScrollTopPosition) {
           // Scrolling down
@@ -1410,20 +1006,127 @@ humanoidContainer.innerHTML = `
   
 `
 
+function trippleImages (post, R2BASE) {
+   
+    const images = post.images
+
+    return `<img class="post-images" src="${R2BASE}/${images[0]}" alt="N" style="height: 100%; width: 49%; object-fit: cover; object-position: center; border-radius: 12px 0 0 12px;" />
+        
+            <div class="stacked" style="display: flex; flex-flow: column nowrap; gap: 3px; height: 100%; width: calc(50% - 5px); border-radius: 0 12px 12px 0; background: transparent;">
+                 <img class="post-images" src="${R2BASE}/${images[1]}" alt="N" style="width: calc(100% -1px); height: calc(50% - 2px); border-radius: 0 12px 0 0; object-fit: cover; object-position: center;" />
+                 <img class="post-images" src="${R2BASE}/${images[2]}" alt="N" style="width: calc(100% - 1px); height: calc(50% - 2px); border-radius: 0 0 12px 0; object-fit: cover; object-position: center;" />
+            </div>
+           `        
+                         
+}
+
+function createTimeElem (timestamp) {
+    
+      const diff = new Date() - new Date(timestamp)
+      const daysPast = Math.floor( (diff / 86400000) )
+      const hoursPast = Math.floor( (diff / 3600000) )
+      const minutesPast = Math.floor( (diff / 60000) ) 
+
+       if (daysPast > 0) {
+
+         return `<div style="pointer-events: none; font-size:12px;color: rgba(237, 232, 224, .65);margin-top:2px;">${daysPast}d</div>`
+
+       } else if (hoursPast > 0) { 
+
+        return  `<div style="pointer-events: none; font-size:12px;color: rgba(237,232,224,.65);margin-top: 2px;">${hoursPast}h</div>`
+
+       } else if (minutesPast > 0) { 
+
+        return  `<div style="pointer-events: none; font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;">${minutesPast}m</div>`
+
+       } else if (minutesPast == 0) { 
+
+        return `<div style="pointer-events: none; font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;">Just now</div>`
+
+       } 
+
+
+}
+
+function placeholder (post) {
+                
+              return `<div class="placeholder-cont" style="display: none;">
+                        ${post.images.map((image, key) => `<p id=${key}>${image}</p>` ).join('') }
+                      </div>
+                      `             
+            }
+
+const mediaContainer = (post) => {
+     
+       if (post.videoUrl !== 'none') {
+
+           return  `<video id="player" controls preload="none" style="display: block; width: 100%; max-height: 500px; border-radius: 12px; margin-top: 13px; object-fit: cover; object-position: center; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
+                           src="${R2Base}/${post.videoUrl}" type="video/mp4" data-src="/uploads/Expressions.mp4">
+                        Your browser does not support the video tag. 
+                    </video>
+                   `
+            
+      } else if (post.images.length === 0) {
+
+                 return   `<article class="post-article" style="width: 100%; height: 200px; border-radius: 12px; margin-top: 13px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
+                           </article>
+                           `
+      } else if (post.images.length === 1) {
+            
+                 return  `<article class="post-article" style="z-index: 5; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; background: transparent;">
+                             ${placeholder(post)}  
+                            ${ post.images.map((image) => `<img class="post-images" src="${R2Base}/${image}" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px;" />` ) }
+                          </article>
+                         ` 
+
+      } else if (post.images.length === 2) { 
+
+    
+                return  `<article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-top: 13px; display: flex; background: transparent;">
+                             ${placeholder(post)}
+                            ${post.images.map((image) => `<img class="post-images" src="${R2Base}/${image}" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />` ).join('') }
+                          </article>
+                          `
+      } else if (post.images.length === 3) { 
+
+                return   `<article class="post-article" style="z-index: 5;width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; gap: 3px; background: transparent;">
+                            ${placeholder(post)}
+                            ${trippleImages(post, R2Base)} 
+                          </article>
+                         `
+      } else if (post.images.length === 4) {
+
+            
+                 return   `<article class="post-article" style="z-index: 5;overflow: hidden; width: 100%; height: 300px; border-radius: 12px; margin-top: 13px; display: flex; flex-wrap: wrap; gap: 3px; overflow: hidden; background: transparent;">
+                                ${placeholder(post)}
+                                ${post.images.map((image) => `<img class="post-images" src="${R2Base}/${image}" alt="N" style="width: calc(50% - 1.5px); height: calc(50% - 1.5px); border-radius: 1px solid red; object-fit: cover; object-position: center;"/>` ).join('') } 
+                          </article>
+                         `
+      } else {
+
+                 
+            return   `<article class="post-article" style="z-index: 5; width: 100%; height: 250px; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">
+                          ${placeholder(post)}
+                          ${post.images.map((image) => `<img class="post-images" src="${R2Base}/${image}" alt="N" style="width: auto; height: 100%; object-fit: contain; margin-right: 3px;" />`).join('') }
+                      </article>
+                     `
+     } 
+                         
+}
 
   
 document.addEventListener('DOMContentLoaded', async () => {
  
-  if ('history' in window && 'scrollRestoration' in window) {
-  console.log('ScrollRestoration present')
+    if ('history' in window && 'scrollRestoration' in window) {
+        console.log('ScrollRestoration present')
 
-  window.history.scrollRestoration = 'manual'
-}
+        window.history.scrollRestoration = 'manual'
+     }
 
 
-  const stopFetchLinks = document.querySelectorAll('.stop-fetch')
+    const stopFetchLinks = document.querySelectorAll('.stop-fetch')
 
-       stopFetchLinks.forEach((link) => {
+    stopFetchLinks.forEach((link) => {
     
           link.addEventListener('click', () => {
 
@@ -1784,7 +1487,7 @@ document.addEventListener('DOMContentLoaded', async () => {
            }
          })
 
-         document.querySelector('.overlay').addEventListener('click', () => {
+       document.querySelector('.overlay').addEventListener('click', () => {
             modal.style.transition = 'top 0.3s ease-out'
             modal.style.top = '100%'
             document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0)`
@@ -1865,6 +1568,218 @@ document.addEventListener('DOMContentLoaded', async () => {
        
        
       }
+
+      // FOR YOU LOGIC HERE
+
+    followingTabBtn.style.borderBottom = `2px solid ${r.col}`
+    interactionsTabBtn.style.borderBottom = 'none'
+    followingContainer.style.transform = `translateX(0%)`
+    interactionsContainer.style.transform = `translateX(0%)`
+
+    followingContainer.style.display = 'none'
+    interactionsContainer.style.display = 'none'
+    loadingForYouSpin.style.display = 'flex'
+
+    const followingResponse = await fetch(`/api/following/${userId}`, {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json"
+        }
+    })
+
+    const responseF = await followingResponse.json()
+
+    const interactionsResponse = await fetch(`/api/interactions/${userId}`, {
+         method: 'GET',
+         headers: {
+           "Content-Type": "application/json"
+         }
+     })
+
+    const responseInt = await interactionsResponse.json()
+   
+     //LOGIC TO POPULATE INTERACTIONS CONTAINER
+
+     if (!responseInt.success) {
+
+        followingContainer.style.display = 'flex'
+        interactionsContainer.style.display = 'flex'
+        loadingForYouSpin.style.display = 'none'
+
+        interactionsContainer.innerHTML = `<div class="no-post-following" style="display: block; text-align: center; padding:40px 0; color: rgba(237,232,224,.85); font-size: 13px;">${responseInt.result}</div>
+                                          `
+     } else {
+        
+        followingContainer.style.display = 'flex'
+        interactionsContainer.style.display = 'flex'
+        loadingForYouSpin.style.display = 'none'
+
+        interactionsContainer.innerHTML = ''
+
+        responseInt.result.forEach((post) => {
+
+               const postLink = document.createElement('a')
+               postLink.style.width = '100%'
+               postLink.style.textDecoration = 'none'
+               postLink.style.marginTop = '10px'
+               postLink.style.borderRadius = '18px'
+               postLink.style.padding = '16px'
+               postLink.style.marginBottom = '12px'
+               postLink.style.boxShadow = `0 2px 18px rgba(0,0,0,.32)`
+               postLink.href = `/post/${post.postId}`
+               const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
+               const posterUserHandle = post.poster.userHandle !== 'none' ? post.poster.userHandle : post.poster.userName
+               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
+               const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
+               postLink.className = postClassName
+               const timestamp = post.createdAt 
+
+              
+              
+
+               postLink.innerHTML = ` <div class="info-button-foryou" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+                                         <div id="poster-username" style="display: none;">${post.userName}</div>
+                                         <div id="poster-followers" style="display: none;">${post.poster.totalFollowers}</div>
+                                         <div id="poster-following" style="display: none;">${post.poster.totalFollowing}</div>
+                                         <div id="poster-posts-length" style="display: none;">${post.poster.totalPosts}</div>
+                                         <div id="poster-userHandle" style="display: none;">@${post.poster.userHandle == 'none' ? post.userName : post.poster.userHandle}</div>
+                                         ${posterImage}
+                                         <div id="post-id" style="display: none;">${post.postId}</div>
+                                         <div id="poster-id" style="display: none;">${post.userId}</div>
+                                         <div style="flex:1"> 
+                                           <div style="pointer-events: none; font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
+                                              <h2 style="pointer-events: none; font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);">${post.userName}</h2>
+                                              ${youSpan}
+                                           </div>
+                                           ${createTimeElem(post.createdAt)}
+                                          </div>           
+                                      </div>
+                                      <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;">${post.post}</p>
+                                      
+                                      ${mediaContainer(post)}
+                                     
+                                      <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px; margin-top: 5px;">
+                                         <button data-liked="false" class="likes-cont-event" style="padding: 12px 18px; display: flex; align-items: center; justify-content: center;">
+                                           <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: block; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out ;"></ion-icon>
+                                           <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: none; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out;" ></ion-icon>
+                                           <h3 class="like-h3" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.likes}</h3>
+                                           <h3 class="postId-span" style="display: none;">${post.postId}</h3>
+                                         </button>   
+                                         <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
+                                            <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                            <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.replies}</h3>
+                                         </div>
+                                         <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                                            <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                            <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.interactions}</span>
+                                         </div> 
+
+                                         <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                         <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                   
+                                     </div>
+                                    `
+              
+              interactionsContainer.appendChild(postLink)                      
+       }) 
+     
+
+        console.log(interactionsContainer)
+     }
+    
+
+
+    // LOGIC TO POPULATE FOLLOWING CONTAINER 
+    if (!responseF.success) {
+      
+       followingContainer.style.display = 'flex'
+       interactionsContainer.style.display = 'flex'
+       loadingForYouSpin.style.display = 'none'
+
+       followingContainer.innerHTML = `<div class="no-post-following" style="display: block; text-align: center; padding:40px 0; color: rgba(237,232,224,.85); font-size: 13px;">${responseF.result}</div>
+                                       `
+
+    } else {
+       
+       followingContainer.style.display = 'flex'
+       interactionsContainer.style.display = 'flex'
+       loadingForYouSpin.style.display = 'none'
+
+       followingContainer.innerHTML = ''
+      
+      
+       responseF.result.forEach((post) => {
+
+               const postLink = document.createElement('a')
+               postLink.style.width = '100%'
+               postLink.style.textDecoration = 'none'
+               postLink.style.marginTop = '10px'
+               postLink.style.borderRadius = '18px'
+               postLink.style.padding = '16px'
+               postLink.style.marginBottom = '12px'
+               postLink.style.boxShadow = `0 2px 18px rgba(0,0,0,.32)`
+               postLink.href = `/post/${post.postId}`
+               const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
+               const posterUserHandle = post.poster.userHandle !== 'none' ? post.poster.userHandle : post.poster.userName
+               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
+               const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
+               postLink.className = postClassName
+               const timestamp = post.createdAt 
+
+              
+              
+
+               postLink.innerHTML = ` <div class="info-button-foryou" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+                                         <div id="poster-username" style="display: none;">${post.userName}</div>
+                                         <div id="poster-followers" style="display: none;">${post.poster.totalFollowers}</div>
+                                         <div id="poster-following" style="display: none;">${post.poster.totalFollowing}</div>
+                                         <div id="poster-posts-length" style="display: none;">${post.poster.totalPosts}</div>
+                                         <div id="poster-userHandle" style="display: none;">@${post.poster.userHandle == 'none' ? post.userName : post.poster.userHandle}</div>
+                                         ${posterImage}
+                                         <div id="post-id" style="display: none;">${post.postId}</div>
+                                         <div id="poster-id" style="display: none;">${post.userId}</div>
+                                         <div style="flex:1"> 
+                                           <div style="pointer-events: none; font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
+                                              <h2 style="pointer-events: none; font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);">${post.userName}</h2>
+                                              ${youSpan}
+                                           </div>
+                                           ${createTimeElem(post.createdAt)}
+                                          </div>           
+                                      </div>
+                                      <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;">${post.post}</p>
+                                      
+                                      ${mediaContainer(post)}
+                                     
+                                      <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px; margin-top: 5px;">
+                                         <button data-liked="false" class="likes-cont-event" style="padding: 12px 18px; display: flex; align-items: center; justify-content: center;">
+                                           <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: block; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out ;"></ion-icon>
+                                           <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: none; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out;" ></ion-icon>
+                                           <h3 class="like-h3" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.likes}</h3>
+                                           <h3 class="postId-span" style="display: none;">${post.postId}</h3>
+                                         </button>   
+                                         <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
+                                            <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                            <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.replies}</h3>
+                                         </div>
+                                         <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                                            <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                            <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.interactions}</span>
+                                         </div> 
+
+                                         <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                         <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                   
+                                     </div>
+                                    `
+              
+              followingContainer.appendChild(postLink)                      
+       }) 
+      
+
+    }
+
+      
+
        
       // AUTO FETCH USERMESSAGES
 
@@ -1951,8 +1866,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         }
 
+ })
 
-      })
+
+// END OF DOM CONTENT LOADED
+
 
 function switchChatRoom (senderId) {
      window.location.href = `/inbox/${senderId}`
@@ -2050,7 +1968,15 @@ socket.on('receiveMessage_realtime', (toastPayload) => {
           showCustomInAppToast(toastPayload)
      })
 
+
+
+
+
+
     // WITHOUT DOMCONTENTLOADED
+
+
+
  const postImages = document.querySelectorAll('.post-images')
  const expandedArticle = document.querySelector('#expanded-article')
  const expandContainer = document.querySelector('#images-expand')
@@ -3421,8 +3347,6 @@ let currentScrollTop = postScrollContainer.scrollTop
 }, { passive: true })
 
 
-
-
 messagesBtn.addEventListener('click', async (e) => {
     
     e.target.style.color = r.col
@@ -3542,7 +3466,7 @@ feedsBtn.addEventListener('click', (e) => {
 
 })
 
-forYouBtn.addEventListener('click', (e) => {
+forYouBtn.addEventListener('click', async (e) => {
 
     e.target.style.color = r.col
     e.target.style.borderBottom = `2px solid ${r.col}`
@@ -3559,8 +3483,627 @@ forYouBtn.addEventListener('click', (e) => {
     localStorage.setItem('storedDOMState', JSON.stringify(roomActive))
     localStorage.setItem('activeBtn', 'forYouBtn')
 
+    // FETCH FOR YOU FEED LOGIC
+    
+    followingTabBtn.style.borderBottom = `2px solid ${r.col}`
+    interactionsTabBtn.style.borderBottom = 'none'
+    followingContainer.style.transform = `translateX(0%)`
+    interactionsContainer.style.transform = `translateX(0%)`
+
+    followingContainer.style.display = 'none'
+    interactionsContainer.style.display = 'none'
+    loadingForYouSpin.style.display = 'flex'
+
+    const followingResponse = await fetch(`/api/following/${userId}`, {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json"
+        }
+    })
+
+    const responseF = await followingResponse.json()
+
+    const interactionsResponse = await fetch(`/api/interactions/${userId}`, {
+         method: 'GET',
+         headers: {
+           "Content-Type": "application/json"
+         }
+     })
+
+    const responseInt = await interactionsResponse.json()
+   //console.log(responseInt)
+     //LOGIC TO POPULATE INTERACTIONS CONTAINER
+
+     if (!responseInt.success) {
+
+        followingContainer.style.display = 'flex'
+        interactionsContainer.style.display = 'flex'
+        loadingForYouSpin.style.display = 'none'
+
+        interactionsContainer.innerHTML = `<div class="no-post-following" style="display: block; text-align: center; padding:40px 0; color: rgba(237,232,224,.85); font-size: 13px;">${responseInt.result}</div>
+                                          `
+     } else {
+        
+        followingContainer.style.display = 'flex'
+        interactionsContainer.style.display = 'flex'
+        loadingForYouSpin.style.display = 'none'
+
+        interactionsContainer.innerHTML = ''
+
+        responseInt.result.forEach((post) => {
+
+               const postLink = document.createElement('a')
+               postLink.style.width = '100%'
+               postLink.style.textDecoration = 'none'
+               postLink.style.marginTop = '10px'
+               postLink.style.borderRadius = '18px'
+               postLink.style.padding = '16px'
+               postLink.style.marginBottom = '12px'
+               postLink.style.boxShadow = `0 2px 18px rgba(0,0,0,.32)`
+               postLink.href = `/post/${post.postId}`
+               const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
+               const posterUserHandle = post.poster.userHandle !== 'none' ? post.poster.userHandle : post.poster.userName
+               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
+               const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
+               postLink.className = postClassName
+               const timestamp = post.createdAt 
+
+              
+              
+
+               postLink.innerHTML = ` <div class="info-button-foryou" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+                                         <div id="poster-username" style="display: none;">${post.userName}</div>
+                                         <div id="poster-followers" style="display: none;">${post.poster.totalFollowers}</div>
+                                         <div id="poster-following" style="display: none;">${post.poster.totalFollowing}</div>
+                                         <div id="poster-posts-length" style="display: none;">${post.poster.totalPosts}</div>
+                                         <div id="poster-userHandle" style="display: none;">@${post.poster.userHandle == 'none' ? post.userName : post.poster.userHandle}</div>
+                                         ${posterImage}
+                                         <div id="post-id" style="display: none;">${post.postId}</div>
+                                         <div id="poster-id" style="display: none;">${post.userId}</div>
+                                         <div style="flex:1"> 
+                                           <div style="pointer-events: none; font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
+                                              <h2 style="pointer-events: none; font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);">${post.userName}</h2>
+                                              ${youSpan}
+                                           </div>
+                                           ${createTimeElem(post.createdAt)}
+                                          </div>           
+                                      </div>
+                                      <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;">${post.post}</p>
+                                      
+                                      ${mediaContainer(post)}
+                                     
+                                      <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px; margin-top: 5px;">
+                                         <button data-liked="false" class="likes-cont-event" style="padding: 12px 18px; display: flex; align-items: center; justify-content: center;">
+                                           <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: block; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out ;"></ion-icon>
+                                           <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: none; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out;" ></ion-icon>
+                                           <h3 class="like-h3" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.likes}</h3>
+                                           <h3 class="postId-span" style="display: none;">${post.postId}</h3>
+                                         </button>   
+                                         <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
+                                            <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                            <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.replies}</h3>
+                                         </div>
+                                         <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                                            <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                            <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.interactions}</span>
+                                         </div> 
+
+                                         <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                         <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                   
+                                     </div>
+                                    `
+              
+              interactionsContainer.appendChild(postLink)                      
+       }) 
+     
+
+        console.log(interactionsContainer)
+     }
+    
+
+
+    // LOGIC TO POPULATE FOLLOWING CONTAINER 
+    if (!responseF.success) {
+      
+       followingContainer.style.display = 'flex'
+       interactionsContainer.style.display = 'flex'
+       loadingForYouSpin.style.display = 'none'
+
+       followingContainer.innerHTML = `<div class="no-post-following" style="display: block; text-align: center; padding:40px 0; color: rgba(237,232,224,.85); font-size: 13px;">${responseF.result}</div>
+                                       `
+
+    } else {
+       
+       followingContainer.style.display = 'flex'
+       interactionsContainer.style.display = 'flex'
+       loadingForYouSpin.style.display = 'none'
+
+       followingContainer.innerHTML = ''
+      // interactionsContainer.innerHTML = ''
+      
+       responseF.result.forEach((post) => {
+
+               const postLink = document.createElement('a')
+               postLink.style.width = '100%'
+               postLink.style.textDecoration = 'none'
+               postLink.style.marginTop = '10px'
+               postLink.style.borderRadius = '18px'
+               postLink.style.padding = '16px'
+               postLink.style.marginBottom = '12px'
+               postLink.style.boxShadow = `0 2px 18px rgba(0,0,0,.32)`
+               postLink.href = `/post/${post.postId}`
+               const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
+               const posterUserHandle = post.poster.userHandle !== 'none' ? post.poster.userHandle : post.poster.userName
+               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
+               const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
+               postLink.className = postClassName
+               const timestamp = post.createdAt 
+
+              
+              
+
+               postLink.innerHTML = ` <div class="info-button-foryou" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+                                         <div id="poster-username" style="display: none;">${post.userName}</div>
+                                         <div id="poster-followers" style="display: none;">${post.poster.totalFollowers}</div>
+                                         <div id="poster-following" style="display: none;">${post.poster.totalFollowing}</div>
+                                         <div id="poster-posts-length" style="display: none;">${post.poster.totalPosts}</div>
+                                         <div id="poster-userHandle" style="display: none;">@${post.poster.userHandle == 'none' ? post.userName : post.poster.userHandle}</div>
+                                         ${posterImage}
+                                         <div id="post-id" style="display: none;">${post.postId}</div>
+                                         <div id="poster-id" style="display: none;">${post.userId}</div>
+                                         <div style="flex:1"> 
+                                           <div style="pointer-events: none; font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
+                                              <h2 style="pointer-events: none; font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);">${post.userName}</h2>
+                                              ${youSpan}
+                                           </div>
+                                           ${createTimeElem(post.createdAt)}
+                                          </div>           
+                                      </div>
+                                      <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;">${post.post}</p>
+                                      
+                                      ${mediaContainer(post)}
+                                     
+                                      <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px; margin-top: 5px;">
+                                         <button data-liked="false" class="likes-cont-event" style="padding: 12px 18px; display: flex; align-items: center; justify-content: center;">
+                                           <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: block; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out ;"></ion-icon>
+                                           <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: none; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out;" ></ion-icon>
+                                           <h3 class="like-h3" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.likes}</h3>
+                                           <h3 class="postId-span" style="display: none;">${post.postId}</h3>
+                                         </button>   
+                                         <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
+                                            <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                            <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.replies}</h3>
+                                         </div>
+                                         <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
+                                            <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                            <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;">${post.interactions}</span>
+                                         </div> 
+
+                                         <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                                         <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                   
+                                     </div>
+                                    `
+              
+              followingContainer.appendChild(postLink)                      
+       }) 
+      //  console.log(followingContainer)
+
+    }
+
+
 })
+
+followingContainer.addEventListener('click', (e) => {
+     
+    let debounceTimer = null
+    
+    const userReqId = '<%= user._id %>'
+    const infoButton = e.target.closest('.info-button-foryou')
+    const postImage = e.target.closest('.post-images')
+    const likeActions = e.target.closest('.likes-cont-event')
+
+    sharePostBtn.style.display = 'none'
+    
+    
+
+    if (infoButton) {
+
+      e.preventDefault()
+
+      const profileInfo = {
+                 userName: infoButton.children[0].textContent,
+                 userId: infoButton.children[7].textContent,
+                 userProfilePic: infoButton.children[5].getAttribute('src'),
+                 userHandle: infoButton.children[4].textContent,
+                 userStats: {
+                     posts: infoButton.children[3].textContent,
+                     followers: infoButton.children[1].textContent,
+                     following: infoButton.children[2].textContent
+                 } 
+             }
   
+             const profileContainer = document.querySelector('#profile-info-cont')
+            
+               profileContainer.querySelector('img').src = profileInfo.userProfilePic  
+               profileContainer.querySelector('h2').textContent = profileInfo.userName
+               profileContainer.querySelector('p').textContent = profileInfo.userHandle
+               profileContainer.querySelector('#following').textContent = `${profileInfo.userStats.following}`
+               profileContainer.querySelector('#followers').textContent = `${profileInfo.userStats.followers}`
+               profileContainer.querySelector('#posts').textContent = `${profileInfo.userStats.posts}`
+               profileContainer.querySelector('#link-to-message').href = `/inbox/${profileInfo.userId}`
+               profileContainer.querySelector('#link-to-profile').href = `/user/${profileInfo.userId}`
+            
+               if (profileInfo.userId == userReqId) {
+                  document.querySelector('.interact').innerHTML = `<a id="link-to-message" href="" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                     <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                                                                     <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
+                                                                  </a>
+                                                                  <a id="link-to-profile" class="stop-fetch" href="" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Profile</h2>
+                                                                  </a>
+                                                                  <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Your Profile</h2>
+                                                                  </a>
+                                                                 `
+             } else {
+               
+                 document.querySelector('.interact').innerHTML = `<a id="link-to-message" href="/inbox/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
+                                                                  </a>
+                                                                  <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Profile</h2>
+                                                                  </a>
+                                                                  <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Your Profile</h2>
+                                                                  </a>
+                                                                 `
+               
+  
+             }
+  
+               document.querySelector('.overlay').style.display = 'block'
+               document.getElementById('profile-wrapper').style.display = 'block'
+               setTimeout(() => {
+                modal.style.transition = 'top 0.3s ease-out'
+                modal.style.top = '50%'
+        
+               }, 200)
+
+       } else if (postImage) {
+        
+         e.preventDefault()
+
+         if (!history.state?.imageExpand) {
+
+               history.pushState( { imageExpand: true}, "", "" )
+       
+         }
+
+        const articleParent =  postImage.closest('article')
+        const wholePost = postImage.closest('a')
+        const postLink = wholePost.children[0].children[6].textContent
+        const placeholderCont = articleParent.children[0]
+        const imagesArray = Array.from(placeholderCont.children, child => child.textContent)
+        const totalImages = imagesArray.length
+
+        linkToPost.href = `/post/${postLink}` 
+
+        imagesArray.forEach((img) => {
+            const image = document.createElement('img')
+            image.src = `<%= R2BASE %>/${img}`
+            image.style.width = '98%'
+            image.style.marginInline = '3px'
+            image.style.height = 'auto'
+            image.style.scrollSnapAlign = 'start'
+            image.style.objectFit = 'contain'
+            expandedArticle.appendChild(image)
+        })
+
+       document.getElementById('total-images').textContent = `${totalImages == 1 ? `${totalImages} Image` : `${totalImages} Images` }`
+       expandContainer.style.display = 'block'
+        
+
+       } else if (likeActions) {
+        e.preventDefault()
+        const currentActiveState = likeActions.dataset.liked === 'true'
+        const likeIcon = likeActions.querySelector('.like')
+        const unlikeIcon = likeActions.querySelector('.unlike')
+        const h3Span = likeActions.querySelector('.like-h3')
+        const postId = likeActions.querySelector('.postId-span').textContent
+        
+        const newLikedState = !currentActiveState
+
+        likeActions.dataset.liked = (newLikedState).toString()
+
+        if (newLikedState) {
+
+             likeIcon.style.display = 'block'
+             likeIcon.style.scale = '1.2'
+             unlikeIcon.style.display = 'none'
+
+        } else {
+ 
+             likeIcon.style.display = 'none'
+             unlikeIcon.style.display = 'block'
+             unlikeIcon.style.scale = '1.2'
+
+        }
+
+        clearTimeout(debounceTimer)
+
+        const updateDB = async (postId, btn) => {
+
+                         const currentDataSet = btn.dataset.liked
+                         const payload = { postId: postId, dataset: currentDataSet }
+
+
+                     try {
+                      
+                       const response = await socket.timeout(5000).volatile.emitWithAck("update-likes", payload)
+           
+                       if (response.success) {
+                         // update Success Instance
+                       if (response.UIStatus == 'like') {
+  
+                          h3Span.textContent = response.newLikesCount
+                          likeIcon.style.display = 'block'
+                          likeIcon.style.scale = '1'
+                          unlikeIcon.style.display = 'none'
+
+                        } else {
+                          h3Span.textContent = response.newLikesCount
+                          likeIcon.style.display = 'none'
+                          unlikeIcon.style.display = 'block'
+                          unlikeIcon.style.scale = '1'
+          
+      
+                        }
+
+                        } else {
+                         // failure instance
+                          likeIcon.style.display = 'none'
+                          unlikeIcon.style.display = 'block'
+                          unlikeIcon.style.scale = '1'
+                          console.log('Likes did not comeThrough')
+
+                        }
+
+                     } catch (error) {
+
+                          likeIcon.style.display = 'none'
+                          unlikeIcon.style.display = 'block'
+                          unlikeIcon.style.scale = '1'
+                          errorMessage.textContent = 'Connection Failure'
+                          setTimeout(() => {
+                           errorMessage.textContent = ''
+                          }, 1500)
+                      
+                     }    
+                 } 
+
+                 debounceTimer = setTimeout(() => {
+      
+                    updateDB(postId, likeActions)
+     
+                  }, 500)
+
+
+       }       
+ })
+
+
+
+interactionsContainer.addEventListener('click', (e) => {
+     
+    let debounceTimer = null
+    
+    const userReqId = '<%= user._id %>'
+    const infoButton = e.target.closest('.info-button-foryou')
+    const postImage = e.target.closest('.post-images')
+    const likeActions = e.target.closest('.likes-cont-event')
+
+    sharePostBtn.style.display = 'none'
+    
+    
+
+    if (infoButton) {
+
+      e.preventDefault()
+
+      const profileInfo = {
+                 userName: infoButton.children[0].textContent,
+                 userId: infoButton.children[7].textContent,
+                 userProfilePic: infoButton.children[5].getAttribute('src'),
+                 userHandle: infoButton.children[4].textContent,
+                 userStats: {
+                     posts: infoButton.children[3].textContent,
+                     followers: infoButton.children[1].textContent,
+                     following: infoButton.children[2].textContent
+                 } 
+             }
+  
+             const profileContainer = document.querySelector('#profile-info-cont')
+            
+               profileContainer.querySelector('img').src = profileInfo.userProfilePic  
+               profileContainer.querySelector('h2').textContent = profileInfo.userName
+               profileContainer.querySelector('p').textContent = profileInfo.userHandle
+               profileContainer.querySelector('#following').textContent = `${profileInfo.userStats.following}`
+               profileContainer.querySelector('#followers').textContent = `${profileInfo.userStats.followers}`
+               profileContainer.querySelector('#posts').textContent = `${profileInfo.userStats.posts}`
+               profileContainer.querySelector('#link-to-message').href = `/inbox/${profileInfo.userId}`
+               profileContainer.querySelector('#link-to-profile').href = `/user/${profileInfo.userId}`
+            
+               if (profileInfo.userId == userReqId) {
+                  document.querySelector('.interact').innerHTML = `<a id="link-to-message" href="" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                     <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                                                                     <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
+                                                                  </a>
+                                                                  <a id="link-to-profile" class="stop-fetch" href="" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Profile</h2>
+                                                                  </a>
+                                                                  <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Your Profile</h2>
+                                                                  </a>
+                                                                 `
+             } else {
+               
+                 document.querySelector('.interact').innerHTML = `<a id="link-to-message" href="/inbox/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
+                                                                  </a>
+                                                                  <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Profile</h2>
+                                                                  </a>
+                                                                  <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                    <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                    <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Your Profile</h2>
+                                                                  </a>
+                                                                 `
+               
+  
+             }
+  
+               document.querySelector('.overlay').style.display = 'block'
+               document.getElementById('profile-wrapper').style.display = 'block'
+               setTimeout(() => {
+                modal.style.transition = 'top 0.3s ease-out'
+                modal.style.top = '50%'
+        
+               }, 200)
+
+       } else if (postImage) {
+        
+         e.preventDefault()
+
+         if (!history.state?.imageExpand) {
+
+               history.pushState( { imageExpand: true}, "", "" )
+       
+         }
+
+        const articleParent =  postImage.closest('article')
+        const wholePost = postImage.closest('a')
+        const postLink = wholePost.children[0].children[6].textContent
+        const placeholderCont = articleParent.children[0]
+        const imagesArray = Array.from(placeholderCont.children, child => child.textContent)
+        const totalImages = imagesArray.length
+
+        linkToPost.href = `/post/${postLink}` 
+
+        imagesArray.forEach((img) => {
+            const image = document.createElement('img')
+            image.src = `<%= R2BASE %>/${img}`
+            image.style.width = '98%'
+            image.style.marginInline = '3px'
+            image.style.height = 'auto'
+            image.style.scrollSnapAlign = 'start'
+            image.style.objectFit = 'contain'
+            expandedArticle.appendChild(image)
+        })
+
+       document.getElementById('total-images').textContent = `${totalImages == 1 ? `${totalImages} Image` : `${totalImages} Images` }`
+       expandContainer.style.display = 'block'
+        
+
+       } else if (likeActions) {
+        e.preventDefault()
+        const currentActiveState = likeActions.dataset.liked === 'true'
+        const likeIcon = likeActions.querySelector('.like')
+        const unlikeIcon = likeActions.querySelector('.unlike')
+        const h3Span = likeActions.querySelector('.like-h3')
+        const postId = likeActions.querySelector('.postId-span').textContent
+        
+        const newLikedState = !currentActiveState
+
+        likeActions.dataset.liked = (newLikedState).toString()
+
+        if (newLikedState) {
+
+             likeIcon.style.display = 'block'
+             likeIcon.style.scale = '1.2'
+             unlikeIcon.style.display = 'none'
+
+        } else {
+ 
+             likeIcon.style.display = 'none'
+             unlikeIcon.style.display = 'block'
+             unlikeIcon.style.scale = '1.2'
+
+        }
+
+        clearTimeout(debounceTimer)
+
+        const updateDB = async (postId, btn) => {
+
+                         const currentDataSet = btn.dataset.liked
+                         const payload = { postId: postId, dataset: currentDataSet }
+
+
+                     try {
+                      
+                       const response = await socket.timeout(5000).volatile.emitWithAck("update-likes", payload)
+           
+                       if (response.success) {
+                         // update Success Instance
+                       if (response.UIStatus == 'like') {
+  
+                          h3Span.textContent = response.newLikesCount
+                          likeIcon.style.display = 'block'
+                          likeIcon.style.scale = '1'
+                          unlikeIcon.style.display = 'none'
+
+                        } else {
+                          h3Span.textContent = response.newLikesCount
+                          likeIcon.style.display = 'none'
+                          unlikeIcon.style.display = 'block'
+                          unlikeIcon.style.scale = '1'
+          
+      
+                        }
+
+                        } else {
+                         // failure instance
+                          likeIcon.style.display = 'none'
+                          unlikeIcon.style.display = 'block'
+                          unlikeIcon.style.scale = '1'
+                          console.log('Likes did not comeThrough')
+
+                        }
+
+                     } catch (error) {
+
+                          likeIcon.style.display = 'none'
+                          unlikeIcon.style.display = 'block'
+                          unlikeIcon.style.scale = '1'
+                          errorMessage.textContent = 'Connection Failure'
+                          setTimeout(() => {
+                           errorMessage.textContent = ''
+                          }, 1500)
+                      
+                     }    
+                 } 
+
+                 debounceTimer = setTimeout(() => {
+      
+                    updateDB(postId, likeActions)
+     
+                  }, 500)
+
+
+       }       
+ })
+
+
 
 
 
