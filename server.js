@@ -1626,17 +1626,19 @@ app.get('/api/following/:id', async (req, res) => {
 app.get('/api/interactions/:id', async (req, res) => {
 
      const userId = req.params.id
+    
 
      try {
 
-         const likedPostIdsResult = LikedPost.aggregate([
+    const likedPostIdsResult = await LikedPost.aggregate([
                      { $match: { parentId: userId } },
                      { $unwind: "$posts"},
                      { $group: { _id: null, likedPostIds: { $addToSet: "$posts" } } },
                      { $project: { _id: 0, likedPostIds: 1 } }
                  ])
 
-    const likedResultArray = likedPostIdsResult[0]?.likedPostIds || []  
+    const likedResultArray = likedPostIdsResult[0]?.likedPostIds || [] 
+    // console.log(likedResultArray) 
     
     const allRepliedToPostIds = await Reply.aggregate([
                      { $match: { userId: userId } },
@@ -1646,70 +1648,285 @@ app.get('/api/interactions/:id', async (req, res) => {
     
     const repliedResultArray = allRepliedToPostIds[0]?.repliedToPostIds || [] 
     
-    const allInteractedPostIds = [...new Set([...likedResultArray, ...repliedResultArray])]
 
-    if (allInteractedPostIds.length === 0) {
+    const likedDataArray = []
+    const repliedDataArray = []
+    
+    
+    
+    // TRIAL FOR NEW POPULATED POST OBJECTS
+
+    if (repliedResultArray.length === 0 && likedResultArray.length === 0) {
 
         res.json({ success: false, result: 'No Interactions Yet' })
 
     } else {
-       
-        const interactedPosts = await Post.find({ _id: { $in: allInteractedPostIds }, createdAt: { $gt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) } }).lean()  
-
-        const sortedInteractions = interactedPosts.sort((a,b) => b.createdAt - a.createdAt)
-
-        const selfExcludedInteractions = sortedInteractions.filter((post) => post.userId !== userId)
-
-        const uniqueUserIds = [...new Set(selfExcludedInteractions.map((d) => d.userId ))]
         
-        const allUsers = await Omaruser.find({ _id: { $in: uniqueUserIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
-        
-        const postDataArray = []
+        if (likedResultArray.length === 0) {
 
-        selfExcludedInteractions.forEach((post) => {
+            const allRepliedPosts = await Post.find({ _id: { $in: repliedResultArray }, createdAt: { $gt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) } }).lean()
+            const sortedRepliedPosts = allRepliedPosts.sort((a,b) => b.createdAt - a.createdAt)
+            const selfExcludedReplies = sortedRepliedPosts.filter((post) => post.userId !== userId)
+            const uniqueUsersInReplied = [...new Set(selfExcludedReplies.map((r) => r.userId))]
+            const allUsersInReplied = await Omaruser.find({ _id: { $in: uniqueUsersInReplied } }).select('totalFollowers totalFollowing totalPosts userDP userHandle') 
+    
+            selfExcludedReplies.forEach((post) => {
 
-             const userId = post.userId
+                  const userId = post.userId
 
-             const posterInfoArray = allUsers.filter((user) => user.id == userId )
-             const posterInfo = posterInfoArray[0]
+                  const posterInfoArray = allUsersInReplied.filter((user) => user.id == userId )
+                  const posterInfo = posterInfoArray[0]
              
-             const newPostObject = {
-                 postId: post._id,
-                 userId: post.userId,
-                 createdAt: post.createdAt,  
-                 videoUrl: post.videoUrl,
-                 images: post.images,
-                 likes: post.likes,
-                 interactions: post.interactions,
-                 replies: post.replies,
-                 userHandle: post.userHandle,
-                 post: post.post,
-                 userName: post.userName,
-                 poster: {
-                    totalFollowers: posterInfo.totalFollowers,
-                    totalFollowing: posterInfo.totalFollowing,
-                    totalPosts: posterInfo.totalPosts,
-                    userDP: posterInfo.userDP,
-                    userHandle: posterInfo.userHandle
+                  const newPostObject = {
+                         postId: post._id,
+                         userId: post.userId,
+                         createdAt: post.createdAt,  
+                         videoUrl: post.videoUrl,
+                         images: post.images,
+                         likes: post.likes,
+                         interactions: post.interactions,
+                         replies: post.replies,
+                         userHandle: post.userHandle,
+                         post: post.post,
+                         userName: post.userName,
+                         action: 'replied',
+                         poster: {
+                         totalFollowers: posterInfo.totalFollowers,
+                         totalFollowing: posterInfo.totalFollowing,
+                         totalPosts: posterInfo.totalPosts,
+                         userDP: posterInfo.userDP,
+                         userHandle: posterInfo.userHandle
+                    }
+
+                  }
+             
+              repliedDataArray.push(newPostObject)
+         
+        
+              }) 
+            
+              res.json({ success: true, result: repliedDataArray })   
+
+              console.log('PICKED ONLY REPLIES')
+            
+        } else if (repliedResultArray.length === 0) {
+            
+            const AllLikedPosts = await Post.find({ _id: { $in: likedResultArray }, createdAt: { $gt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) } }).lean()
+            const sortedLikedPosts = AllLikedPosts.sort((a,b) => b.createdAt - a.createdAt)
+            const selfExcludedLikes = sortedLikedPosts.filter((post) => post.userId !== userId)
+            const uniqueUserLikedIds = [...new Set(selfExcludedLikes.map((l) => l.userId))]
+            const allUsersInLiked = await Omaruser.find({ _id: { $in: uniqueUserLikedIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+    
+
+            selfExcludedLikes.forEach((post) => {
+
+                 const userId = post.userId
+
+                 const posterInfoArray = allUsersInLiked.filter((user) => user.id == userId )
+                 const posterInfo = posterInfoArray[0]
+             
+                 const newPostObject = {
+                    postId: post._id,
+                    userId: post.userId,
+                    createdAt: post.createdAt,  
+                    videoUrl: post.videoUrl,
+                    images: post.images,
+                    likes: post.likes,
+                    interactions: post.interactions,
+                    replies: post.replies,
+                    userHandle: post.userHandle,
+                    post: post.post,
+                    userName: post.userName,
+                    action: 'liked',
+                    poster: {
+                       totalFollowers: posterInfo.totalFollowers,
+                       totalFollowing: posterInfo.totalFollowing,
+                       totalPosts: posterInfo.totalPosts,
+                       userDP: posterInfo.userDP,
+                       userHandle: posterInfo.userHandle
                     }
 
               }
              
-              postDataArray.push(newPostObject)
+              likedDataArray.push(newPostObject)
          
         
-          }) 
+            }) 
 
+            res.json({ success: true, result: likedDataArray })
 
-        res.json({ success: true, result: postDataArray })   // all userInteracted posts for the past two months per request
-       // console.log(postDataArray)
+            console.log('PICKED ONLY LIKES')
+            
+        } else {  // BOTH ARRAYS HAVE DATA LIKED/REPLIED
+
+             const AllLikedPosts = await Post.find({ _id: { $in: likedResultArray }, createdAt: { $gt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) } }).lean()
+             const sortedLikedPosts = AllLikedPosts.sort((a,b) => b.createdAt - a.createdAt)
+             const selfExcludedLikes = sortedLikedPosts.filter((post) => post.userId !== userId)
+             const uniqueUserLikedIds = [...new Set(selfExcludedLikes.map((l) => l.userId))]
+             const allUsersInLiked = await Omaruser.find({ _id: { $in: uniqueUserLikedIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+    
+
+             selfExcludedLikes.forEach((post) => {
+
+                 const userId = post.userId
+
+                 const posterInfoArray = allUsersInLiked.filter((user) => user.id == userId )
+                 const posterInfo = posterInfoArray[0]
+             
+                 const newPostObject = {
+                    postId: post._id,
+                    userId: post.userId,
+                    createdAt: post.createdAt,  
+                    videoUrl: post.videoUrl,
+                    images: post.images,
+                    likes: post.likes,
+                    interactions: post.interactions,
+                    replies: post.replies,
+                    userHandle: post.userHandle,
+                    post: post.post,
+                    userName: post.userName,
+                    action: 'liked',
+                    poster: {
+                       totalFollowers: posterInfo.totalFollowers,
+                       totalFollowing: posterInfo.totalFollowing,
+                       totalPosts: posterInfo.totalPosts,
+                       userDP: posterInfo.userDP,
+                       userHandle: posterInfo.userHandle
+                    }
+
+              }
+             
+              likedDataArray.push(newPostObject)
+         
+        
+             }) 
+
+             const allRepliedPosts = await Post.find({ _id: { $in: repliedResultArray }, createdAt: { $gt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) } }).lean()
+             const sortedRepliedPosts = allRepliedPosts.sort((a,b) => b.createdAt - a.createdAt)
+             const selfExcludedReplies = sortedRepliedPosts.filter((post) => post.userId !== userId)
+             const uniqueUsersInReplied = [...new Set(selfExcludedReplies.map((r) => r.userId))]
+             const allUsersInReplied = await Omaruser.find({ _id: { $in: uniqueUsersInReplied } }).select('totalFollowers totalFollowing totalPosts userDP userHandle') 
+    
+             selfExcludedReplies.forEach((post) => {
+
+                  const userId = post.userId
+
+                  const posterInfoArray = allUsersInReplied.filter((user) => user.id == userId )
+                  const posterInfo = posterInfoArray[0]
+             
+                  const newPostObject = {
+                         postId: post._id,
+                         userId: post.userId,
+                         createdAt: post.createdAt,  
+                         videoUrl: post.videoUrl,
+                         images: post.images,
+                         likes: post.likes,
+                         interactions: post.interactions,
+                         replies: post.replies,
+                         userHandle: post.userHandle,
+                         post: post.post,
+                         userName: post.userName,
+                         action: 'replied',
+                         poster: {
+                         totalFollowers: posterInfo.totalFollowers,
+                         totalFollowing: posterInfo.totalFollowing,
+                         totalPosts: posterInfo.totalPosts,
+                         userDP: posterInfo.userDP,
+                         userHandle: posterInfo.userHandle
+                    }
+
+                  }
+             
+               repliedDataArray.push(newPostObject)
+         
+        
+              }) 
+
+             const interactionsArray = [...likedDataArray, ...repliedDataArray]
+            
+             const uniqueMap = new Map()
+
+             interactionsArray.forEach((post) => {
+
+                 uniqueMap.set(String(post.postId), post)
+             })
+            
+             const deduplicatedArray = Array.from(uniqueMap.values())
+      
+          
+             res.json({ success: true, result: deduplicatedArray })
+             
+           
+             console.log('PICKED BOTH ARRAY INSTANCE')
+        }
+
     }
+
+
+    // const allInteractedPostIds = [...new Set([...likedResultArray, ...repliedResultArray])]
+
+    // if (allInteractedPostIds.length === 0) {
+
+    //     res.json({ success: false, result: 'No Interactions Yet' })
+
+    // } else {
+       
+    //     const interactedPosts = await Post.find({ _id: { $in: allInteractedPostIds }, createdAt: { $gt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) } }).lean()  
+
+    //     const sortedInteractions = interactedPosts.sort((a,b) => b.createdAt - a.createdAt)
+
+    //     const selfExcludedInteractions = sortedInteractions.filter((post) => post.userId !== userId)
+
+    //     const uniqueUserIds = [...new Set(selfExcludedInteractions.map((d) => d.userId ))]
+        
+    //     const allUsers = await Omaruser.find({ _id: { $in: uniqueUserIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+        
+    //     const postDataArray = []
+
+    //     selfExcludedInteractions.forEach((post) => {
+
+    //          const userId = post.userId
+
+    //          const posterInfoArray = allUsers.filter((user) => user.id == userId )
+    //          const posterInfo = posterInfoArray[0]
+             
+    //          const newPostObject = {
+    //              postId: post._id,
+    //              userId: post.userId,
+    //              createdAt: post.createdAt,  
+    //              videoUrl: post.videoUrl,
+    //              images: post.images,
+    //              likes: post.likes,
+    //              interactions: post.interactions,
+    //              replies: post.replies,
+    //              userHandle: post.userHandle,
+    //              post: post.post,
+    //              userName: post.userName,
+    //              poster: {
+    //                 totalFollowers: posterInfo.totalFollowers,
+    //                 totalFollowing: posterInfo.totalFollowing,
+    //                 totalPosts: posterInfo.totalPosts,
+    //                 userDP: posterInfo.userDP,
+    //                 userHandle: posterInfo.userHandle
+    //                 }
+
+    //           }
+             
+    //           postDataArray.push(newPostObject)
+         
+        
+    //       }) 
+
+
+    //     res.json({ success: true, result: postDataArray })   // all userInteracted posts for the past two months per request
+    //    // console.log(postDataArray)
+    // }
         
      } catch (error) {
 
-        console.log('MONGODB ERROR: ' + error)
+        console.log(error)
 
-        res.json({ success: false, result: 'Server Error~!!'  })
+        res.json({ success: false, result: 'Server Error~'  })
         
      }
      

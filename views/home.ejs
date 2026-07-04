@@ -87,7 +87,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      <div class="fd" style="font-size: 17px; font-weight: 700; color:rgba(237,232,224,.88);">
                         <%= user.userName %>
                      </div>
-                     <div <% /* eslint-disable-next-line css-porpertyvalueexpected */ %> style="font-size: 11px; color: <%= user.userColor %>; letter-spacing: 1px; margin-top: 1px; opacity: 0.7;">
+                     <div <% /* eslint-disable-next-line css-porpertyvalueexpected */ %> style="font-size: 11px; color: <%= user.userColor %>; letter-spacing: 1px; margin-top: 1px; opacity: 0.8; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         @<%= user.userHandle !== 'none' ? user.userHandle : user.userName %>
                      </div>
             </div>
@@ -527,7 +527,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                     <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
 
-                    <p style="font-size: 16px; color: rgba(237,232,224,.45);"></p>
+                    <p style="font-size: 16px; color: rgba(237,232,224,.45); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
 
                     <div class="follow-wrapper" style="display: flex; justify-content: space-around; align-items: center; width: 100%; height: 40px;">
                          
@@ -1609,7 +1609,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         interactionsContainer.innerHTML = `<div class="no-post-following" style="display: block; text-align: center; padding:40px 0; color: rgba(237,232,224,.85); font-size: 13px;">${responseInt.result}</div>
                                           `
      } else {
-        
+    
         followingContainer.style.display = 'flex'
         interactionsContainer.style.display = 'flex'
         loadingForYouSpin.style.display = 'none'
@@ -1617,7 +1617,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         interactionsContainer.innerHTML = ''
 
         responseInt.result.forEach((post) => {
-
+               
                const postLink = document.createElement('a')
                postLink.style.width = '100%'
                postLink.style.textDecoration = 'none'
@@ -1628,8 +1628,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                postLink.style.boxShadow = `0 2px 18px rgba(0,0,0,.32)`
                postLink.href = `/post/${post.postId}`
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
+               
                const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
-               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
+               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 50%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
                const timestamp = post.createdAt 
@@ -1637,7 +1638,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               
               
 
-               postLink.innerHTML = ` <div class="info-button-foryou" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+               postLink.innerHTML = ` <div class="info-button-foryou" style="position: relative; display: flex; align-items: center; gap:9px; margin-bottom:10px;">
                                          <div id="poster-username" style="display: none;">${post.userName}</div>
                                          <div id="poster-followers" style="display: none;">${post.poster.totalFollowers}</div>
                                          <div id="poster-following" style="display: none;">${post.poster.totalFollowing}</div>
@@ -1652,7 +1653,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                                               ${youSpan}
                                            </div>
                                            ${createTimeElem(post.createdAt)}
-                                          </div>           
+                                          </div> 
+                                          <div class="action" style="position: absolute; right: 10px; top: 70%; transform: translateY(-50%); font-size: 13px; font-family:'Playfair Display',serif; color: rgba(237,232,224,.75);">${ post.action == 'replied' ? '~You Replied~' : '~You Liked~' }</div>          
+
                                       </div>
                                       <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;">${post.post}</p>
                                       
@@ -1684,7 +1687,9 @@ document.addEventListener('DOMContentLoaded', async () => {
        }) 
      
 
-        console.log(interactionsContainer)
+        interactionsContainer.querySelectorAll('.glass').forEach(container => {
+            videoObserver.observe(container)
+         })
      }
     
 
@@ -1744,7 +1749,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                               ${youSpan}
                                            </div>
                                            ${createTimeElem(post.createdAt)}
-                                          </div>           
+                                          </div>      
                                       </div>
                                       <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;">${post.post}</p>
                                       
@@ -1775,7 +1780,9 @@ document.addEventListener('DOMContentLoaded', async () => {
               followingContainer.appendChild(postLink)                      
        }) 
       
-
+       followingContainer.querySelectorAll('.glass').forEach(container => {
+             videoObserver.observe(container)
+        })
     }
 
       
@@ -1849,7 +1856,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                <div style="flex: 1; min-width: 0;">
                                    <div style="display:flex;justify-content:space-between;margin-bottom:3px">
                                        <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">${msgLink.userName}</span>
-                                       <span style="font-size:9px;color:rgba(237,232,224,.85)">${formatDividerDate(newTimeString)}</span>    
+                                       <span style="font-size:9px;color: ${ unreadCount !== 0 ? '<%= user.userColor %>' : 'rgba(237,232,224,.85)' } ;">${formatDividerDate(newTimeString)}</span>    
                                    </div>
                                    <p style="font-size: 11px; color: rgba(237,232,224,.53); max-width: 80%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${tickHtml}${msgLink.lastText}</p>
                                </div> 
@@ -1940,7 +1947,7 @@ socket.on('arrange-dashboard', async (incomingMsg) => {
                                  <div style="flex: 1; min-width: 0;">
                                      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
                                          <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">${msgLink.userName}</span>
-                                         <span style="font-size:9px;color:rgba(237,232,224,.85)">${newTimeString.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>    
+                                         <span style="font-size:9px;color: ${unreadCount !== 0 ? '<%= user.userColor %>' : 'rgba(237,232,224,.85)' };">${newTimeString.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>    
                                      </div>
                                      <p style="font-size: 11px; color: rgba(237,232,224,.53); max-width: 80%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${tickHtml}${msgLink.lastText}</p>
                                  </div> 
@@ -3425,7 +3432,7 @@ messagesBtn.addEventListener('click', async (e) => {
                                <div style="flex: 1; min-width: 0;">
                                    <div style="display:flex;justify-content:space-between;margin-bottom:3px">
                                        <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">${msgLink.userName}</span>
-                                       <span style="font-size:9px;color:rgba(237,232,224,.85)">${formatDividerDate(newTimeString)}</span>    
+                                       <span style="font-size:9px;color: ${ unreadCount !== 0 ? '<%= user.userColor %>' : 'rgba(237,232,224,.85)' } ;">${formatDividerDate(newTimeString)}</span>    
                                    </div>
                                    <p style="font-size: 11px; color: rgba(237,232,224,.53); max-width: 80%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${tickHtml}${msgLink.lastText}</p>
                                </div> 
@@ -3511,7 +3518,7 @@ forYouBtn.addEventListener('click', async (e) => {
      })
 
     const responseInt = await interactionsResponse.json()
-   //console.log(responseInt)
+   
      //LOGIC TO POPULATE INTERACTIONS CONTAINER
 
      if (!responseInt.success) {
@@ -3543,7 +3550,7 @@ forYouBtn.addEventListener('click', async (e) => {
                postLink.href = `/post/${post.postId}`
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
                const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
-               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
+               const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 50%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
                const timestamp = post.createdAt 
@@ -3551,7 +3558,7 @@ forYouBtn.addEventListener('click', async (e) => {
               
               
 
-               postLink.innerHTML = ` <div class="info-button-foryou" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+               postLink.innerHTML = ` <div class="info-button-foryou" style="position: relative; display: flex; align-items: center; gap:9px; margin-bottom:10px;">
                                          <div id="poster-username" style="display: none;">${post.userName}</div>
                                          <div id="poster-followers" style="display: none;">${post.poster.totalFollowers}</div>
                                          <div id="poster-following" style="display: none;">${post.poster.totalFollowing}</div>
@@ -3566,7 +3573,9 @@ forYouBtn.addEventListener('click', async (e) => {
                                               ${youSpan}
                                            </div>
                                            ${createTimeElem(post.createdAt)}
-                                          </div>           
+                                          </div> 
+                                          <div class="action" style="position: absolute; right: 10px; top: 70%; transform: translateY(-50%); font-size: 13px; font-family:'Playfair Display',serif; color: rgba(237,232,224,.75);">${post.action == 'replied' ? '~You Replied' : '~You Liked~' }</div>          
+                                                    
                                       </div>
                                       <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;">${post.post}</p>
                                       
@@ -3597,8 +3606,10 @@ forYouBtn.addEventListener('click', async (e) => {
               interactionsContainer.appendChild(postLink)                      
        }) 
      
-
-        console.log(interactionsContainer)
+       interactionsContainer.querySelectorAll('.glass').forEach(container => {
+          videoObserver.observe(container)
+       })
+        
      }
     
 
@@ -3658,7 +3669,7 @@ forYouBtn.addEventListener('click', async (e) => {
                                               ${youSpan}
                                            </div>
                                            ${createTimeElem(post.createdAt)}
-                                          </div>           
+                                          </div>       
                                       </div>
                                       <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;">${post.post}</p>
                                       
@@ -3688,12 +3699,19 @@ forYouBtn.addEventListener('click', async (e) => {
               
               followingContainer.appendChild(postLink)                      
        }) 
-      //  console.log(followingContainer)
+      
+       followingContainer.querySelectorAll('.glass').forEach(container => {
+         videoObserver.observe(container)
+       })
 
     }
 
 
 })
+
+
+
+
 
 followingContainer.addEventListener('click', (e) => {
      
