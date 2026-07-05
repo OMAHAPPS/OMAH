@@ -158,23 +158,22 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
       
     </main>
     <footer style="position: relative; height: 15%; padding-left: 12px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
-        <div class="gif-container" style="position: absolute; bottom: 100%; left: 0; width: 100%; z-index: 10; height: 0px; background-color: black; transition: height .3s ease-out; border-radius: 20px 20px 0 0;">
+        <div class="gif-container" style="position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); width: 100%; z-index: 10; height: 0px; background-color: black; transition: height .3s ease-out; border-radius: 20px 20px 0 0;">
 
               <div class="gif-header-holder" style=" opacity: 0; position: relative; height: 50px; width: 100%; display: flex; align-items: center; justify-content: space-evenly; transition: opacity .5s ease-out;" > 
-                  <button id="emojis" onclick="openEmogis()"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M12 22c5.514 0 10-4.486 10-10S17.514 2 12 2 2 6.486 2 12s4.486 10 10 10zm3.493-13a1.494 1.494 0 1 1-.001 2.987A1.494 1.494 0 0 1 15.493 9zm-4.301 6.919a4.108 4.108 0 0 0 1.616 0c.253-.052.505-.131.75-.233.234-.1.464-.224.679-.368.208-.142.407-.306.591-.489.183-.182.347-.381.489-.592l1.658 1.117a6.027 6.027 0 0 1-1.619 1.621 6.003 6.003 0 0 1-2.149.904 6.116 6.116 0 0 1-2.414-.001 5.919 5.919 0 0 1-2.148-.903 6.078 6.078 0 0 1-1.621-1.622l1.658-1.117c.143.211.307.41.488.59a3.988 3.988 0 0 0 2.022 1.093zM8.5 9a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 8.5 9z"></path></svg></button>
-                  <button id="gifs" onclick="openGifs()"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-2.667 15.772A4.512 4.512 0 0 1 9.984 18c-.737 0-1.271-.186-1.644-.546-.371-.348-.575-.875-.569-1.469.006-1.344.983-2.111 2.309-2.111.521 0 .924.103 1.121.198l-.191.731c-.222-.096-.498-.174-.941-.174-.762 0-1.338.432-1.338 1.308 0 .833.522 1.325 1.271 1.325.21 0 .378-.024.45-.061v-.846h-.624v-.713h1.505v2.13zm1.634.186h-.918v-4.042h.918v4.042zm3.262-3.292h-1.553v.923h1.451v.744h-1.451v1.625h-.918v-4.042h2.471v.75zM14 9h-1V4l5 5h-4z"></path></svg></button>             
+                  <button id="emojis"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M12 22c5.514 0 10-4.486 10-10S17.514 2 12 2 2 6.486 2 12s4.486 10 10 10zm3.493-13a1.494 1.494 0 1 1-.001 2.987A1.494 1.494 0 0 1 15.493 9zm-4.301 6.919a4.108 4.108 0 0 0 1.616 0c.253-.052.505-.131.75-.233.234-.1.464-.224.679-.368.208-.142.407-.306.591-.489.183-.182.347-.381.489-.592l1.658 1.117a6.027 6.027 0 0 1-1.619 1.621 6.003 6.003 0 0 1-2.149.904 6.116 6.116 0 0 1-2.414-.001 5.919 5.919 0 0 1-2.148-.903 6.078 6.078 0 0 1-1.621-1.622l1.658-1.117c.143.211.307.41.488.59a3.988 3.988 0 0 0 2.022 1.093zM8.5 9a1.5 1.5 0 1 1-.001 3.001A1.5 1.5 0 0 1 8.5 9z"></path></svg></button>
+                  <button id="gifs"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-2.667 15.772A4.512 4.512 0 0 1 9.984 18c-.737 0-1.271-.186-1.644-.546-.371-.348-.575-.875-.569-1.469.006-1.344.983-2.111 2.309-2.111.521 0 .924.103 1.121.198l-.191.731c-.222-.096-.498-.174-.941-.174-.762 0-1.338.432-1.338 1.308 0 .833.522 1.325 1.271 1.325.21 0 .378-.024.45-.061v-.846h-.624v-.713h1.505v2.13zm1.634.186h-.918v-4.042h.918v4.042zm3.262-3.292h-1.553v.923h1.451v.744h-1.451v1.625h-.918v-4.042h2.471v.75zM14 9h-1V4l5 5h-4z"></path></svg></button>             
                   <button id="stickers" onclick="openStickers()"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M18.5 11c-4.136 0-7.5 3.364-7.5 7.5 0 .871.157 1.704.432 2.482l9.551-9.551A7.462 7.462 0 0 0 18.5 11z"></path><path d="M12 2C6.486 2 2 6.486 2 12c0 4.583 3.158 8.585 7.563 9.69A9.431 9.431 0 0 1 9 18.5C9 13.262 13.262 9 18.5 9c1.12 0 2.191.205 3.19.563C20.585 5.158 16.583 2 12 2z"></path></svg></button>                        
                   <button class="close-gif" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center;">
                      <ion-icon name="close-outline" style="color: white; font-size: 2.5rem;"></ion-icon>
                   </button>
               </div>
-              <div class="holder-container" style="overflow-y: hidden; overflow-x: scroll; height: 0px; display: flex; gap: 20px; width: 100%; padding-inline: 8px; opacity: 0; transition: all .3s ease-out;">
+              <section class="holder-container" style="overflow-y: hidden; overflow-x: auto;  height: 0px; display: flex; flex-flow: row nowrap; width: 100%; opacity: 0; transition: all .3s ease-out;">
                   
-                  <div class="emojis-cont" style="height: 100%; width: 100%; background: red;">ff</div>
-                  <div class="gifs-cont" style="height: 100%; width: 100%; background: blue;">ff</div>
-                  <div class="stickers-cont" style="height: 100%; width: 100%; background: green;">ff</div>
-
-              </div>
+                  <div class="emojis-cont" style="height: 100%!important; width: 100%!important; background: red; display: flex; flex-grow: 1;">
+                    
+                  </div>
+                </section>
               
         </div>
         
@@ -253,19 +252,38 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     
 <script src="/socket.io/socket.io.js"></script>
-<script>
+<script type="module">
+
+    import { Picker } from "https://cdn.jsdelivr.net/npm/emoji-mart@5.6.0/+esm";
+    import data from "https://cdn.jsdelivr.net/npm/@emoji-mart/data@1.2.1/+esm";
 
     const socket = io({ auth: { userId: '<%= userReq._id %>' } })
 
     // MESSAGING LOGIC WITH RETRIES OPTION
 
-    
+     
 
    
     const textArea = document.getElementById('text-area')
     const sendMsgBtn = document.getElementById('send-msg-btn')
     const chatContainer = document.getElementById('chat-container')
+    const emojiContainer = document.querySelector('.emojis-cont')
 
+
+    const picker = new Picker({
+        data,
+        theme: "dark",
+        previewPosition: "none",
+        width: "100%",
+        skinTonePosition: "search",
+        emojiSize: 30,
+        emojiButtonSize: 40,
+        onEmojiSelect: (emoji) => {
+            textArea.value += emoji.native
+        }
+    })
+    
+    emojiContainer.appendChild(picker)
 
     const MAX_LOCAL_MESSAGES = 200 
     const currentUserId = '<%= parties.sender %>'
@@ -277,6 +295,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     const closeGifBtn = document.querySelector('.close-gif')
     const gifHeaderHolder = document.querySelector('.gif-header-holder')
     const gifHolderContainer = document.querySelector('.holder-container')
+    const emojisBtn = document.getElementById('emojis')
 
     gifOpenerBtn.addEventListener('click', () => {
          
@@ -297,10 +316,20 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         gifContainer.style.height = '0px'
         closeGifBtn.style.display = 'none'
         gifHolderContainer.style.opacity = '0'
-        gifHolderContainer.style.display = 'none'
+       // gifHolderContainer.style.display = 'none'
         gifHolderContainer.style.height = '0px'
        
     })
+
+    document.getElementById('emojis').addEventListener('click', () => {
+
+        gifHolderContainer.style.opacity = '1'
+        gifHolderContainer.style.display = 'flex'
+        gifHolderContainer.style.height = '300px'
+    })
+    
+    
+     
 
     textArea.addEventListener('focus', () => {
 
@@ -310,7 +339,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         gifContainer.style.height = '0px'
         gifHeaderHolder.style.opacity = '0'
         gifHolderContainer.style.opacity = '0'
-        gifHolderContainer.style.display = 'none'
+       // gifHolderContainer.style.display = 'none'
         gifHolderContainer.style.height = '0px'
         closeGifBtn.style.display = 'none'
         gifOpenerBtn.style.display = 'none'
@@ -321,13 +350,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     })
 
 
-    function openGifs() {
-
-    gifHolderContainer.style.opacity = '1'
-    gifHolderContainer.style.display = 'flex'
-    gifHolderContainer.style.height = '300px'
-    
-    }  
+   
 
     function generateOneOnOneRoomId(userA_Id, userB_Id) {
         

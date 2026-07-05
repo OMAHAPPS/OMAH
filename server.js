@@ -666,9 +666,9 @@ app.get('/api/dm-history/messages', async (req, res) => {
 
         const recentHistoryChatBucket = await Chat.findOne({ roomId: roomId, count: { $lt: 500 } }).lean()
         const latestFullBucketArray = await Chat.find({ roomId: roomId, count: 500 }).sort({ _id: -1 }).limit(1).exec()
-        const recentBucketLength = recentHistoryChatBucket.count
+       
         const latestFullBucketDoc = latestFullBucketArray[0]
-        const recentMessages = recentHistoryChatBucket.messages
+        
 
         let messagesArray = []
 
@@ -680,22 +680,29 @@ app.get('/api/dm-history/messages', async (req, res) => {
                 res.json({ success: true, messages: messagesArray, })
 
             } else {
-                
+             
+                const recentMessages = recentHistoryChatBucket.messages
                 messagesArray = recentMessages
                 res.json({ success: true, messages: messagesArray, })
             }
 
         } else {
 
-            
+            const recentBucketLength = recentHistoryChatBucket.count
             const latestFullBucketMsgs = latestFullBucketDoc.messages
+
             if (recentBucketLength < 299) {  // COMBINE THE TWO BUCKETS
-                             
+
+               const recentMessages = recentHistoryChatBucket.messages               
                messagesArray = [...latestFullBucketMsgs, ...recentMessages]
+
                res.json({ success: true, messages: messagesArray, })
+
             } else {
-    
+
+                const recentMessages = recentHistoryChatBucket.messages 
                 messagesArray = recentMessages
+
                 res.json({ success: true, messages: messagesArray, })
             }
             
