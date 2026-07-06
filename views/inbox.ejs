@@ -319,7 +319,6 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         skinTonePosition: "search",
         emojiSize: 36,
         emojiButtonSize: 40,
-        navPosition: "bottom",
         onEmojiSelect: (emoji) => {
             sendMsgBtn.disabled = false
             sendMsgBtn.style.display = 'flex'
@@ -392,12 +391,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     emojisBtn.addEventListener('click', () => {
 
         gifHolderContainer.style.opacity = '1'
+        gifHolderContainer.style.display = 'flex'
         gifHolderContainer.style.height = '400px'
-        emojiContainer.style.display = 'flex'
-        gifCont.style.display = 'none'
+    })
     
         
-    })
+    
 
     gifsBtn.addEventListener('click', async () => {   // logic to populate gifs container
         
