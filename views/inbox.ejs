@@ -49,6 +49,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 @keyframes storyPulse  {0%,100%{box-shadow:0 0 0 0 var(--sc)}50%{box-shadow:0 0 0 4px var(--sc)}}
 @keyframes heartbeat   {0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.06)}}
 @keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes spin        {100%{transform: rotate(360deg);}}
 
 /* chatContainer styles */
 .chat-date-divider{font-family: 'Playfair Display', serif; height: 6%; width: 100%; display: flex; align-items: center; justify-content: center; color: rgba(237,232,224,.95); font-size: 0.9rem; }
@@ -165,15 +166,41 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                   <button id="gifs"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-2.667 15.772A4.512 4.512 0 0 1 9.984 18c-.737 0-1.271-.186-1.644-.546-.371-.348-.575-.875-.569-1.469.006-1.344.983-2.111 2.309-2.111.521 0 .924.103 1.121.198l-.191.731c-.222-.096-.498-.174-.941-.174-.762 0-1.338.432-1.338 1.308 0 .833.522 1.325 1.271 1.325.21 0 .378-.024.45-.061v-.846h-.624v-.713h1.505v2.13zm1.634.186h-.918v-4.042h.918v4.042zm3.262-3.292h-1.553v.923h1.451v.744h-1.451v1.625h-.918v-4.042h2.471v.75zM14 9h-1V4l5 5h-4z"></path></svg></button>             
                   <button id="stickers" onclick="openStickers()"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M18.5 11c-4.136 0-7.5 3.364-7.5 7.5 0 .871.157 1.704.432 2.482l9.551-9.551A7.462 7.462 0 0 0 18.5 11z"></path><path d="M12 2C6.486 2 2 6.486 2 12c0 4.583 3.158 8.585 7.563 9.69A9.431 9.431 0 0 1 9 18.5C9 13.262 13.262 9 18.5 9c1.12 0 2.191.205 3.19.563C20.585 5.158 16.583 2 12 2z"></path></svg></button>                        
                   <button class="close-gif" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center;">
-                     <ion-icon name="close-outline" style="color: white; font-size: 2.5rem;"></ion-icon>
+                     <ion-icon name="close-outline" style="color: white; font-size: 2rem;"></ion-icon>
                   </button>
               </div>
               <section class="holder-container" style="overflow-y: hidden; overflow-x: auto;  height: 0px; display: flex; flex-flow: row nowrap; width: 100%; opacity: 0; transition: all .3s ease-out;">
                   
-                  <div class="emojis-cont" style="height: 100%!important; width: 100%!important; background: red; display: flex; flex-grow: 1;">
+                  <div class="emojis-cont" style="height: 100%; width: 100%; display: flex;">
                     
                   </div>
-                </section>
+                  <div class="gifs-cont" style="display: none; height: 100%; width: 100%;">
+                      
+                      <nav class="header-gif-category" style="z-index: 10; height: 10%; max-width: 100%; overflow-x: auto; overflow-y: hidden; display: flex; gap: 10px; scroll-snap-type: inline mandatory;">
+                          <!-- ! RENDERED IN JAVASCRIPT -->
+                                   
+                      </nav>
+                      <section id="content" style="position: relative; width: 100%; height: 100%; padding-block: 15px; overflow-y: scroll; overflow-x: hidden; display: flex; flex-wrap: wrap; gap: 6px; scroll-snap-type: y mandatory;">
+                        <!-- ! Rendered in javascript -->
+
+                        <div class="load-trending" style="display: flex; justify-content: center; align-items: center; gap: 3px; position: absolute; left: 50%; top: 10%; transform: translateX(-50%);">
+                           <ion-icon name="aperture-sharp" style="font-size: 1.4rem; color: rgba(237, 232, 224, .85); animation: spin .5s infinite;"></ion-icon>
+                           <h2 class="fs" style="font-size: .9rem; color: rgba(237, 232, 224, .85);">Loading</h2>
+                        </div>
+
+                         
+                      </section>
+
+                  </div>
+                  <div class="sticker-cont" style="position: relative; display: none; height: 100%; width: 100%; padding-block: 15px; overflow-y: scroll; overflow-x: hidden; display: flex; flex-wrap: wrap; gap: 6px; scroll-snap-type: y mandatory;">
+
+                       <div class="sticker-load-trending" style="display: flex; justify-content: center; align-items: center; gap: 3px; position: absolute; left: 50%; top: 10%; transform: translateX(-50%);">
+                           <ion-icon name="aperture-sharp" style="font-size: 1.4rem; color: rgba(237, 232, 224, .85); animation: spin .5s infinite;"></ion-icon>
+                           <h2 class="fs" style="font-size: .9rem; color: rgba(237, 232, 224, .85);">Loading</h2>
+                        </div>
+
+                  </div>
+              </section>
               
         </div>
         
@@ -257,17 +284,31 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     import { Picker } from "https://cdn.jsdelivr.net/npm/emoji-mart@5.6.0/+esm";
     import data from "https://cdn.jsdelivr.net/npm/@emoji-mart/data@1.2.1/+esm";
 
+    const userReqColor = '<%= userReq.userColor %>'
+
     const socket = io({ auth: { userId: '<%= userReq._id %>' } })
 
     // MESSAGING LOGIC WITH RETRIES OPTION
 
-     
+    function generateOneOnOneRoomId(userA_Id, userB_Id) {
+        
+       // 1. Put both IDs into an array
+       const ids = [userA_Id, userB_Id]
+  
+       // 2. Sort them alphabetically (e.g., ['alice', 'bob'] instead of ['bob', 'alice'])
+       ids.sort()
+  
+       // 3. Join them with a delimiter to create a single immutable string
+      return `dm_${ids[0]}_${ids[1]}`
+    }
+    
 
    
     const textArea = document.getElementById('text-area')
     const sendMsgBtn = document.getElementById('send-msg-btn')
     const chatContainer = document.getElementById('chat-container')
     const emojiContainer = document.querySelector('.emojis-cont')
+   
 
 
     const picker = new Picker({
@@ -276,9 +317,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         previewPosition: "none",
         width: "100%",
         skinTonePosition: "search",
-        emojiSize: 30,
+        emojiSize: 36,
         emojiButtonSize: 40,
+        navPosition: "bottom",
         onEmojiSelect: (emoji) => {
+            sendMsgBtn.disabled = false
+            sendMsgBtn.style.display = 'flex'
+            socket.emit('typing', roomId)
             textArea.value += emoji.native
         }
     })
@@ -288,14 +333,37 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     const MAX_LOCAL_MESSAGES = 200 
     const currentUserId = '<%= parties.sender %>'
     const recipientId = '<%= parties.recipient %>'
+    const R2Base = '<%= R2BASE %>'
+    const roomId = generateOneOnOneRoomId(currentUserId, recipientId)
+
+    let messageState = JSON.parse(localStorage.getItem(`chat_history_${recipientId}`)) || []
 
 
     const gifOpenerBtn = document.getElementById('gif-opener-btn')
     const gifContainer = document.querySelector('.gif-container')
+    const gifCont = document.querySelector('.gifs-cont')
     const closeGifBtn = document.querySelector('.close-gif')
     const gifHeaderHolder = document.querySelector('.gif-header-holder')
     const gifHolderContainer = document.querySelector('.holder-container')
     const emojisBtn = document.getElementById('emojis')
+    const gifsBtn = document.getElementById('gifs')
+    const stickerBtn = document.getElementById('stickers')
+    const gifsHeaderWrapper = document.querySelector('.header-gif-category')
+    const loadingIcon = document.querySelector('.load-trending')
+    const stickerLoadingIcon = document.querySelector('.sticker-load-trending')
+    const gifDataSection = document.getElementById('content')
+    const stickerCont = document.querySelector('.sticker-cont')
+
+    const options = ["Trending", "Happy", "Thanks", "Hug", "Shocked", "Angry", "Welcome", "Love", "Sad", "Laughing", "Welcome", "Love", "Eye Roll", "WTF", "Tired", "OK", "Side Eye", "Thumbs Up", "Cute", "Crazy", "Funny", "Yes", "No", "Crying", "Dancing", "Kiss", "Excited", "Miss You", "Fire", "Scared", "Bye", "Thinking", "Celebrate", "Congratulations", "Confused", "Hello", "Lol", "Huh", "Sleepy" ]
+
+    options.forEach((option) => {
+
+        gifsHeaderWrapper.innerHTML += `<button class="category" id="${option}" style="height: 100%; width: fit-content; padding-inline: 8px; border: none; color: rgba(237,232,224,.55); white-space: nowrap; font-size: 10px; display: flex; align-items: center; justify-content: center;">
+                                          ${option}
+                                        </button>  
+                                       `
+    })
+
 
     gifOpenerBtn.addEventListener('click', () => {
          
@@ -310,59 +378,271 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     closeGifBtn.addEventListener('click', () => {
 
         gifHeaderHolder.style.opacity = '0'
+      
         setTimeout(() => {
             gifContainer.style.display = 'none'
         }, 700)
         gifContainer.style.height = '0px'
         closeGifBtn.style.display = 'none'
         gifHolderContainer.style.opacity = '0'
-       // gifHolderContainer.style.display = 'none'
         gifHolderContainer.style.height = '0px'
        
     })
 
-    document.getElementById('emojis').addEventListener('click', () => {
+    emojisBtn.addEventListener('click', () => {
 
         gifHolderContainer.style.opacity = '1'
-        gifHolderContainer.style.display = 'flex'
-        gifHolderContainer.style.height = '300px'
-    })
+        gifHolderContainer.style.height = '400px'
+        emojiContainer.style.display = 'flex'
+        gifCont.style.display = 'none'
     
-    
-     
-
-    textArea.addEventListener('focus', () => {
-
-        setTimeout(() => {
-            gifContainer.style.display = 'none'
-        }, 700)
-        gifContainer.style.height = '0px'
-        gifHeaderHolder.style.opacity = '0'
-        gifHolderContainer.style.opacity = '0'
-       // gifHolderContainer.style.display = 'none'
-        gifHolderContainer.style.height = '0px'
-        closeGifBtn.style.display = 'none'
-        gifOpenerBtn.style.display = 'none'
-    })
-
-    textArea.addEventListener('blur', () => {
-        gifOpenerBtn.style.display = 'flex'
-    })
-
-
-   
-
-    function generateOneOnOneRoomId(userA_Id, userB_Id) {
         
-       // 1. Put both IDs into an array
-       const ids = [userA_Id, userB_Id]
-  
-       // 2. Sort them alphabetically (e.g., ['alice', 'bob'] instead of ['bob', 'alice'])
-       ids.sort()
-  
-       // 3. Join them with a delimiter to create a single immutable string
-      return `dm_${ids[0]}_${ids[1]}`
-}
+    })
+
+    gifsBtn.addEventListener('click', async () => {   // logic to populate gifs container
+        
+        textArea.value = ''           // reset textArea to only send GIFS
+        gifHolderContainer.style.opacity = '1'
+        gifHolderContainer.style.height = '400px'
+        emojiContainer.style.display = 'none'     // FLEX
+        gifCont.style.display = 'block'            // check if flex box
+        const trendingBtn = document.getElementById('Trending')
+        trendingBtn.style.borderBottom = `2px solid ${userReqColor}`     // None highlighted button rgba(237,232,224,.55)
+        trendingBtn.style.color = `${userReqColor}`
+        loadingIcon.style.display = 'flex'
+
+        const trendingResponse = await fetch('/api/gifs/trending', {
+                 method: 'GET',
+                 headers: {
+                    "Content-Type": "application/json"
+                 }
+        })
+
+        const trendingGifData = await trendingResponse.json()
+
+        if (!trendingGifData.success) {
+            
+             loadingIcon.style.display = 'none'
+
+             gifDataSection.innerHTML =  `<div class="no-post-following" style="position: absolute; top: 15%; left: 50%; transform: translateX(-50%); display: block; text-align: center; color: red; font-size: 15px;">${trendingGifData.error}</div>
+                                          `
+     
+        } else {                 // <img src="/placeholder.jpg" alt="" height="180" style="min-width: 100px; flex-grow: 1; object-fit: cover; object-position: center;">
+                        
+
+            loadingIcon.style.display = 'none'
+
+            const Gifs = trendingGifData.trendingData
+            
+            
+            Gifs.forEach((gif) => {
+
+                const gifImage = document.createElement('img')
+                gifImage.src = gif.url
+                gifImage.className = 'gif-images'
+                gifImage.dataset.id = gif.id
+                gifImage.style.minWidth = '100px'
+                gifImage.style.flexGrow = '1'
+                gifImage.style.height = '180px'
+                gifImage.style.objectFit = 'cover'
+                gifImage.style.objectPosition = 'center'
+
+                gifDataSection.appendChild(gifImage)
+
+            })
+
+        }
+
+        const gifImages = document.querySelectorAll('.gif-images')
+    
+        gifImages.forEach((image) => {
+         
+             image.addEventListener('click', async (e) => {
+                  
+                  const imageSrc = e.target.src
+                  
+                  const newMessage = {
+                     id: crypto.randomUUID(),
+                     senderId: currentUserId,
+                     receiverId: roomId, // The roomId acts as the destination router target
+                     text: 'none',
+                     hasMedia: true,
+                     mediaType: 'gif',
+                     images: [],
+                     videoUrl: 'none',
+                     gif: imageSrc,
+                     timestamp: Date.now(),
+                     status: 'sending'
+                  }
+
+                  messageState.push(newMessage)
+                  gifOpenerBtn.style.display = 'flex'
+                  gifContainer.style.height = '0px'
+                  gifContainer.style.display = 'none'
+                  gifHeaderHolder.style.opacity = '0'
+                  gifHolderContainer.style.opacity = '0'
+                  gifHolderContainer.style.height = '0px'
+                  closeGifBtn.style.display = 'none'
+                  textArea.value = '' // Reset form box
+                  sendMsgBtn.style.display = 'none' // Hide sendMessage Btn 
+                  socket.emit('stop-typing', roomId)
+                  saveAndRender()
+                  chatContainer.scrollTo({
+                     top: chatContainer.scrollHeight,
+                     behavior: "instant"
+                  })
+
+                        // EMIT EVENT: Safe to trigger since joinRoom registration already processed
+         
+                try {
+            
+                     const response = await socket.timeout(8000).emitWithAck('sendMessage', newMessage)
+
+                     if (response.success) {
+                         // ADD ALL ADDITIONAL INSTANCES NESTED TO ALWAYS RETURN THE ACK({}) BLOCK
+                         // THIS SHOULD FIRE ONLY WHEN MESSAGE IS JUST SAVED BUT NOT DELIVERED    INTERCEPTS MIGHT OCCUR FOR UI
+                         updateMessageStatus(newMessage.id, response.newStatus)
+                         console.log('New message sent: ' + response.newStatus)
+
+
+                      } else {  // THIS BLOCK WILL CARRY ALL SERVER INSTANCE ERRORS EVERY TIME THE SERVER FAILS TO SAVE OR UPDATE BUCKETS
+
+                         updateMessageStatus(newMessage.id, response.newStatus)
+                         console.log(response.error)
+                      }
+
+                } catch (error) {
+                         console.log(error)
+                         updateMessageStatus(newMessage.id, 'failed')
+                         console.log('ACK TIMEOUT')
+            
+                }
+
+            })
+
+        })
+    
+    })
+
+    const navButtons = document.querySelectorAll('.category')
+
+    navButtons.forEach((btn) => {
+
+      
+
+          btn.addEventListener('click', async (e) => {
+
+              gifDataSection.innerHTML = `<div class="load-trending" style="display: flex; justify-content: center; align-items: center; gap: 3px; position: absolute; left: 50%; top: 10%; transform: translateX(-50%);">
+                                       <ion-icon name="aperture-sharp" style="font-size: 1.4rem; color: rgba(237, 232, 224, .85); animation: spin .5s infinite;"></ion-icon>
+                                       <h2 class="fs" style="font-size: .9rem; color: rgba(237, 232, 224, .85);">Loading</h2>
+                                    </div>
+                                   `
+
+              navButtons.forEach((button) => {
+
+                  button.style.color = 'rgba(237,232,224,.55)'
+                  button.style.border = 'none'
+              })
+              e.target.style.color = `${userReqColor}`
+              e.target.style.borderBottom = `2px solid ${userReqColor}`
+              const categoryValue = e.target.textContent.toLowerCase()
+             
+              const categoryResponse = await fetch(`/api/gifs/category/${categoryValue}`, {
+                       method: 'GET',
+                       headers: {
+                         "Content-Type": "application/json"
+                       }
+              })
+
+              const categoryData = await categoryResponse.json()
+
+              if (!categoryData.success) {
+
+                  gifDataSection.innerHTML = ''
+
+                  gifDataSection.innerHTML =  `<div class="no-post-following" style="position: absolute; top: 15%; left: 50%; transform: translateX(-50%); display: block; text-align: center; color: red; font-size: 15px;">${categoryData.error}</div>
+                                              `                        
+              } else {
+                 
+                 gifDataSection.innerHTML = ''
+
+                 const Gifs = categoryData.categoryData
+
+                 Gifs.forEach((gif) => {
+
+                     const gifImage = document.createElement('img')
+                     gifImage.src = gif.url
+                     gifImage.dataset.id = gif.id
+                     gifImage.className = 'gif-images'
+                     gifImage.style.minWidth = '100px'
+                     gifImage.style.flexGrow = '1'
+                     gifImage.style.height = '180px'
+                     gifImage.style.objectFit = 'cover'
+                     gifImage.style.objectPosition = 'center'
+
+                     gifDataSection.appendChild(gifImage)
+                 })
+                 
+              }
+
+          })
+    })
+
+
+    stickerBtn.addEventListener('click', async () => {
+
+        textArea.value = ''           // reset textArea to only send GIFS
+        gifHolderContainer.style.opacity = '1'
+        gifHolderContainer.style.height = '400px'
+        emojiContainer.style.display = 'none'     // FLEX
+        stickerCont.style.display = 'block'
+
+        const stickersResponse = await fetch('/api/gifs/stickers', {
+               method: 'GET',
+               headers: {
+                 "Content-Type": "application/json"
+               }
+        })
+
+        const stickerData = await stickersResponse.json()
+
+        if (!stickerData.success) {
+
+             stickerLoadingIcon.style.display = 'none'
+
+             stickerCont.innerHTML = `<div class="no-post-following" style="position: absolute; top: 15%; left: 50%; transform: translateX(-50%); display: block; text-align: center; color: red; font-size: 15px;">${stickerData.error}</div>
+                                     `
+                                     
+        } else {
+             
+             stickerLoadingIcon.style.display = 'none'
+
+             const Stickers = stickerData.stickers
+
+             Stickers.forEach((sticker) => {
+
+                  const stickerImage = document.createElement('img')
+                  stickerImage.src = sticker.url
+                  stickerImage.dataset.id = sticker.id
+                  stickerImage.className = 'sticker-images'
+                  stickerImage.style.minWidth = '100px'
+                  stickerImage.style.flexGrow = '1'
+                  stickerImage.style.height = '180px'
+                  stickerImage.style.objectFit = 'cover'
+                  stickerImage.style.objectPosition = 'center'
+
+                  stickerCont.appendChild(stickerImage)
+             })
+             
+        }
+
+        const stickerImages = document.querySelectorAll('.sticker-images')
+
+
+    })
+    
+
+
     
     function formatDividerDate(dateObj) {
        const today = new Date();
@@ -379,9 +659,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
        }
      }
 
-    const roomId = generateOneOnOneRoomId(currentUserId, recipientId)
+   
 
-    let messageState = JSON.parse(localStorage.getItem(`chat_history_${recipientId}`)) || []
+    
     
 
       textArea.addEventListener('keyup', () => {
@@ -406,7 +686,23 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         }
     })
 
-    
+      textArea.addEventListener('focus', () => {
+
+        setTimeout(() => {
+            gifContainer.style.display = 'none'
+        }, 700)
+        gifContainer.style.height = '0px'
+        gifHeaderHolder.style.opacity = '0'
+        gifHolderContainer.style.opacity = '0'
+       
+        gifHolderContainer.style.height = '0px'
+        closeGifBtn.style.display = 'none'
+        
+    })
+
+      textArea.addEventListener('blur', () => {
+        gifOpenerBtn.style.display = 'flex'
+      })
    
     function saveAndRender () {
        
@@ -467,9 +763,14 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               if (isMe) {
                 msgElement.style.backgroundColor = '<%= userReq.userColor %>41'
               }
-              if (msg.status == 'failed') {
-                  msgElement.classList.add('failed')
-                   msgElement.innerHTML = ` 
+              
+              // MEDIA INCLUDED LOGIC IF STATEMENTS
+
+              if (!msg.hasMedia) {  // MESSAGE WITH PURE TEXTS AND EMOJIS ONLY
+
+                   if (msg.status == 'failed') {
+                      msgElement.classList.add('failed')
+                      msgElement.innerHTML = ` 
                                       <p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>
 
                                          <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
@@ -488,13 +789,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                                       
                                      `
     
+                    } else {
 
-              } else {
-
-                  msgElement.innerHTML = ` 
-                                          <p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>
+                      msgElement.innerHTML = ` 
+                                             <p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>
     
-                                             <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
+                                              <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
     
                                               ${tickHtml}
     
@@ -510,6 +810,155 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                                           
                                          `
         
+                    }
+  
+              } else {  // Message hasMedia LOGIC HERE
+
+                if (msg.status == 'failed') {
+                    msgElement.classList.add('failed')
+                    
+                    if (msg.mediaType == 'gif') {
+                       
+                        msgElement.innerHTML = `<img src="${msg.gif}" style="max-width: 100%; max-height: 300px; object-fit: cover; object-position: center;" />
+                                                <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
+
+                                                   ${tickHtml}
+
+                                                   <p id="localetime" >${currentMessageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+
+                                                </div> 
+
+                                         
+                                                <button class="retry-btn" onclick="retryMessage('${msg.id}')" style="outline: none; cursor: pointer; border: none; position: absolute; bottom: 0; left: -65px; color: red; width: 70px; display: flex; align-items: center; justify-content: center; gap: 3px; font-size: .85rem;">
+                                                    <ion-icon name="repeat-outline" style="pointer-event: none; color: red; font-size: 1.05rem;"></ion-icon>
+                                                    Retry
+                                                </button>
+                                               `
+
+                    } else if (msg.mediaType == 'images') { 
+
+                        const messageHasText = msg.text !== 'none' ?  `<p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>` : `<p style="display: none;">NO TEXT</p>`
+                        
+                         msgElement.innerHTML = `${messageHasText}
+                                                 <article style="max-width: 100%; heigth: 380px; overflow-x: auto; overflow-y: hidden;" >                         
+                                                  ${ msg.images.map((image) => `<img src="${R2Base}/${image}" style="width: auto; height: 100%; object-fit: contain; object-position: center;" />` ).join('') } 
+                                                 </article>
+                                                <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
+
+                                                   ${tickHtml}
+
+                                                   <p id="localetime" >${currentMessageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+
+                                                </div> 
+
+                                         
+                                                <button class="retry-btn" onclick="retryMessage('${msg.id}')" style="outline: none; cursor: pointer; border: none; position: absolute; bottom: 0; left: -65px; color: red; width: 70px; display: flex; align-items: center; justify-content: center; gap: 3px; font-size: .85rem;">
+                                                    <ion-icon name="repeat-outline" style="pointer-event: none; color: red; font-size: 1.05rem;"></ion-icon>
+                                                    Retry
+                                                </button>
+                                               `
+                                              
+
+                    } else if (msg.mediaType == 'video') {
+
+                        const messageHasText = msg.text !== 'none' ?  `<p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>` : `<p style="display: none;">NO TEXT</p>`
+                        
+
+                        msgElement.innerHTML = `${messageHasText}
+                                                <video id="player" controls preload="none" style="display: block; width: 100%; max-height: 400px; border-radius: 12px; margin-top: 13px; object-fit: cover; object-position: center; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
+                                                   src="${R2Base}/${msg.videoUrl}" type="video/mp4" data-src="/uploads/Expressions.mp4">
+                                                   Your browser does not support the video tag. 
+                                                </video>
+                                                 <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
+
+                                                   ${tickHtml}
+
+                                                   <p id="localetime" >${currentMessageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+
+                                                </div> 
+
+                                         
+                                                <button class="retry-btn" onclick="retryMessage('${msg.id}')" style="outline: none; cursor: pointer; border: none; position: absolute; bottom: 0; left: -65px; color: red; width: 70px; display: flex; align-items: center; justify-content: center; gap: 3px; font-size: .85rem;">
+                                                    <ion-icon name="repeat-outline" style="pointer-event: none; color: red; font-size: 1.05rem;"></ion-icon>
+                                                    Retry
+                                                </button>
+                                               `
+                    }
+
+                    
+
+                } else {  //Messages has not failed
+
+                     if (msg.mediaType == 'gif') {
+                       
+                        msgElement.innerHTML = `<img src="${msg.gif}" style="max-width: 100%; max-height: 300px; object-fit: cover; object-position: center;" />
+                                                <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
+
+                                                   ${tickHtml}
+
+                                                   <p id="localetime" >${currentMessageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+
+                                                </div> 
+
+                                         
+                                                <button class="fs" style="outline: none; cursor: pointer; border: none; position: absolute; bottom: 0; left: -65px; color: red; width: 70px; display: none; align-items: center; justify-content: center; gap: 3px; font-size: .85rem;">
+                                                   <ion-icon name="repeat-outline" style="color: red; font-size: 1.05rem;"></ion-icon>
+                                                   Retry
+                                                </button>
+                                               `
+
+                    } else if (msg.mediaType == 'images') { 
+
+                        const messageHasText = msg.text !== 'none' ?  `<p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>` : `<p style="display: none;">NO TEXT</p>`
+                        
+                         msgElement.innerHTML = `${messageHasText}
+                                                 <article style="max-width: 100%; heigth: 380px; overflow-x: auto; overflow-y: hidden;" >                         
+                                                  ${ msg.images.map((image) => `<img src="${R2Base}/${image}" style="width: auto; height: 100%; object-fit: contain; object-position: center;" />` ).join('') } 
+                                                 </article>
+                                                <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
+
+                                                   ${tickHtml}
+
+                                                   <p id="localetime" >${currentMessageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+
+                                                </div> 
+
+                                         
+                                                <button class="fs" style="outline: none; cursor: pointer; border: none; position: absolute; bottom: 0; left: -65px; color: red; width: 70px; display: none; align-items: center; justify-content: center; gap: 3px; font-size: .85rem;">
+                                                   <ion-icon name="repeat-outline" style="color: red; font-size: 1.05rem;"></ion-icon>
+                                                   Retry
+                                                </button>
+                                               `
+                                              
+
+                    } else if (msg.mediaType == 'video') {
+
+                        const messageHasText = msg.text !== 'none' ?  `<p id="text" style="white-space: pre-wrap; margin-bottom: 10px; margin-top: 5px; color: rgba(237,232,224,.95); font-size: 16px;">${msg.text}</p>` : `<p style="display: none;">NO TEXT</p>`
+                        
+
+                        msgElement.innerHTML = `${messageHasText}
+                                                <video id="player" controls preload="none" style="display: block; width: 100%; max-height: 400px; border-radius: 12px; margin-top: 13px; object-fit: cover; object-position: center; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
+                                                   src="${R2Base}/${msg.videoUrl}" type="video/mp4" data-src="/uploads/Expressions.mp4">
+                                                   Your browser does not support the video tag. 
+                                                </video>
+                                                 <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
+
+                                                   ${tickHtml}
+
+                                                   <p id="localetime" >${currentMessageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+
+                                                </div> 
+
+                                         
+                                                <button class="fs" style="outline: none; cursor: pointer; border: none; position: absolute; bottom: 0; left: -65px; color: red; width: 70px; display: none; align-items: center; justify-content: center; gap: 3px; font-size: .85rem;">
+                                                    <ion-icon name="repeat-outline" style="color: red; font-size: 1.05rem;"></ion-icon>
+                                                    Retry
+                                                </button>
+                                               `
+                    }
+
+                }
+
               }
     
     
@@ -518,6 +967,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           })
 
       }
+
+
       document.querySelector('#alert-scroll').addEventListener('click', (e) => {
           
         e.target.style.display = 'none'
@@ -748,12 +1199,23 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             senderId: currentUserId,
             receiverId: roomId, // The roomId acts as the destination router target
             text: textArea.value,
+            hasMedia: false,
+            mediaType: 'none',
+            images: [],
+            videoUrl: 'none',
+            gif: 'none',
             timestamp: Date.now(),
             status: 'sending'
          }
 
          messageState.push(newMessage)
-         
+         gifOpenerBtn.style.display = 'flex'
+         gifContainer.style.height = '0px'
+         gifContainer.style.display = 'none'
+         gifHeaderHolder.style.opacity = '0'
+         gifHolderContainer.style.opacity = '0'
+         gifHolderContainer.style.height = '0px'
+         closeGifBtn.style.display = 'none'
          textArea.value = '' // Reset form box
          sendMsgBtn.style.display = 'none' // Hide sendMessage Btn 
          socket.emit('stop-typing', roomId)

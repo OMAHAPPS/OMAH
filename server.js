@@ -10,6 +10,9 @@ const flash = require('connect-flash')
 const multer = require('multer')
 const cors = require('cors')
 const path = require('path')
+const { GiphyFetch } = require('@giphy/js-fetch-api')
+
+
 
 const webpush = require('web-push')
 
@@ -417,7 +420,7 @@ io.on('connection', (socket) => {
         const senderId = newMessage.senderId
         const recipientId = newMessage.receiverId.replace('dm_', '').split('_').find(uid => uid !== senderId)
         const updatedMessage = {...newMessage, status: 'sent' }
-        const messageText = newMessage.text
+        const messageText = newMessage.text    // might be 'none'
         const senderUser = await Omaruser.findOne({ _id: senderId }).lean()
         const recipientUser = await Omaruser.findOne({ _id: recipientId }).lean()
         const senderUserName = senderUser.userName
@@ -450,7 +453,7 @@ io.on('connection', (socket) => {
 
                          console.log('Message already exists in DB NO RESAVES')
                          
-                        
+                         return;
                         
                      } else {    // Update the bucket with upsert AND emit to receiver_background 
 
@@ -1939,4 +1942,115 @@ app.get('/api/interactions/:id', async (req, res) => {
      
     
 
+})
+
+const randomApi = () => {
+    const GPAPK1 = process.env.GPAPK1
+    const GPAPK2 = process.env.GPAPK2
+    const GPAPK3 = process.env.GPAPK3
+    const GPAPK4 = process.env.GPAPK4
+    const GPAPK5 = process.env.GPAPK5
+    const GPAPK6 = process.env.GPAPK6
+
+    const apiArray = [GPAPK1, GPAPK2, GPAPK3, GPAPK4, GPAPK5, GPAPK6]
+
+    const selected = apiArray[Math.floor(Math.random() * apiArray.length)]
+
+    return selected
+}
+
+
+const gf = new GiphyFetch(randomApi())
+
+app.get('/api/gifs/trending', async (req, res) => {
+
+    try {
+
+    const result = await gf.trending({ limit: 30 })
+    const { data: gifs } = result
+    
+    const resultArray = { data: gifs }.data
+    
+    const uniqueMap = new Map()
+
+    resultArray.forEach((gifData) => {
+        const gifId = gifData.id
+        const gifUrl = gifData.images.original.url
+        const gifObject = { id: gifId, url: gifUrl }
+        uniqueMap.set(gifId, gifObject)
+    })
+    
+    const gifsArray = Array.from(uniqueMap.values())
+    
+    
+    res.json({ success: true, trendingData: gifsArray })
+  
+
+  } catch (error) {
+
+    console.error(error)
+    res.json({ success: false, error: '~Trending Gifs Unavailable~' })
+  }
+
+     
+})
+
+app.get('/api/gifs/category/:id', async (req, res) => {
+
+     const searchQuery = req.params.id
+
+     try {
+
+        const result = await gf.search(searchQuery, { sort: 'recent', limit: 25 }) 
+        const { data: gifs } = result
+        const resultArray = { data: gifs }.data
+
+        const uniqueMap = new Map()
+
+        resultArray.forEach((gifMeta) => {
+            const gifId = gifMeta.id
+            const gifUrl = gifMeta.images.original.url
+            const gifObject = { id: gifId, url: gifUrl }
+
+            uniqueMap.set(gifId, gifObject)
+        })
+
+        const gifsArray = Array.from(uniqueMap.values())
+
+        res.json({ success: true, categoryData: gifsArray })
+    
+  } catch (error) {
+        console.error(error)
+        res.json({ success: false, error: `~${searchQuery} has No GIF's` })
+  }
+
+})
+
+app.get('/api/gifs/stickers', async (req, res) => {
+
+     try {
+
+       const result = await gf.emoji({ limit: 70 });
+       const { data: gifs } = result
+       const resultArray = { data: gifs }.data
+       const uniqueMap = new Map()
+
+       resultArray.forEach((gifData) => {
+           const gifId = gifData.id
+           const gifUrl = gifData.images.original.url
+           const gifObject = { id: gifId, url: gifUrl }
+
+           uniqueMap.set(gifId, gifObject)
+       })
+
+       const gifData = Array.from(uniqueMap.values())
+
+       res.json({ success: true, stickers: gifData })
+       
+
+  } catch (error) {
+
+      console.error(error)
+      res.json({ success: false, error: '~Stickers Not Available~' })
+  }
 })
