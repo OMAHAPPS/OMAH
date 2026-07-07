@@ -453,7 +453,8 @@ io.on('connection', (socket) => {
 
                          console.log('Message already exists in DB NO RESAVES')
                          
-                         return;
+                         ack({ success: true, newStatus: 'sent' })
+                        
                         
                      } else {    // Update the bucket with upsert AND emit to receiver_background 
 
