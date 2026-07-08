@@ -206,7 +206,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         
         
         <div class="cont" style="height: 100%; width: 100%; display: flex; align-items: center; gap: 12px;">
-            <div class="textarea-media-container" style="background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.09); width: fit-content; height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column nowrap; flex: 1; padding-block: 8px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 20px;">
+            <div class="textarea-media-container" style="background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.09); width: fit-content; height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column nowrap; flex: 1; padding-block: 2px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 20px;">
 
                 <textarea id="text-area" type="text" placeholder="Message" style="background: transparent;  font-size: 16px; height: 75%; width: 100%; padding: 12px 16px; color: rgba(237,232,224,.95);"></textarea>
                 
@@ -370,6 +370,15 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     })
 
 
+    const CLEAN_MEDIA_ICONS = {
+          image: "🖼️",
+          video: "📹",
+          gif: "🎞️",
+          gif2: '🎞',
+          loopingGif: "↻"
+    }
+
+
     gifOpenerBtn.addEventListener('click', () => {
          
          gifHeaderHolder.style.opacity = '1'
@@ -473,7 +482,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                      id: crypto.randomUUID(),
                      senderId: currentUserId,
                      receiverId: roomId,        // The roomId acts as the destination router target
-                     text: 'none',
+                     text: '🎞~GIF',
                      hasMedia: true,
                      mediaType: 'gif',
                      images: [],
@@ -647,6 +656,73 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
         }
 
         const stickerImages = document.querySelectorAll('.sticker-images')
+
+        stickerImages.forEach((sticker) => {
+         
+             sticker.addEventListener('click', async (e) => {
+                  
+                  const imageSrc = e.target.src
+                  textArea.value = ''           // reset textArea to only send GIFS/STICKERS
+                  const newMessage = {
+                     id: crypto.randomUUID(),
+                     senderId: currentUserId,
+                     receiverId: roomId,        // The roomId acts as the destination router target
+                     text: '🎞~STICKER',
+                     hasMedia: true,
+                     mediaType: 'gif',
+                     images: [],
+                     videoUrl: 'none',
+                     gif: imageSrc,
+                     timestamp: Date.now(),
+                     status: 'sending'
+                  }
+
+                  messageState.push(newMessage)
+                  gifOpenerBtn.style.display = 'flex'
+                  gifContainer.style.height = '0px'
+                  gifContainer.style.display = 'none'
+                  gifHeaderHolder.style.opacity = '0'
+                  gifHolderContainer.style.opacity = '0'
+                  gifHolderContainer.style.height = '0px'
+                  closeGifBtn.style.display = 'none'
+                  textArea.value = '' // Reset form box
+                  sendMsgBtn.style.display = 'none' // Hide sendMessage Btn 
+                  socket.emit('stop-typing', roomId)
+                  saveAndRender()
+                  chatContainer.scrollTo({
+                     top: chatContainer.scrollHeight,
+                     behavior: "instant"
+                  })
+
+                        // EMIT EVENT: Safe to trigger since joinRoom registration already processed
+         
+                try {
+            
+                     const response = await socket.timeout(8000).emitWithAck('sendMessage', newMessage)
+
+                     if (response.success) {
+                         // ADD ALL ADDITIONAL INSTANCES NESTED TO ALWAYS RETURN THE ACK({}) BLOCK
+                         // THIS SHOULD FIRE ONLY WHEN MESSAGE IS JUST SAVED BUT NOT DELIVERED    INTERCEPTS MIGHT OCCUR FOR UI
+                         updateMessageStatus(newMessage.id, response.newStatus)
+                         console.log('New message sent: ' + response.newStatus)
+
+
+                      } else {  // THIS BLOCK WILL CARRY ALL SERVER INSTANCE ERRORS EVERY TIME THE SERVER FAILS TO SAVE OR UPDATE BUCKETS
+
+                         updateMessageStatus(newMessage.id, response.newStatus)
+                         console.log(response.error)
+                      }
+
+                } catch (error) {
+                         console.log(error)
+                         updateMessageStatus(newMessage.id, 'failed')
+                         console.log('ACK TIMEOUT')
+            
+                }
+
+            })
+
+        })
 
 
     })

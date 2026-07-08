@@ -9,7 +9,9 @@ const replySchema = new Schema({
      replyType: { type: String, required: true },       // parent || child if it is sub-reply
      parentReplyId: { type: String, default: 'none', required: false },
      replystring: { type: String, default: 'none', required: false },
+     mediaType: { type: String, default: 'none', required: false },     // 'gif', 'images', 'video', 'none'DEF
      images: { type: Array, default: [], required: false },
+     gifSrc: { type: String, default: 'none', required: false },
      videoUrl: { type: String, default: 'none', required: false },
      likes: { type: Number, default: 0, required: false },
      interactions: { type: Number, default: 0, required: false }

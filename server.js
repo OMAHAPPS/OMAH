@@ -946,6 +946,8 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
                       parentId: subreply.parentReplyId,
                       subreplyId: subreply._id,
                       createdAt: subreply.createdAt,
+                      mediaType: subreply.mediaType,
+                      gifSrc: subreply.gifSrc,
                       videoUrl: subreply.videoUrl,
                       images: subreply.images,
                       likes: subreply.likes,
@@ -977,7 +979,9 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
          
          const newReplyObject = {
              replyId: reply._id,
-             createdAt: reply.createdAt,  
+             createdAt: reply.createdAt,
+             mediaType: reply.mediaType,
+             gifSrc: reply.gifSrc,  
              videoUrl: reply.videoUrl,
              images: reply.images,
              likes: reply.likes,
@@ -1355,7 +1359,7 @@ app.patch('/post-update-user', async (req, res) => {
 
 app.post('/post/reply', async (req, res) => {
 
-    const { replystring, videoUrl, imagesrc, userid, postid, replytype, parentreplyid } = req.body
+    const { replystring, videoUrl, imagesrc, gifsrc, mediatype, userid, postid, replytype, parentreplyid } = req.body
 
     const reply = new Reply({
            userId: userid,
@@ -1363,6 +1367,8 @@ app.post('/post/reply', async (req, res) => {
            replyType: replytype,
            parentReplyId: parentreplyid,
            replystring: replystring,
+           mediaType: mediatype,
+           gifSrc: gifsrc,
            videoUrl: videoUrl,
            images: imagesrc
     }).save().then((data) => {
