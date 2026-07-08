@@ -39,6 +39,7 @@ const LikedReply = require('./models/userReplyLikes')
 const Following = require('./models/following')
 const Chat = require('./models/dmBucket')
 const Notification = require('./models/notifications')
+const Transaction = require('./models/transactions')
 
 const googleRoutes = require('./routes/auth-routes')
 
@@ -2162,4 +2163,60 @@ app.get('/api/gifs/stickers', async (req, res) => {
       console.error(error)
       res.json({ success: false, error: '~Stickers Not Available~' })
   }
+})
+
+// PAYMENT ROUTES
+
+app.post('/paypal-deposit', (req, res) => {
+
+      const { valuePaid, paypalEmail } = req.body
+
+      const userId = req.user._id
+      const status = 'pending'
+
+      const transactionValue = 1000
+
+      const newTransaction = new Transactions({
+         tranx_type: 'Deposit',
+             method: 'paypal',
+             userId: userId,
+             amount: transactionValue,
+             status: status,
+           pplEmail: paypalEmail
+          
+    }).save().then((tranxSaved) => {
+
+        res.json({ success: true, transaction: tranxSaved })
+
+    })
+    .catch((error) => {
+
+        console.log(error)
+
+        res.json({ success: false, error: 'Failed To save Transaction to DB' })
+
+    })
+
+})
+
+app.patch('/update-verified', async (req, res) => {
+
+      const { tranxId, pplEmail } = req.body
+      const userId = req.user._id
+
+      try {
+
+        await Omaruser.findByIdAndUpdate(userId, { $set: { verified: true } }, { returnDocument: 'after' })
+
+        await Transaction.findByIdAndUpdate(tranxId, { $set: { status: 'complete' } })
+        
+        res.json({ success: true, message: 'Updates Successful' })
+        
+      } catch (error) {
+
+        console.log(error)
+        
+        res.json({ success: false, error: 'Failed to Update User Verification' })
+        
+      }
 })

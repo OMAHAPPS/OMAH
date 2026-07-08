@@ -65,7 +65,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
     
-    <div class="view" id="profile-cont" style="display: block; z-index: 4; background:rgba(5,5,8,.92)">
+    <div class="view" id="profile-cont" style="position: relative; display: block; z-index: 4; background:rgba(5,5,8,.92)">
     
         <div style="padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; gap:10px; flex-shrink: 0;">
           <a href="/home" class="tap" style="text-decoration: none; padding: 7px 14px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); font-size: 12px; color: rgba(237,232,224,.45)">
@@ -229,14 +229,47 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                  </div>
              
              </div>
-           </form>
+          </form>
+
+           <div class="paypal-section" style="display: none; overflow: hidden; width: clamp(300px, 95vw, 500px); margin-top: 5px; border-radius: 20px; height: 40vh; z-index: 30; background-color: rgba(255,255,255,.04); animation:viewIn .42s cubic-bezier(.22,.61,.36,1) both;">
+          <div class="paypal-container" style="position: relative; width: 100%; height: 50%; background-color: inherit;">
+            <div class="close" style="width: 100%; height: 35%; display: flex; justify-content: space-between; padding-left: 10px;">
+                  <img src="/paypal.png" alt="" width="120" height="40">
+                  <button id="close" style="height: 70%; width: 50px; display: flex; justify-content: center; align-items: center; outline: none; border: none; background-image: linear-gradient(135deg, blue, limegreen); border-radius: 0 20px 0 20px;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" style="fill: white;transform: msFilter"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg>
+                  </button>
+            </div>
+            <div id="paypal-button-container" style="height: 30%; width: 75%; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); ">
+            </div>
+            <input type="number" id="amount" name="amount" style="display: none;" value="9" />
+
+          </div>
+    
+          <div class="mpesa-container" style="border: 1px solid var(--sport-green); border-top: none; position: relative; width: 100%; height: 50%; border-radius: 0 0 20px 20px; background-color: rgba(255,255,255,.04);">
+
+                <img src="/mpesa.png" alt="" width="120" height="60" style="position: absolute; top: 0; left: 10px;">
+                <button id="lipa-mpesa" style="padding-block: 3px; display: flex; justify-content: center; align-items: center; cursor: pointer; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); outline: none; border: 1px solid gold; min-height: calc( min(25%, 170px)); min-width: calc( min(75%, 800px)); border-radius: 25px; background-color: #1db954;">
+                   <h2 class="fd" style="font-size: 1.3rem; font-weight: bold; color: white;">Lipa Na Mpesa</h2>
+                </button>
+      
+                <img src="/safaricom.png" alt="" width="120" height="60" style="position: absolute; bottom: 0; right: 5px;">
+
+
+          </div>
+    
+
+           </div>
 
         </section>
 
 
       </div>
+
+      
     
     </div> 
+
+    
 
 
 
@@ -246,6 +279,107 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     <script>
 
     const socket = io({ auth: { userId: '<%= user._id %>' } })
+
+    // PAYPAL LOGIC
+    const userId = '<%= user._id %>'
+    const errorMessage = document.getElementById('error-display')
+    const inputElem = document.getElementById('amount')
+
+    paypal.Buttons({
+      style: {
+        layout: 'vertical',
+        color: 'blue',
+        shape: 'pill',
+        label: 'paypal'
+      },
+      createOrder: function (data, actions) {
+        return actions.order.create({
+          purchase_units: [
+            {
+              amount: {
+                value: inputElem.value
+              }
+            }
+          ]
+        })
+      },
+      onApprove: function (data, actions) {
+        return actions.order.capture().then( async (details) => {
+          const paidValue = details.purchase_units[0].amount.value
+          const email = details.payer.email_address
+
+            const tranxResponse = await fetch('/paypal-deposit', {
+                                    method: 'POST',
+                                    headers: {
+                                      "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                              valuePaid: paidValue,
+                                              paypalEmail: email,
+                                          })
+                                 })
+            
+            const tranxData = await tranxResponse.json()
+            
+            if (tranxData.success) {   // PATCH USER VERIFIED BADGE AND UPDATE TRANX TO COMPLETE
+                 
+                 const tranxId = tranxData.transaction._id
+                 const pplEmail = tranxData.transaction.pplEmail
+
+                 const updatedUserAndTranxResponse = await fetch('/update-verified', {
+                              method: 'PATCH',
+                              headers: {
+                                "Content-Type": "application/json"
+                              },
+                              body: JSON.stringify({
+                                      tranxId: tranxId,
+                                      pplEmail: pplEmail
+                              })
+                 })
+
+                 const updateResp = await updatedUserAndTranxResponse.json()
+
+                 if (updateResp.success) {
+
+                  errorMessage.textContent = 'Updates Complete'
+                  setTimeout(()=> {
+                  errorMessage.textContent = ''
+                  window.location.reload()
+                  }, 3000)
+
+                 } else {
+
+                  errorMessage.textContent = 'Updates Failed Contact Support'
+                  setTimeout(()=> {
+                  errorMessage.textContent = ''
+                  window.location.reload()
+                  }, 3000)
+
+                 }
+   
+            } else {
+                 
+                  errorMessage.textContent = 'Paypal Response Failure'
+                  setTimeout(()=> {
+                  errorMessage.textContent = ''
+                  window.location.reload()
+                  }, 3000)
+
+            }
+
+
+            })
+              
+      },
+      onCancel: function () {
+        alert('You Canceled the Request')
+        window.location.href = '/settings'
+      },
+      onError: function () {
+        alert('Server Error!! Please try Again')
+        window.location.href = '/settings'
+      }
+    }).render('#paypal-button-container')
 
 
  const REALMS = {
@@ -463,11 +597,14 @@ const labelDP = document.getElementById('label-dp')
 const submitDpBtn = document.getElementById('submit-dp')
 const submitActionsCont = document.querySelector('.submit-actions')
 const cancelDpBtn = document.querySelector('.cancel-dp')
-const errorMessage = document.getElementById('error-display')
 const wrapper = document.querySelector('.progress-wrapper')   // display flex - none
 const progress = document.querySelector('#overallProgress')
 const text = document.querySelector('.progress-text')
 const status = document.querySelector('#upload-status')
+const verifyBtn = document.getElementById('verify')
+const paypalSection = document.querySelector('.paypal-section')
+const closePaymentBtn = document.getElementById('close')
+
 
 
 labelDP.addEventListener('click', () => {
@@ -667,7 +804,18 @@ submitDpBtn.addEventListener('click', async (e) => {
     
 })
 
+verifyBtn.addEventListener('click', () => {
 
+    changeBox.style.display = 'none'
+    paypalSection.style.display = 'block'
+
+})
+
+closePaymentBtn.addEventListener('click', () => {
+   
+    changeBox.style.display = 'flex'
+    paypalSection.style.display = 'none'
+})
 
 
         
