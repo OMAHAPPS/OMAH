@@ -38,6 +38,7 @@ const LikedPost = require('./models/userPostLikes')
 const LikedReply = require('./models/userReplyLikes')
 const Following = require('./models/following')
 const Chat = require('./models/dmBucket')
+const Notification = require('./models/notifications')
 
 const googleRoutes = require('./routes/auth-routes')
 
@@ -47,6 +48,7 @@ const app = express()
 const server = createServer(app)
 const mongoose = require('mongoose')
 const { count } = require('node:console')
+const Notify = require('./models/notifications')
 
 const PORT = 4000
 
@@ -275,6 +277,104 @@ io.on('connection', (socket) => {
          }
     
 
+    })
+
+    socket.on('addNotification', async (data, ack) => {
+
+          try {
+
+                 if (!data || typeof data !== 'object' || Array.isArray(data)) {
+
+                     ack({ success: false, error: 'Invalid Payload Datatype', UIStatus: 'addNotify' })
+                 } 
+                 
+                 const userReq = socket.userId
+
+                  // DOUBLE CHECK IF RECIPIENT ALREADY HAS A BUCKET 
+                 const recipHasBucket = await Notification.findOne({ parentId: data.recipientId })
+
+                 if (!recipHasBucket) {  //NO ONE HAS EVER REQUESTED TO HAVE NOTIFICATIONS FROM THIS USER
+                    //CREATE NEW BUCKET FOR RECIPIENT
+                    const newBucket = new Notification({
+                        parentId: data.recipientId, count: 1, notify: [userReq]
+                    }).save().then((newBucket) => {
+
+                        ack({ success: true, UIStatus: 'removeNotify' })
+                    })
+                    .catch((error) => {
+
+                        ack({ success: false, UIStatus: 'addNotify' })
+                    })
+
+                 } else {
+
+
+                     const userReqExistsInRecipBucket = await Notification.findOne({ parentId: data.recipientId, notify: userReq }) 
+                     
+                     if (userReqExistsInRecipBucket) { // No need to add user to recipient Bucket
+    
+                         ack({ success: true, UIStatus: 'removeNotify' })
+    
+                     } else {  // Add User to recipient Bucket
+    
+                       await Notification.updateOne({ parentId: data.recipientId, count: { $lt: 500 } }, { $addToSet: { notify: userReq }, $inc: { count: 1 } }, { upsert: true })
+                        
+                       ack({ success: true, UIStatus: 'removeNotify' })
+                        
+                     }
+
+                 }
+                 
+            
+          } catch (error) {
+               
+               console.log(error)
+               ack({ success: false, UIStatus: 'addNotify' })
+          }
+    })
+
+    socket.on('removeNotification', async (data, ack) => {
+           
+           if (!data || typeof data !== 'object' || Array.isArray(data)) {
+
+               ack({ success: false, UIStatus: 'removeNotfy' })
+           }
+
+        try {
+
+            const userReq = socket.userId
+
+            // CHECK IF USEREQ EXISTS IN ONE OF THE REC BUCKETS
+            const userReqExistsInRecBucket = await Notification.findOne({ parentId: data.recipientId, notify: userReq })
+
+            if (!userReqExistsInRecBucket) {  // UserReq never Added Notification although button is accid visible
+                 
+                 ack({ success: true, UIStatus: 'addNotify' })
+
+            } else {
+
+                if (userReqExistsInRecBucket.count === 1) {  // DELETE THE BUCKET CONTAINING THE USERREQ AS THE ONLY NOTIFY RECIP
+                       
+                      await Notification.deleteOne({ _id: userReqExistsInRecBucket._id })
+
+                      ack({ success: true, UIStatus: 'addNotify' })
+
+                } else {
+
+                    await Notification.findByIdAndUpdate(userReqExistsInRecBucket._id, { $pull: { notify: userReq }, $inc: { count: -1 } })
+                    
+                    ack({ success: true, UIStatus: 'addNotify' })
+                }
+
+            }
+            
+        } catch (error) {
+
+            console.log(error)
+
+            ack({ success: false, UIStatus: 'removeNotify' })
+            
+        }   
     })
 
     socket.on('follow-request', async (data, ack) => {
@@ -1448,8 +1548,9 @@ app.get('/settings', notLoggedInCheck, async (req, res) => {
 
        const User = req.user
        const R2BASEURL = process.env.R2_PUBLIC_BASE_URL
+       const CLIENT = process.env.PAYPAL_CLIENT_ID
 
-       res.render('settings', { user: User, R2BASE: R2BASEURL, totalPosts: totalPosts, messages: req.flash('error') })
+       res.render('settings', { user: User, CLIENT, R2BASE: R2BASEURL, totalPosts: totalPosts, messages: req.flash('error') })
 })
 
 app.get('/inbox/:id', notLoggedInCheck, async (req, res) => {
@@ -1484,11 +1585,12 @@ app.get('/user/:id', notLoggedInCheck,  async (req, res) => {
     const user = await Omaruser.findOne({ _id: userid })
     const userPosts = await Post.find({ userId: userid }) 
     const R2baseUrl = process.env.R2_PUBLIC_BASE_URL
+    const notiActive = false
 
 
     const userReqIsFollowingRec = await Following.findOne({ parentId: userReq._id, following: userid })
 
-    res.render('userposts', { userReq, following: userReqIsFollowingRec,  posts: userPosts, user, R2BASE: R2baseUrl, origin: postOriginId } )
+    res.render('userposts', { userReq, following: userReqIsFollowingRec,  posts: userPosts, user, R2BASE: R2baseUrl, origin: postOriginId, notiActive } )
 })
 
 app.get('/group', notLoggedInCheck, async (req, res) => {

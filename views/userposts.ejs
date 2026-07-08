@@ -107,6 +107,23 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                  <a href="/inbox/<%= user._id %>" class="message" style="text-decoration: none; margin-right: 15px; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
                  </a>
+
+                 <% if (notiActive) { %>
+                      <button class="notifyOn"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; padding: 5px; margin-right: 3px; height: 20px; width: fit-content; border-radius: 15px; border: none; transition: all .4s ease-out;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="m5.705 3.71-1.41-1.42C1 5.563 1 7.935 1 11h1l1-.063C3 8.009 3 6.396 5.705 3.71zm13.999-1.42-1.408 1.42C21 6.396 21 8.009 21 11l2-.063c0-3.002 0-5.374-3.296-8.647zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zm7-7.414V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258C7.184 4.073 5 6.783 5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-1a.996.996 0 0 0-.293-.707L19 14.586z"></path></svg>
+                      </button>
+                      <button class="notifyOff"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; place-content: center; padding: 5px; margin-right: 3px; height: 20px; width: fit-content; border-radius: 15px; border: none; transition: all .4s ease-out;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="M20.345 18.931A.993.993 0 0 0 21 18v-1a.996.996 0 0 0-.293-.707L19 14.586V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258c-1.323.364-2.463 1.128-3.346 2.127L3.707 2.293 2.293 3.707l18 18 1.414-1.414-1.362-1.362zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zM5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h10.879L5.068 9.189C5.037 9.457 5 9.724 5 10z"></path></svg>
+                      </button> 
+                 <% } else { %>
+                  <button class="notifyOff"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; padding: 5px; margin-right: 3px; height: 20px; width: fit-content; border-radius: 15px; border: none; transition: all .4s ease-out;">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="M20.345 18.931A.993.993 0 0 0 21 18v-1a.996.996 0 0 0-.293-.707L19 14.586V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258c-1.323.364-2.463 1.128-3.346 2.127L3.707 2.293 2.293 3.707l18 18 1.414-1.414-1.362-1.362zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zM5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h10.879L5.068 9.189C5.037 9.457 5 9.724 5 10z"></path></svg>         
+                  </button>
+                  <button class="notifyOn"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; place-content: center; padding: 5px; margin-right: 3px; height: 20px; width: fit-content; border-radius: 15px; border: none; transition: all .4s ease-out;">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="m5.705 3.71-1.41-1.42C1 5.563 1 7.935 1 11h1l1-.063C3 8.009 3 6.396 5.705 3.71zm13.999-1.42-1.408 1.42C21 6.396 21 8.009 21 11l2-.063c0-3.002 0-5.374-3.296-8.647zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zm7-7.414V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258C7.184 4.073 5 6.783 5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-1a.996.996 0 0 0-.293-.707L19 14.586z"></path></svg>
+
+                  </button>   
+                 <% } %>
                  
                  <% if (!following) { %>
                    <button class="follow-btn"  <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: grid; place-content: center; padding: 15px; height: 20px; width: fit-content; border-radius: 15px; border: none; background-color: <%= userReq.userColor %>; transition: all .4s ease-out;">
@@ -150,8 +167,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                         <div style="flex:1; position: relative; width: 100%;">
                 
                             <div style="margin-bottom: 5px; display: flex; align-items: center; justify-content: flex-start; font-size: 18px; font-weight: 600; color: rgba(237,232,224,.85)">
-                                 <%= user.userName %> 
-                                 <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="margin-left: 5px; font-size: 16px; color: <%= userReq.userColor %>; font-weight: 600;" >@<%= user.userHandle !== 'none' ? user.userHandle : user.userName %></h2>      
+                                 <h2 style="font-size: 18px; margin-right: 2px;"><%= user.userName %></h2>
+                                 <img src="/verified.png" alt="" width="15" height="15"> 
+                                 <h2 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="max-width: 55%; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; margin-left: 5px; font-size: 16px; color: <%= userReq.userColor %>; font-weight: 600;" >@<%= user.userHandle !== 'none' ? user.userHandle : user.userName %></h2>      
                             </div>
                             <div class="follow-info" style="display: flex; align-items: center; justify-content: flex-start; margin-top: 5px;">
 
@@ -361,8 +379,10 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
   const followBtn = document.querySelector('.follow-btn')
   const unfollowBtn = document.querySelector('.unfollow-btn')
+  const addNotifyBtn = document.querySelector('.notifyOff')
+  const removeNotifyBtn = document.querySelector('.notifyOn')
 
-    followBtn.addEventListener('click', async (e) => {
+  followBtn.addEventListener('click', async (e) => {
 
           e.target.innerHTML = `${dot(userColor)}`
           e.target.style.backgroundColor = 'transparent'
@@ -410,7 +430,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     })
 
-    unfollowBtn.addEventListener('click', async (e) => {
+  unfollowBtn.addEventListener('click', async (e) => {
               
             e.target.innerHTML = `${dot(userColor)}`
             e.target.disabled = true
@@ -449,7 +469,86 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     })
 
+  addNotifyBtn.addEventListener('click', async (e) => {
+        
+        e.target.innerHTML = `${dot(userColor)}`
+        e.target.style.backgroundColor = 'transparent'
+        e.target.disabled = true
+        
+        const payload = { recipientId: '<%= user._id %>' }
 
+        try {
+
+          const response = await socket.timeout(5000).volatile.emitWithAck('addNotification', payload)
+
+          if (response.success) {
+
+            e.target.style.display = 'none'
+            e.target.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="M20.345 18.931A.993.993 0 0 0 21 18v-1a.996.996 0 0 0-.293-.707L19 14.586V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258c-1.323.364-2.463 1.128-3.346 2.127L3.707 2.293 2.293 3.707l18 18 1.414-1.414-1.362-1.362zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zM5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h10.879L5.068 9.189C5.037 9.457 5 9.724 5 10z"></path></svg>
+                                 `
+            e.target.disabled = false
+            removeNotifyBtn.style.display = 'grid'
+            console.log(response)
+
+          } else {
+            
+            e.target.disabled = false
+            e.target.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="M20.345 18.931A.993.993 0 0 0 21 18v-1a.996.996 0 0 0-.293-.707L19 14.586V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258c-1.323.364-2.463 1.128-3.346 2.127L3.707 2.293 2.293 3.707l18 18 1.414-1.414-1.362-1.362zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zM5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h10.879L5.068 9.189C5.037 9.457 5 9.724 5 10z"></path></svg>
+                                 `       
+            console.log(response)
+
+          }
+          
+        } catch (error) {
+            
+            e.target.disabled = false
+            setTimeout(() => {
+              e.target.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="M20.345 18.931A.993.993 0 0 0 21 18v-1a.996.996 0 0 0-.293-.707L19 14.586V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258c-1.323.364-2.463 1.128-3.346 2.127L3.707 2.293 2.293 3.707l18 18 1.414-1.414-1.362-1.362zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zM5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h10.879L5.068 9.189C5.037 9.457 5 9.724 5 10z"></path></svg>
+                                 `
+            }, 500)
+            console.log(error)                     
+
+        }
+  })
+
+  removeNotifyBtn.addEventListener('click', async (e) => {
+        
+        e.target.innerHTML = `${dot(userColor)}`
+        e.target.disabled = true
+        const payload = { recipientId: '<%= user._id %>' }
+        
+        try {
+
+          const response = await socket.timeout(5000).volatile.emitWithAck('removeNotification', payload)
+
+          if (response.success) {
+
+             e.target.disabled = false
+             e.target.style.display = 'none'
+             e.target.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="m5.705 3.71-1.41-1.42C1 5.563 1 7.935 1 11h1l1-.063C3 8.009 3 6.396 5.705 3.71zm13.999-1.42-1.408 1.42C21 6.396 21 8.009 21 11l2-.063c0-3.002 0-5.374-3.296-8.647zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zm7-7.414V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258C7.184 4.073 5 6.783 5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-1a.996.996 0 0 0-.293-.707L19 14.586z"></path></svg>
+                                  `
+             addNotifyBtn.style.display = 'grid'
+             console.log(response)
+
+          } else {
+             
+             e.target.disabled = false
+             e.target.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="m5.705 3.71-1.41-1.42C1 5.563 1 7.935 1 11h1l1-.063C3 8.009 3 6.396 5.705 3.71zm13.999-1.42-1.408 1.42C21 6.396 21 8.009 21 11l2-.063c0-3.002 0-5.374-3.296-8.647zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zm7-7.414V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258C7.184 4.073 5 6.783 5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-1a.996.996 0 0 0-.293-.707L19 14.586z"></path></svg>
+                                  `
+             console.log(response)
+          }
+          
+        } catch (error) {
+
+           e.target.disabled = false
+           setTimeout(() => {
+              e.target.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; fill: <%= userReq.userColor %>;transform: msFilter"><path d="m5.705 3.71-1.41-1.42C1 5.563 1 7.935 1 11h1l1-.063C3 8.009 3 6.396 5.705 3.71zm13.999-1.42-1.408 1.42C21 6.396 21 8.009 21 11l2-.063c0-3.002 0-5.374-3.296-8.647zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22zm7-7.414V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258C7.184 4.073 5 6.783 5 10v4.586l-1.707 1.707A.996.996 0 0 0 3 17v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-1a.996.996 0 0 0-.293-.707L19 14.586z"></path></svg>
+                                  `
+           }, 500)
+           console.log(error)
+          
+        }
+  })
 
 </script>     
 

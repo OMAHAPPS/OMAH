@@ -13,6 +13,7 @@ const omahSchema = new Schema({
        totalPosts: { type: Number, default: 0, required: false },
        totalFollowers: { type: Number, default: 0, required: false },
        totalFollowing: { type: Number, default: 0, required: false },
+       verified: { type: Boolean, default: false, required: false },
        pushSubscriptions: { type: Array, default: [], required: false }
 
 })

@@ -145,29 +145,29 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           
              <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
                 <div style="font-size: 22px; margin-bottom: 6px;">
-                  ⚡
+                  <ion-icon name="person-add-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;" ></ion-icon>
                 </div>
                 <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
-                  0
+                  <%= user.totalFollowing %>
                 </div>
                 <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
-                  XP
+                  Following
                 </div>
              </div>
              <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
                 <div style="font-size: 22px; margin-bottom: 6px;">
-                  ✅
+                  <ion-icon name="people-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;"></ion-icon>
                 </div>
                 <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
-                  0
+                  <%= user.totalFollowers %>
                 </div>
                 <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
-                  Quests
+                  Followers
                 </div>
              </div>
-             <div class="glass" style="border-radius:16px;padding:14px;text-align:center">
+             <a href="/user/<%= user._id %>" class="glass" style="text-decoration: none; border-radius:16px;padding:14px;text-align:center; border:2px solid rgba(255,255,255,.17);">
                 <div style="font-size: 22px; margin-bottom: 6px;">
-                  📝
+                  <ion-icon name="newspaper-sharp" <%/* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; color: <%= user.userColor %>;" ></ion-icon>
                 </div>
                 <div class="fd" style="font-size: 20px; font-weight: 700; color:rgba(237,232,224,.88)">
                   <%= totalPosts %>
@@ -175,7 +175,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 <div style="font-size: 9px; color:rgba(237,232,224,.26); letter-spacing: 1px; margin-top: 2px;">
                   Posts
                 </div>
-             </div>
+              </a>
     
           </div>
           
@@ -184,8 +184,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             <a href="/main" class="tap" style="text-decoration: none; padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
               ✏️ Change Theme
             </a>
-            <button id="userhandle" href="/main" class="tap" style="text-decoration: none; padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
+            <button id="userhandle"  class="tap" style="padding:13px;border-radius:14px;font-size:13px;background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.5)">
                ✏️ Change User Handle
+            </button>
+            <button id="verify" class="tap" style="display: flex; align-items: center; justify-content: center; gap: 3px; padding:13px;border-radius: 14px; font-size: 13px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.85)">
+               Get Verified
+               <img src="/verified.png" alt="" width="15" height="15"> 
             </button>
             <a href="/auth/logout" class="tap" style="text-decoration: none; padding: 13px; border-radius: 14px; font-size: 13px; background:rgba(200,60,40,.07); border:1px solid rgba(200,60,40,.2); color: #C04848;">
                Logout
@@ -237,6 +241,8 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
 <script src="/socket.io/socket.io.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=<%= CLIENT %>&components=buttons&disable-funding=credit,card"></script>
+
     <script>
 
     const socket = io({ auth: { userId: '<%= user._id %>' } })
