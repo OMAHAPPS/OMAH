@@ -116,7 +116,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               <div style="flex:1; position: relative;">
                 
                         <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.9)">
-                                 <%= post.userName %> 
+                                 <%= post.userName %>
+                              <% if (poster.verified) { %>
+                                 <img src="/verified.png" alt="" width="13" height="13">     
+                              <% } else { %>
+                                 <img src="/verified.png" alt="" width="13" height="13" style="display: none;">                          
+                              <% } %> 
                                  <% if (post.userName == user.userName) { %>
                                    <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                                    <% } else { %>
@@ -257,16 +262,21 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                               <% const minutesPast = Math.floor( (diff / 60000) ) %>
 
                           <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
-                                   <%= reply.author.userName %> 
+                                   <%= reply.author.userName %>
+                                   <% if (reply.author.verified) { %>
+                                     <img src="/verified.png" alt="" width="12" height="12" style="margin-inline: 2px;">
+                                   <% } else { %>
+                                     <img src="/verified.png" alt="" style="display: none;">
+                                   <% } %> 
                                    <% if (daysPast > 0) { %>
-                               <span style="color: rgba(237, 232, 224, .42);"> . <%= daysPast %>d</span>
-                               <% } else if (hoursPast > 0) { %>
-                               <span style="color: rgba(237, 232, 224, .42);"> . <%= hoursPast %>h</span>
-                                 <% } else if (minutesPast > 0) { %>
-                                   <span style="color: rgba(237, 232, 224, .42);"> . <%= minutesPast %>m</span>
+                                         <span style="color: rgba(237, 232, 224, .42);"> . <%= daysPast %>d</span>
+                                   <% } else if (hoursPast > 0) { %>
+                                         <span style="color: rgba(237, 232, 224, .42);"> . <%= hoursPast %>h</span>
+                                   <% } else if (minutesPast > 0) { %>
+                                         <span style="color: rgba(237, 232, 224, .42);"> . <%= minutesPast %>m</span>
                                    <% } else if (minutesPast == 0) { %>
-                                  <span style="color: rgba(237, 232, 224, .42);"> . Just Now</span>
-                                  <% } %>
+                                         <span style="color: rgba(237, 232, 224, .42);"> . Just Now</span>
+                                   <% } %>
                           </div>
   
                           <h2 style="font-size: 12px; color: rgba(237,232,224,.32); width: 65%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >Replying to <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>;">@<%= poster.userHandle !== 'none' ? poster.userHandle : poster.userName %></span></h2>
@@ -416,7 +426,12 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                                         <% const srminutesPast = Math.floor( (srdiff / 60000) ) %>
 
                           <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85);">
-                                   <%= subreply.subReplyAuthor.userName %> 
+                                   <%= subreply.subReplyAuthor.userName %>
+                                   <% if (subreply.subReplyAuthor.verified) { %>
+                                      <img src="/verified.png" alt="" width="12" height="12" style="margin-inline: 2px;">
+                                   <% } else { %>
+                                      <img src="/verified.png" alt="" style="display: none;">
+                                   <% } %> 
                                    <% if (srdaysPast > 0) { %>
                                    <span style="color: rgba(237, 232, 224, .42);"> . <%= srdaysPast %>d</span>
                                    <% } else if (srhoursPast > 0) { %>
@@ -673,8 +688,14 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                    
 
-
-                    <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
+                    <div class="username-wrapper" style="display: flex; justify-self: center; align-items: center; gap: 3px;">
+                          <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
+                      <% if (user.verified) { %>
+                          <img src="/verified.png" alt="" width="17" height="17">
+                      <% } else { %>
+                          <img src="/verified.png" alt="" style="display: none;">
+                      <% } %>
+                    </div>
 
                     <p style="font-size: 16px; color: rgba(237,232,224,.45);"></p>
 

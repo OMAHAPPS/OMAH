@@ -84,8 +84,13 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
             <div style="padding:14px 16px 0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
                   <div>
-                     <div class="fd" style="font-size: 17px; font-weight: 700; color:rgba(237,232,224,.88);">
+                     <div class="fd" style="font-size: 17px; font-weight: 700; color:rgba(237,232,224,.88); display: flex; justify-content: center; align-items: center; gap: 3px;">
                         <%= user.userName %>
+                        <% if (user.verified) { %>
+                           <img src="/verified.png" alt="" width="16" height="16" />
+                        <% } else { %>
+                           <img src="/verified.png" alt="" style="display: none;">
+                        <% } %>
                      </div>
                      <div <% /* eslint-disable-next-line css-porpertyvalueexpected */ %> style="font-size: 11px; color: <%= user.userColor %>; letter-spacing: 1px; margin-top: 1px; opacity: 0.8; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         @<%= user.userHandle !== 'none' ? user.userHandle : user.userName %>
@@ -182,6 +187,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
 
                                  <h2 style="font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);"><%= post.userName %> </h2>
+                                 <% if (post.poster.verified) { %>
+                                    <img src="/verified.png" alt="" width="13" height="13" style="margin-left: 2px;">
+                                 <% } else { %>
+                                    <img src="/verified.png" alt="" style="display: none;">
+                                 <% } %>
                                  <% if (post.userName == user.userName) { %>
                                    <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
                                    <% } else { %>
@@ -394,7 +404,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                              </p>
                          </div>            
       
-                  </a>   
+               </a>   
                  
                 
 
@@ -1630,6 +1640,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
                
                const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
+               const verified = post.poster.verified == true ? `<img src="/verified.png" alt="" width="13" height="13" />` : `<img src="/verified.png" alt="" style="display: none;" />`
                const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 50%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
@@ -1650,6 +1661,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                          <div style="flex:1"> 
                                            <div style="pointer-events: none; font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
                                               <h2 style="pointer-events: none; font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);">${post.userName}</h2>
+                                              ${verified}
                                               ${youSpan}
                                            </div>
                                            ${createTimeElem(post.createdAt)}
@@ -1726,6 +1738,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                postLink.href = `/post/${post.postId}`
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
                const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
+               const verified = post.poster.verified == true ? `<img src="/verified.png" alt="" width="13" height="13" />` : `<img src="/verified.png" alt="" style="display: none;" />`
                const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
@@ -1746,6 +1759,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                          <div style="flex:1"> 
                                            <div style="pointer-events: none; font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
                                               <h2 style="pointer-events: none; font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);">${post.userName}</h2>
+                                              ${verified}
                                               ${youSpan}
                                            </div>
                                            ${createTimeElem(post.createdAt)}
@@ -1848,14 +1862,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             
              let UnreadCount = unreadCount !== 0 ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="height: 25px; width: 25px; padding: 5px; border-radius: 50%; display: grid; place-content: center; backGround: <%= user.userColor %>; color: White; font-size: 10px; position: absolute; right: 12px; bottom: 10px;">${unreadCount}</span>` : ''
              let tickHtml = isMe ? (msgLink.lastMsgStatus == 'seen' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: rgb(37, 134, 224);"></ion-icon></span>' : msgLink.lastMsgStatus == 'delivered' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sent' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sending' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="time-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : '' ) : '';
-
+             let verified = msgLink.verified == true ? `<img src="/verified.png" width="12" height="12" />` : `<img src="/verified.png" width="12" height="12" style="display: none;" />`
  
             dmLink.innerHTML = `
                                <img src="${msgLink.userDP !== 'none' ? `${R2Base}/${msgLink.userDP}` : 'placeholder.jpg' }" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
                                <div style="flex: 1; min-width: 0;">
                                    <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-                                       <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">${msgLink.userName}</span>
+                                       <div style="display: flex; justify-content: center; align-items: center;" >
+                                         <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92); margin-right: 3px;">${msgLink.userName}</span>
+                                         ${verified}
+                                       </div>
                                        <span style="font-size:9px;color: ${ unreadCount !== 0 ? '<%= user.userColor %>' : 'rgba(237,232,224,.85)' } ;">${formatDividerDate(newTimeString)}</span>    
                                    </div>
                                    <p style="font-size: 11px; color: rgba(237,232,224,.53); max-width: 80%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${tickHtml}${msgLink.lastText}</p>
@@ -3424,14 +3441,18 @@ messagesBtn.addEventListener('click', async (e) => {
             
              let UnreadCount = unreadCount !== 0 ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="height: 25px; width: 25px; padding: 5px; border-radius: 50%; display: grid; place-content: center; backGround: <%= user.userColor %>; color: White; font-size: 10px; position: absolute; right: 12px; bottom: 10px;">${unreadCount}</span>` : ''
              let tickHtml = isMe ? (msgLink.lastMsgStatus == 'seen' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: rgb(37, 134, 224);"></ion-icon></span>' : msgLink.lastMsgStatus == 'delivered' ? '<span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sent' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : msgLink.lastMsgStatus == 'sending' ? '<span style="display: inline-block; margin-right: 4px;"><ion-icon name="time-outline" style="font-size: 13px; color: grey;"></ion-icon></span>' : '' ) : '';
-
+             let verified = msgLink.verified == true ? `<img src="/verified.png" width="12" height="12" />` : `<img src="/verified.png" width="12" height="12" style="display: none;" />`
+ 
  
             dmLink.innerHTML = `
                                <img src="${msgLink.userDP !== 'none' ? `${R2Base}/${msgLink.userDP}` : 'placeholder.jpg' }" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
 
                                <div style="flex: 1; min-width: 0;">
                                    <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-                                       <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92)">${msgLink.userName}</span>
+                                       <div style="display: flex; justify-content: center; align-items: center;" >
+                                         <span style="font-size:13px;font-weight:600;color:rgba(237,232,224,.92); margin-right: 3px;">${msgLink.userName}</span>
+                                         ${verified}
+                                       </div>
                                        <span style="font-size:9px;color: ${ unreadCount !== 0 ? '<%= user.userColor %>' : 'rgba(237,232,224,.85)' } ;">${formatDividerDate(newTimeString)}</span>    
                                    </div>
                                    <p style="font-size: 11px; color: rgba(237,232,224,.53); max-width: 80%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${tickHtml}${msgLink.lastText}</p>
@@ -3550,6 +3571,7 @@ forYouBtn.addEventListener('click', async (e) => {
                postLink.href = `/post/${post.postId}`
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
                const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
+               const verified = post.poster.verified == true ? `<img src="/verified.png" alt="" width="13" height="13" />` : `<img src="/verified.png" alt="" style="display: none;" />`
                const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 50%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
@@ -3570,6 +3592,7 @@ forYouBtn.addEventListener('click', async (e) => {
                                          <div style="flex:1"> 
                                            <div style="pointer-events: none; font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
                                               <h2 style="pointer-events: none; font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);">${post.userName}</h2>
+                                              ${verified}
                                               ${youSpan}
                                            </div>
                                            ${createTimeElem(post.createdAt)}
@@ -3646,6 +3669,7 @@ forYouBtn.addEventListener('click', async (e) => {
                postLink.href = `/post/${post.postId}`
                const posterImage = post.poster.userDP !== 'none' ? `<img src="${R2Base}/${post.poster.userDP}" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />` : ` <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />`
                const posterUserHandle = post.poster.userHandle !== 'none' ? `${post.poster.userHandle}` : `${post.userName}`
+               const verified = post.poster.verified == true ? `<img src="/verified.png" alt="" width="13" height="13" />` : `<img src="/verified.png" alt="" style="display: none;" />`
                const youSpan = post.userName == userName ? `<span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>` : ` <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@${posterUserHandle}</span>`
                const postClassName = post.videoUrl !== 'none' ? 'glass stop-fetch' : 'glass-images stop-fetch'
                postLink.className = postClassName
@@ -3666,6 +3690,7 @@ forYouBtn.addEventListener('click', async (e) => {
                                          <div style="flex:1"> 
                                            <div style="pointer-events: none; font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
                                               <h2 style="pointer-events: none; font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);">${post.userName}</h2>
+                                              ${verified}
                                               ${youSpan}
                                            </div>
                                            ${createTimeElem(post.createdAt)}

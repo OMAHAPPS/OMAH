@@ -216,9 +216,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
               <div style=" display: flex; align-items: center; justify-content: center; gap: 5px;">
                 <div class="fd" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size:24px;font-weight:700;color:#ede8e0;"><%= user.userName %></div>
                 <% if (!user.verified) { %>
-                   <img src="/verified.png" alt="" width="24" height="24" style="display: none;">
+                   <img src="/verified.png" alt="" width="20" height="20" style="display: none;">
                 <% } else { %>
-                   <img src="/verified.png" alt="" width="24" height="24">
+                   <img src="/verified.png" alt="" width="20" height="20">
                 <% } %>
                 
               </div>

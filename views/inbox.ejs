@@ -83,17 +83,24 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                <div id="poster-user-handle" style="display: none;">@<%= userMessaged.userHandle !== 'none' ? userMessaged.userHandle : userMessaged.userName %></div>
 
                <% if (userMessaged.userDP !== 'none') { %>
-                <img onclick="displayNav()" src="<%= R2BASE %>/<%= userMessaged.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" /> 
+                <img  src="<%= R2BASE %>/<%= userMessaged.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" /> 
                <% } else { %>
-                <img onclick="displayNav()" src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />              
+                <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />              
                <% } %>
 
 
-            <div onclick="displayNav()" class="name-cont" style="display: flex; flex-direction: column; gap:4px">
+            <div class="name-cont" style="display: flex; flex-direction: column; gap:4px">
+                
+                <div class="username-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 3px;">
+                    <h2 style="font-size: 15px; font-weight: 600; color: rgba(237,232,224,.85);"><%= userMessaged.userName %></h2>
+                 <% if (userMessaged.verified) { %>
+                    <img src="/verified.png" alt="" width="15" height="15" style="pointer-events: none;"> 
+                 <% } else { %>
+                    <img src="/verified.png" alt="" width="15" height="15" style="display: none;"> 
+                 <% } %>
+                </div>
 
-                <h2 onclick="displayNav()" style="font-size: 15px; font-weight: 600; color: rgba(237,232,224,.85);"><%= userMessaged.userName %></h2>
-
-                <div id="online-status" onclick="displayNav()" style="display: flex; align-items: center; gap:4px">
+                <div id="online-status" style="display: flex; align-items: center; gap:4px">
                    <div style="display: none; width: 6px; height: 6px; border-radius: 50%; background: #1ed760; box-shadow:0 0 6px #1ed760; animation: throb 1.8s ease-in-out infinite;"></div>
                    <span style="display: none; font-size: 11px; color: rgba(237,232,224,.45);">Online</span>
 
@@ -128,35 +135,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     <main id="chat-container" style="height: 73%; display: flex; flex-direction: column; gap: 12px; padding: 16px; overflow-y: scroll; overflow-x: hidden; scroll-snap-type: y mandatory; scroll-padding-block: 10px;">
 
-       
+         <!-- ! RENDERED IN JAVASCRIPT -->
         
-        <!-- <div class="receiver-cont" style="align-self: flex-start; max-width: 72%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 0 18px 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;">
-             
-            <p style="white-space: pre-wrap; margin-block: 8px; color: rgba(237,232,224,.75); font-size: 16px;">Hey! I'm doing great, thanks for asking. How about you?Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
-                <span style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: rgb(37, 134, 224);"></ion-icon></span>
-                <p> 2:30 PM</p>
-            </div>
-
-        </div>
-
         
-        <div class="sender-cont" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="align-self: flex-end; max-width: 72%; background: <%= userReq.userColor %>41; border: 1px solid rgba(255,255,255,.07); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px 0 18px 18px; padding: 5px 16px; animation: msgPop .28s cubic-bezier(.22,.61,.36,1) both; scroll-snap-align: end;">
-           
-            <p id="text" style="white-space: pre-wrap; margin-block: 4px; color: rgba(237,232,224,.95); font-size: 16px;">Hey! I'm doing great, thanks for asking. How about you?</p>
-
-            <div class="timestamp" style="font-size: 11px; color: rgba(237,232,224,.45); text-align: right; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end;">
-
-                <span id="sender-status-span" style="display: inline-block; margin-right: 4px;"><ion-icon name="checkmark-done-outline" style="font-size: 1.1rem; color: rgb(37, 134, 224);"></ion-icon></span>
-
-                <p id="localetime" >2:30 PM</p>
-
-            </div>
-
-        </div>
-       -->
-        
-      
     </main>
     <footer style="position: relative; height: 17%; padding-left: 12px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
         <div class="gif-container" style="position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); width: 100%; height: 0px; background-color: black; transition: height .3s ease-out; border-radius: 20px 20px 0 0;">
@@ -244,8 +225,15 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                 <div id="single-profile-info-cont" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 16px;">
 
                     <img src="" alt="" width="100" height="100" style="border-radius: 50%; object-fit: cover;" />
+                    <div class="username-wrapper" style="display: flex; justify-content: center; align-items: center; gap: 2px;">
+                        <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
+                        <% if (userMessaged.verified) { %>
+                         <img src="/verified.png" alt="" width="17" height="17" style="margin-inline: 2px;">
+                         <% } else { %>
+                         <img src="/verified.png" alt="" width="17" height="17" style="display: none;">
+                        <% } %>
 
-                    <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
+                    </div>
 
                     <p style="font-size: 14px; color: rgba(237,232,224,.45);"></p>
 
@@ -1518,42 +1506,45 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
     const profileHeader = document.querySelector('#prof')
 
-    function displayNav () {
-          
-          // Populate modal with profile info (placeholder for now)
-          const profileInfo = {
-              userName: profileHeader.children[0].textContent,
-              userProfilePic: profileHeader.children[5].getAttribute('src'),
-              userHandle: profileHeader.children[4].textContent,
-              userStats: {
-                  posts: profileHeader.children[3].textContent,
-                  followers: profileHeader.children[1].textContent,
-                  following: profileHeader.children[2].textContent
-              } 
-          }
-         
-        
-          const singleProfileContainer = document.querySelector('#single-profile-info-cont')
-          
-          singleProfileContainer.querySelector('img').src = profileInfo.userProfilePic
-          singleProfileContainer.querySelector('h2').textContent = profileInfo.userName
-          singleProfileContainer.querySelector('p').textContent = profileInfo.userHandle
-          singleProfileContainer.querySelector('#following').textContent = profileInfo.userStats.following
-          singleProfileContainer.querySelector('#followers').textContent = profileInfo.userStats.followers
-          singleProfileContainer.querySelector('#postsTotal').textContent = profileInfo.userStats.posts
+    document.getElementById('prof').addEventListener('click', () => {
 
-          document.querySelector('.interact').innerHTML = `<a id="link-to-profile" class="stop-fetch" href="/user/<%= userMessaged._id %>" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
-                                                             <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
-                                                             <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= userReq.userColor %>;">View Profile</h2>
-                                                           </a>
-                                                           `
-          document.querySelector('.overlay-single').style.display = 'block'
-          document.getElementById('single-profile-wrapper').style.display = 'block'
-          setTimeout(() => {
-              modalSingle.style.transition = 'top 0.3s ease-out'
-              modalSingle.style.top = '50%'
-          }, 200)
-      }
+        // Populate modal with profile info (placeholder for now)
+        const profileInfo = {
+            userName: profileHeader.children[0].textContent,
+            userProfilePic: profileHeader.children[5].getAttribute('src'),
+            userHandle: profileHeader.children[4].textContent,
+            userStats: {
+                posts: profileHeader.children[3].textContent,
+                followers: profileHeader.children[1].textContent,
+                following: profileHeader.children[2].textContent
+            } 
+        }
+       
+      
+        const singleProfileContainer = document.querySelector('#single-profile-info-cont')
+        
+        singleProfileContainer.querySelector('img').src = profileInfo.userProfilePic
+        singleProfileContainer.querySelector('h2').textContent = profileInfo.userName
+        singleProfileContainer.querySelector('p').textContent = profileInfo.userHandle
+        singleProfileContainer.querySelector('#following').textContent = profileInfo.userStats.following
+        singleProfileContainer.querySelector('#followers').textContent = profileInfo.userStats.followers
+        singleProfileContainer.querySelector('#postsTotal').textContent = profileInfo.userStats.posts
+    
+        document.querySelector('.interact').innerHTML = `<a id="link-to-profile" class="stop-fetch" href="/user/<%= userMessaged._id %>" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                           <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= userReq.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                           <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= userReq.userColor %>;">View Profile</h2>
+                                                         </a>
+                                                         `
+        document.querySelector('.overlay-single').style.display = 'block'
+        document.getElementById('single-profile-wrapper').style.display = 'block'
+        setTimeout(() => {
+            modalSingle.style.transition = 'top 0.3s ease-out'
+            modalSingle.style.top = '50%'
+        }, 200)
+
+    })
+          
+      
 
     
 

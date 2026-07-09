@@ -845,7 +845,7 @@ app.get('/api/dm-history/all/:id', async (req, res) => {
 
         const uniqueRecipientIds = Array.from(uniqueMap.keys())
         
-        const AllRecipientInfo = await Omaruser.find({ _id: { $in: uniqueRecipientIds } }).select('_id userDP userName')
+        const AllRecipientInfo = await Omaruser.find({ _id: { $in: uniqueRecipientIds } }).select('_id userDP userName verified')
 
         const populatedDms = []
 
@@ -873,7 +873,8 @@ app.get('/api/dm-history/all/:id', async (req, res) => {
                   lastMsgTimestamp: lastMessagetimeStamp,
                   userDP: userInDmInfo.userDP,
                   userName: userInDmInfo.userName,
-                  userId: userInDmInfo._id
+                  userId: userInDmInfo._id,
+                  verified: userInDmInfo.verified
 
              }
              
@@ -944,7 +945,7 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
 
     const requiredUsseArray = allPosts.map((post) => post.userId)
     
-    const allUsers = await Omaruser.find({ _id: { $in: requiredUsseArray  } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+    const allUsers = await Omaruser.find({ _id: { $in: requiredUsseArray  } }).select('totalFollowers totalFollowing totalPosts userDP userHandle verified')
     
      const postDataArray = []
 
@@ -972,7 +973,8 @@ app.get('/home', notLoggedInCheck, async (req, res) => {
                  totalFollowing: posterInfo.totalFollowing,
                  totalPosts: posterInfo.totalPosts,
                  userDP: posterInfo.userDP,
-                 userHandle: posterInfo.userHandle
+                 userHandle: posterInfo.userHandle,
+                 verified: posterInfo.verified
              }
 
          }
@@ -1032,9 +1034,9 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
 
     const requiredsubRepliesUserArray = subReplies.map((subreply) => subreply.userId)
     
-    const allSubUsers = await Omaruser.find({ _id: { $in: requiredsubRepliesUserArray } }).select('_id totalFollowers totalFollowing totalPosts userName userDP userHandle')
+    const allSubUsers = await Omaruser.find({ _id: { $in: requiredsubRepliesUserArray } }).select('_id totalFollowers totalFollowing totalPosts userName userDP userHandle verified')
 
-     const allUsers = await Omaruser.find({ _id: { $in: requiredUserArray  } }).select('_id totalFollowers totalFollowing totalPosts userName userDP userHandle')
+     const allUsers = await Omaruser.find({ _id: { $in: requiredUserArray  } }).select('_id totalFollowers totalFollowing totalPosts userName userDP userHandle verified')
     
      const replyDataArray = []
 
@@ -1062,7 +1064,8 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
                          totalFollowers: subReplyPosterInfo.totalFollowers,
                          totalFollowing: subReplyPosterInfo.totalFollowing,
                          totalPosts: subReplyPosterInfo.totalPosts,
-                         userId: subReplyPosterInfo._id
+                         userId: subReplyPosterInfo._id,
+                         verified: subReplyPosterInfo.verified
                       }
             }
 
@@ -1096,7 +1099,8 @@ app.get('/post/:id', notLoggedInCheck, async (req, res) => {
                  userDP: posterInfo.userDP,
                  userName: posterInfo.userName,
                  userHandle: posterInfo.userHandle,
-                 userId: posterInfo._id
+                 userId: posterInfo._id,
+                 verified: posterInfo.verified
              },
              subreplies: allSubReplies
 
@@ -1688,7 +1692,7 @@ app.get('/api/following/:id', async (req, res) => {
 
           const sortedPosts = posts.sort((a,b) => b.createdAt - a.createdAt)
 
-          const allUsers = await Omaruser.find({ _id: { $in: usersFollowingIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+          const allUsers = await Omaruser.find({ _id: { $in: usersFollowingIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle verified')
           
           const postDataArray = []
 
@@ -1716,7 +1720,8 @@ app.get('/api/following/:id', async (req, res) => {
                     totalFollowing: posterInfo.totalFollowing,
                     totalPosts: posterInfo.totalPosts,
                     userDP: posterInfo.userDP,
-                    userHandle: posterInfo.userHandle
+                    userHandle: posterInfo.userHandle,
+                    verified: posterInfo.verified
                     }
 
               }
@@ -1789,7 +1794,7 @@ app.get('/api/interactions/:id', async (req, res) => {
             const sortedRepliedPosts = allRepliedPosts.sort((a,b) => b.createdAt - a.createdAt)
             const selfExcludedReplies = sortedRepliedPosts.filter((post) => post.userId !== userId)
             const uniqueUsersInReplied = [...new Set(selfExcludedReplies.map((r) => r.userId))]
-            const allUsersInReplied = await Omaruser.find({ _id: { $in: uniqueUsersInReplied } }).select('totalFollowers totalFollowing totalPosts userDP userHandle') 
+            const allUsersInReplied = await Omaruser.find({ _id: { $in: uniqueUsersInReplied } }).select('totalFollowers totalFollowing totalPosts userDP userHandle verified') 
     
             selfExcludedReplies.forEach((post) => {
 
@@ -1816,7 +1821,8 @@ app.get('/api/interactions/:id', async (req, res) => {
                          totalFollowing: posterInfo.totalFollowing,
                          totalPosts: posterInfo.totalPosts,
                          userDP: posterInfo.userDP,
-                         userHandle: posterInfo.userHandle
+                         userHandle: posterInfo.userHandle,
+                         verified: posterInfo.verified
                     }
 
                   }
@@ -1836,7 +1842,7 @@ app.get('/api/interactions/:id', async (req, res) => {
             const sortedLikedPosts = AllLikedPosts.sort((a,b) => b.createdAt - a.createdAt)
             const selfExcludedLikes = sortedLikedPosts.filter((post) => post.userId !== userId)
             const uniqueUserLikedIds = [...new Set(selfExcludedLikes.map((l) => l.userId))]
-            const allUsersInLiked = await Omaruser.find({ _id: { $in: uniqueUserLikedIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+            const allUsersInLiked = await Omaruser.find({ _id: { $in: uniqueUserLikedIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle verified')
     
 
             selfExcludedLikes.forEach((post) => {
@@ -1864,7 +1870,8 @@ app.get('/api/interactions/:id', async (req, res) => {
                        totalFollowing: posterInfo.totalFollowing,
                        totalPosts: posterInfo.totalPosts,
                        userDP: posterInfo.userDP,
-                       userHandle: posterInfo.userHandle
+                       userHandle: posterInfo.userHandle,
+                       verified: posterInfo.verified
                     }
 
               }
@@ -1884,7 +1891,7 @@ app.get('/api/interactions/:id', async (req, res) => {
              const sortedLikedPosts = AllLikedPosts.sort((a,b) => b.createdAt - a.createdAt)
              const selfExcludedLikes = sortedLikedPosts.filter((post) => post.userId !== userId)
              const uniqueUserLikedIds = [...new Set(selfExcludedLikes.map((l) => l.userId))]
-             const allUsersInLiked = await Omaruser.find({ _id: { $in: uniqueUserLikedIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle')
+             const allUsersInLiked = await Omaruser.find({ _id: { $in: uniqueUserLikedIds } }).select('totalFollowers totalFollowing totalPosts userDP userHandle verified')
     
 
              selfExcludedLikes.forEach((post) => {
@@ -1912,7 +1919,8 @@ app.get('/api/interactions/:id', async (req, res) => {
                        totalFollowing: posterInfo.totalFollowing,
                        totalPosts: posterInfo.totalPosts,
                        userDP: posterInfo.userDP,
-                       userHandle: posterInfo.userHandle
+                       userHandle: posterInfo.userHandle,
+                       verified: posterInfo.verified
                     }
 
               }
@@ -1926,7 +1934,7 @@ app.get('/api/interactions/:id', async (req, res) => {
              const sortedRepliedPosts = allRepliedPosts.sort((a,b) => b.createdAt - a.createdAt)
              const selfExcludedReplies = sortedRepliedPosts.filter((post) => post.userId !== userId)
              const uniqueUsersInReplied = [...new Set(selfExcludedReplies.map((r) => r.userId))]
-             const allUsersInReplied = await Omaruser.find({ _id: { $in: uniqueUsersInReplied } }).select('totalFollowers totalFollowing totalPosts userDP userHandle') 
+             const allUsersInReplied = await Omaruser.find({ _id: { $in: uniqueUsersInReplied } }).select('totalFollowers totalFollowing totalPosts userDP userHandle verified') 
     
              selfExcludedReplies.forEach((post) => {
 
@@ -1953,7 +1961,8 @@ app.get('/api/interactions/:id', async (req, res) => {
                          totalFollowing: posterInfo.totalFollowing,
                          totalPosts: posterInfo.totalPosts,
                          userDP: posterInfo.userDP,
-                         userHandle: posterInfo.userHandle
+                         userHandle: posterInfo.userHandle,
+                         verified: posterInfo.verified
                     }
 
                   }
