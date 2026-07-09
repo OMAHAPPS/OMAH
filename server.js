@@ -9,6 +9,7 @@ const methodOverride = require('method-override')
 const flash = require('connect-flash')
 const multer = require('multer')
 const cors = require('cors')
+const axios = require('axios')
 const path = require('path')
 const { GiphyFetch } = require('@giphy/js-fetch-api')
 
@@ -2219,4 +2220,254 @@ app.patch('/update-verified', async (req, res) => {
         res.json({ success: false, error: 'Failed to Update User Verification' })
         
       }
+})
+
+// MPESA LOGIC
+
+const getAccessToken = async () => {
+    const accessUrl = 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    const consumerKey = process.env.CONSUMER_KEY
+    const secret = process.env.CONSUMER_SECRET
+    const auth = new Buffer.from(`${consumerKey}:${secret}`).toString('base64')
+    const Headers = {
+        headers: {
+            'Authorization': `Basic ${auth}`
+        }
+    }
+
+    try {
+
+        const response = await axios.get(accessUrl, Headers)
+        const token = response.data.access_token
+
+        return token
+
+    } catch (error) {
+
+
+        const token = null
+        return token
+    }
+
+
+}
+
+
+app.post('/mpesa/stk', async (req, res) => {
+
+    const { mpesaAmount, phone } = req.body
+
+    const requiredlength = phone.length
+    const startingNum = phone.charAt(0)
+
+    if (requiredlength !== 10 && startingNum !== 0) {
+
+        res.json({ success: false, error: 'Incorrect Mpesa Number' })
+
+    } else {
+
+        // TODO: MPESA API LOGIC
+
+        const token = await getAccessToken()
+        
+
+        if (token == null) {
+
+            res.json({ success: false, error: '~ AccessToken Error ~' })
+             
+        } else {   // Initiate STK PUSH
+            
+            const inputPhone = phone.substring(1)
+            const correctPhone = `254${inputPhone}`
+            const stkUrl = 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
+            const passkey = process.env.PASSKEY
+            const shortcode = process.env.SHORTCODE
+            const date = new Date()
+            const year = date.getFullYear()
+            const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+            const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+            const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
+            const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+            const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
+            const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`
+
+            const password = new Buffer.from(shortcode + passkey + timestamp).toString('base64')
+
+            await axios.post(stkUrl,
+                {
+                    "BusinessShortCode": shortcode,
+                    "Password": password,
+                    "Timestamp": timestamp,
+                    "TransactionType": "CustomerBuyGoodsOnline",
+                    "Amount": mpesaAmount,
+                    "PartyA": correctPhone,
+                    "PartyB": '8811882',
+                    "PhoneNumber": correctPhone,
+                    "CallBackURL": `${process.env.OMAH_DOMAIN}/mpesa/${process.env.CALLBACK}`,
+                    "AccountReference": correctPhone,
+                    "TransactionDesc": "Test"
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+
+            )
+            .then((response) => {  // SUCCESS STK PUSH INITIALIZATION
+
+                const merchantID = response.data.MerchantRequestID
+
+                res.json({ success: true, merchantID: merchantID })  // RETURN MERCHANT ID TO CLIENT TO COMPLETE FORM
+
+            })
+            .catch((error) => {   // STK PUSH ERROR INSTANCE
+
+                res.json({ success: false, error: 'STK PUSH ERROR' })
+
+                console.log(error)
+            })
+            
+        }
+
+        
+    }
+})
+
+
+app.post(`/mpesa/${process.env.CALLBACK}`, (req, res) => {
+
+    const mpesaResponse = req.body
+
+    const stkCallback = mpesaResponse.Body.stkCallback
+    const metaData = mpesaResponse.Body.stkCallback.CallbackMetadata
+
+      if (!metaData) {
+
+        const merchantID = stkCallback.MerchantRequestID
+        const resCode = stkCallback.ResultCode
+        const resDesc = stkCallback.ResultDesc
+
+        //   TODO: SAVE FAILED TRANSACTION
+
+        const tranx = new Transaction({
+
+            tranx_type: 'Deposit',
+            method: 'mpesa',
+            userId: 'failed',
+            status: 'complete',
+            mpesaObject: {
+                reqID: merchantID,
+                status: {
+                    resultCode: resCode,
+                    resultDesc: resDesc
+                }
+            }
+
+        }).save().then((data) => {
+
+            console.log('--INCOMPLETE TRANX SAVED--')
+
+        }).catch((err) => {
+            console.log('--FAILED TO SAVE TRANX--')
+        })
+
+        return res.json({ message: 'Response OK' })    // ESSENTIAL TO ALERT MPESA STK CALLBACK WAS RECEIVED
+
+    } else {
+
+         const merchantID = stkCallback.MerchantRequestID
+         const mpesaAmount = metaData.Item[0].Value
+         const phoneNumber = metaData.Item[4].Value
+         const succResCode = stkCallback.ResultCode
+         const succResDesc = stkCallback.ResultDesc
+
+         // todo: SAVE SUCCESSFUL TRANSACTION
+
+         const newSuccTranx = new Transaction({
+             tranx_type: 'Deposit',
+             method: 'mpesa',
+             userId: 'success',
+             amount: mpesaAmount,
+             status: 'pending',
+             mpesaObject: {
+                 mpesaNumber: phoneNumber,
+                 reqID: merchantID,
+                 status: {
+                    resultCode: succResCode,
+                    resultDesc: succResDesc
+                 }
+             }
+         }).save()
+           .then((data) => {
+
+                console.log('--SUCCESSFUL TRANSACTION SAVED')
+
+            })
+            .catch(error => console.log('--ERROR SAVING TRANX SUCC'))
+
+        return res.json({ message: 'Response OK' })  // ESSENTIAL TO ALERT MPESA CALLBACK RECEIVED
+    }
+
+})
+
+app.patch('/mpesa/complete-tranx', async (req, res) => {
+
+    const userId = req.user._id
+    const { reqid } = req.body
+
+    try {
+
+        const transaction = await Transaction.findOne({ "mpesaObject.reqID": reqid })
+
+        if (!transaction) {
+            
+             res.json({  data: 'Network Failure!!...Contact support if you completed Payment', statusCode: 501 })
+             
+
+        } else {
+
+            try {
+
+
+                const userObject = await Omaruser.findOne({ _id: userId })
+                // UPDATE USER TO VERIFIED STATUS
+                const tranxAmount = transaction.amount
+                const tranxPhone = transaction.mpesaObject.mpesaNumber
+                const resDesc = transaction.mpesaObject.status.resultDesc
+                const tranxId = transaction._id
+
+                if (tranxAmount == 0) {  // CLIENT DID NOT PAY ANYTHING DUE TO AN ACTION
+
+
+                     res.json({ data: resDesc, statusCode: 420 })
+
+                } else {  // CLIENT COMPLETED TRANSACTION AND FULLY PAID
+
+                   
+
+                    const updatedUser = await Omaruser.findByIdAndUpdate(userId, { $set: { verified: true } })
+                    const updatedTranx = await Transaction.findByIdAndUpdate(tranxId, { $set: { status: 'complete', userId: String(userId) } })
+                        
+                    res.json({ data: 'Upgrade Complete', statusCode: 1000 })
+                   
+
+                }
+
+            } catch (error) {
+
+                
+               res.json({ data: 'Update Error!!..Contact Support', statusCode: 1002 })
+
+            }
+        }
+
+    } catch (error) {
+
+        //console.log('mongoDB eRROR')
+
+        res.json({ data: 'Server Error!!..Contact Support', statusCode: 505 })
+
+    }
+
 })

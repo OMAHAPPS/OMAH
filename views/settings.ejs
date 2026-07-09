@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
     <link rel="icon" href="/XIKIKA-KE.png" type="images/x-icon" width="400" height="400">
+    <link rel="stylesheet" href="mpesa.css">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
@@ -20,6 +21,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 ::-webkit-scrollbar{width:0;height:0}
 
 ::placeholder{color: #c048488f;}
+.input-box input::placeholder{font-size: 1.5rem; font-family:'DM Serif Display',serif}
 
 /* ── TYPE ── */
 .fd{font-family:'Playfair Display',serif}
@@ -33,6 +35,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 /* ── INTERACTIONS ── */
 .tap{cursor:pointer;transition:transform .12s ease,opacity .12s ease;user-select:none;-webkit-user-select:none}
 .tap:active{transform:scale(.91)!important;opacity:.72!important}
+.small-spin {display: none; animation: spin .75s ease-in-out .5s 10 normal forwards;}
 
 /* ── ANIMATIONS ── */
 @keyframes viewIn      {from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
@@ -49,6 +52,11 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 @keyframes storyPulse  {0%,100%{box-shadow:0 0 0 0 var(--sc)}50%{box-shadow:0 0 0 4px var(--sc)}}
 @keyframes heartbeat   {0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.06)}}
 @keyframes shimmer     {0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
 </style>
 </head>
 
@@ -60,9 +68,79 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
   <% } %>
 
-     <p class="fs" id="error-display" style="position: absolute; top: 5%; left: 50%; transform: translateX(-50%); max-width: 100%; background-color: white; color:red; padding-inline: 5px; border-radius: 2px; font-weight: bold; z-index: 100;"></p>
+     <p class="fs" id="error-display" style="position: absolute; top: 5%; left: 50%; transform: translateX(-50%); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; color:red; padding-inline: 5px; border-radius: 2px; font-weight: bold; z-index: 100;"></p>
     
+     <div class="mpesa-wrapper" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; flex-flow: column nowrap; z-index: 10; text-align: center; height: 350px; width: 300px; border-radius: 20px; background-color: #212121; border: 2px solid #B3B3B3;">
+  
+                <!-- CLOSE BTN -->
+              <article>
+    
+                <div class="close-mpesa" style="position: absolute;right: 0;top: 0;height: 40px;border-radius: 0 20px 0 20px;display: flex;align-items: center;justify-content: center;cursor: pointer;font-weight: bold;font-size: 1.2rem;width: 40px;background-color: #FF073A;">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" style="fill: white;transform: msFilter">
+                      <path
+                        d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z">
+                      </path>
+                   </svg>
+                </div>
+      
+                <img src="/mpesa.png" width="180" height="80" alt="Lipa na Mpesa">
+      
+              </article>
+              <form action="/mpesa/stk" method="post" class="formbox-mpesa" style=" display: flex; flex-flow: column nowrap; align-items: center; justify-content: flex-start; flex-grow: 1; position: relative;">
+      
+             <div class="token-select" style="display: flex; align-items: center; justify-content: center;">       
+                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" style="fill: #1ed760; transform: msFilter"><path d="M12 10c3.976 0 8-1.374 8-4s-4.024-4-8-4-8 1.374-8 4 4.024 4 8 4z"></path><path d="M4 10c0 2.626 4.024 4 8 4s8-1.374 8-4V8c0 2.626-4.024 4-8 4s-8-1.374-8-4v2z"></path><path d="M4 14c0 2.626 4.024 4 8 4s8-1.374 8-4v-2c0 2.626-4.024 4-8 4s-8-1.374-8-4v2z"></path><path d="M4 18c0 2.626 4.024 4 8 4s8-1.374 8-4v-2c0 2.626-4.024 4-8 4s-8-1.374-8-4v2z"></path></svg>
+                <h3 class="fd" id="token-display" style="font-size: 1.2rem; font-weight: bold; color: #1ed760;">KES <span id="displayAmount">1000</span></h3>
+             </div>
+             <div class="input-box" style="width: 95%; margin: 1.3rem auto; height: 40%; position: relative;">
+                  <p class="fd" style="margin-bottom: 8px; font-size: .95rem; font-weight: bold; color: #B3B3B3;">
+                    An stk prompt will be pushed to...</p>
+                  <input id="phone" name="phone" type="number" placeholder="07 or 01...(10-digit-num)" required onkeyup="validatePhone()" style=" height: 60%;width: 90%; padding-inline: 30px; outline: none;text-align: start; margin-bottom: 10px; border: 1px solid #FF073A; font-size: 1.85rem;font-weight: bold; border-radius: 20px; color: #FF073A;" />
 
+             </div>    
+             <div class="input-amount" style="display: none;">
+
+                  <input id="mpesa-amount" name="mpesaAmount" type="number" value="10" required>
+
+             </div>
+
+             <button type="submit" class="fd" id="mpesa-submit" style="display: none; width: 70%;height: 60px;background-color: #1db954;border-radius: 15px; margin-top: 3px;border: none;outline: none;color: #121212;font-size: 1.4rem; font-weight: bold;cursor: pointer; white-space: nowrap;">PAY</button>
+
+
+              </form>
+     </div>
+
+     <form action="/mpesa/complete-tranx?_method=PATCH" method="post" class="confirm-box">
+
+        <h1 class="fd" style="text-align: center; text-wrap: wrap; color: #1ed760; margin-bottom: 10px; font-style: italic; font-size: 1.7rem; font-weight: bold;">
+            Safaricom STK initiated....</h1>
+        <article
+            style="display: flex; align-items: center; justify-content: space-evenly; width: 100%; margin-bottom: 5px;">
+            <svg class="small-spin" xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 24 24"
+                style="fill: #1db954;transform: msFilter">
+                <path
+                    d="M7.08 11.25A4.84 4.84 0 0 1 8 9.05L4.43 5.49A9.88 9.88 0 0 0 2 11.25zM9.05 8a4.84 4.84 0 0 1 2.2-.91V2a9.88 9.88 0 0 0-5.76 2.43zm3.7-6v5A4.84 4.84 0 0 1 15 8l3.56-3.56A9.88 9.88 0 0 0 12.75 2zM8 15a4.84 4.84 0 0 1-.91-2.2H2a9.88 9.88 0 0 0 2.39 5.76zm3.25 1.92a4.84 4.84 0 0 1-2.2-.92l-3.56 3.57A9.88 9.88 0 0 0 11.25 22zM16 9.05a4.84 4.84 0 0 1 .91 2.2h5a9.88 9.88 0 0 0-2.39-5.76zM15 16a4.84 4.84 0 0 1-2.2.91v5a9.88 9.88 0 0 0 5.76-2.39zm1.92-3.25A4.84 4.84 0 0 1 16 15l3.56 3.56A9.88 9.88 0 0 0 22 12.75z">
+                </path>
+            </svg>
+            <img src="/mpesa.png" alt="MPESA" height="80" width="120" />
+        </article>
+        <div class="instructions"
+            style="margin-bottom: 10px; width: 100%; display: flex; flex-flow: column nowrap; align-items: center; justify-content: center; background-color: #fff; height: 30%;">
+            <p id="tranx-message"  style="margin-bottom: 20px; color: #1F51FF; text-align: center; text-wrap: wrap; 
+           font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 1.1rem; font-style: italic; 
+           font-weight: bold;">An STK Prompt has been pushed to your Phone</p>
+            <p class="tranx-status" style="color: #1db954; text-align: center; text-wrap: wrap; 
+           font-family: 'Signika', sans-serif; font-size: 1.4rem; font-style: italic; 
+           font-weight: bold;">Click to Complete Transaction </p>
+        </div>
+
+        <input id="merchant" type="text" name="reqid" value="" style="display: none;">
+
+        <button class="fd" type="submit" id="confirm-mpesa-final-btn" style="opacity: 0; display: flex; align-items: center; justify-content: center; height: 8svh; width: 60%; border: none; outline: none; border-radius: 15px; font-size: 1.3rem; background-color: #1db954; color: #fff; font-weight: bold;
+         outline: none; transition: opacity 1s ease-out;">Complete</button>
+
+
+    </form>
 
     
     <div class="view" id="profile-cont" style="position: relative; display: block; z-index: 4; background:rgba(5,5,8,.92)">
@@ -134,10 +212,18 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
 
               </div>
-    
-            <div style="margin-bottom: 4px;">
-              <div class="fd" style="font-size:24px;font-weight:700;color:#ede8e0; margin-block: 20px;"><%= user.userName %></div>
-              
+            <div class="username-handle-wrapper" style="margin-bottom: 10px; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center; gap: 3px;">
+              <div style=" display: flex; align-items: center; justify-content: center; gap: 5px;">
+                <div class="fd" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size:24px;font-weight:700;color:#ede8e0;"><%= user.userName %></div>
+                <% if (!user.verified) { %>
+                   <img src="/verified.png" alt="" width="24" height="24" style="display: none;">
+                <% } else { %>
+                   <img src="/verified.png" alt="" width="24" height="24">
+                <% } %>
+                
+              </div>
+              <h2 class="fd"<% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size:18px; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@<%= user.userHandle %></h2>
+
             </div>
             
           <!-- Stats grid -->
@@ -188,7 +274,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                ✏️ Change User Handle
             </button>
             <button id="verify" class="tap" style="display: flex; align-items: center; justify-content: center; gap: 3px; padding:13px;border-radius: 14px; font-size: 13px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color:rgba(237,232,224,.85)">
-               Get Verified
+               Get Verification Badge
                <img src="/verified.png" alt="" width="15" height="15"> 
             </button>
             <a href="/auth/logout" class="tap" style="text-decoration: none; padding: 13px; border-radius: 14px; font-size: 13px; background:rgba(200,60,40,.07); border:1px solid rgba(200,60,40,.2); color: #C04848;">
@@ -231,7 +317,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
              </div>
           </form>
 
-           <div class="paypal-section" style="display: none; overflow: hidden; width: clamp(300px, 95vw, 500px); margin-top: 5px; border-radius: 20px; height: 40vh; z-index: 30; background-color: rgba(255,255,255,.04); animation:viewIn .42s cubic-bezier(.22,.61,.36,1) both;">
+          <div class="paypal-section" style="display: none; overflow: hidden; width: clamp(300px, 95vw, 500px); margin-top: 5px; border-radius: 20px; height: 40vh; z-index: 30; background-color: rgba(255,255,255,.04); animation:viewIn .42s cubic-bezier(.22,.61,.36,1) both;">
           <div class="paypal-container" style="position: relative; width: 100%; height: 50%; background-color: inherit;">
             <div class="close" style="width: 100%; height: 35%; display: flex; justify-content: space-between; padding-left: 10px;">
                   <img src="/paypal.png" alt="" width="120" height="40">
@@ -258,7 +344,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           </div>
     
 
-           </div>
+          </div>
 
         </section>
 
@@ -604,6 +690,19 @@ const status = document.querySelector('#upload-status')
 const verifyBtn = document.getElementById('verify')
 const paypalSection = document.querySelector('.paypal-section')
 const closePaymentBtn = document.getElementById('close')
+const mpesaBtn = document.getElementById('lipa-mpesa')
+const mpesaFormBox = document.querySelector('.mpesa-wrapper')
+const closeMpesaBtn = document.querySelector('.close-mpesa')
+const confirmMpesaBox = document.querySelector('.confirm-box')
+const payMpesaBtn = document.getElementById('mpesa-submit')
+const mpesaForm = document.querySelector('.formbox-mpesa')
+const phoneNumberInput = document.getElementById('phone')
+const finalConfirmMpesaBtn = document.getElementById('confirm-mpesa-final-btn')
+const merchantIdInput = document.getElementById('merchant')
+const tranxSpan = document.querySelector('.tranx-status')
+const animatedSpin = document.querySelector('.small-spin')
+const tranxMessage = document.getElementById('tranx-message')
+
 
 
 
@@ -805,19 +904,239 @@ submitDpBtn.addEventListener('click', async (e) => {
 })
 
 verifyBtn.addEventListener('click', () => {
-
+    
+    questBox.style.display = 'none'
     changeBox.style.display = 'none'
     paypalSection.style.display = 'block'
 
 })
 
 closePaymentBtn.addEventListener('click', () => {
-   
+    
+    questBox.style.display = 'grid'
     changeBox.style.display = 'flex'
     paypalSection.style.display = 'none'
 })
 
+mpesaBtn.addEventListener('click', () => {
+    questBox.style.display = 'none'
+    changeBox.style.display = 'none'
+    paypalSection.style.display = 'none'
+    mpesaFormBox.style.display = 'flex'
 
+})
+
+closeMpesaBtn.addEventListener('click', () => {
+
+    mpesaFormBox.style.display = 'none'
+    paypalSection.style.display = 'block'
+})
+
+payMpesaBtn.addEventListener('click', async (e) => {
+      
+    e.preventDefault()
+    payMpesaBtn.disabled = true
+    payMpesaBtn.style.backgroundColor = 'transparent'
+    payMpesaBtn.style.color = 'white'
+    payMpesaBtn.textContent = 'Sending...'
+    
+    const mpesaResponse = await fetch('/mpesa/stk', {
+           method: 'POST',
+           headers: {
+             "Content-Type": "application/json"
+           },
+           body: JSON.stringify({
+               mpesaAmount: document.getElementById('mpesa-amount').value,
+               phone: phoneNumberInput.value
+           })
+    })
+
+    const mpesaData = await mpesaResponse.json()
+
+    if (!mpesaData.success) {  // Initial deposit terminated Incorrect payload
+             
+          phoneNumberInput.value = ''
+          payMpesaBtn.style.backgroundColor = '#212121'
+          phoneNumberInput.style.border = '1px solid #FF073A'
+          payMpesaBtn.style.color = 'red'
+          payMpesaBtn.textContent = mpesaData.error
+          errorMessage.textContent = mpesaData.error
+          setTimeout(() => {
+            errorMessage.textContent = ''
+            payMpesaBtn.disabled = false
+            payMpesaBtn.style.backgroundColor = '#1db954'
+            payMpesaBtn.style.color = '#121212'
+            payMpesaBtn.style.border = 'none'
+            payMpesaBtn.textContent = 'PAY'
+            payMpesaBtn.style.display = 'none'
+
+          }, 3000)
+
+    } else {  // STK INITIATED SUCCESSFULLY
+
+       console.log(mpesaData)
+       phoneNumberInput.value = ''
+       mpesaFormBox.style.display = 'none'               //reset all mpesa formbox
+       payMpesaBtn.disabled = false
+       payMpesaBtn.style.backgroundColor = '#1db954'
+       payMpesaBtn.style.color = '#121212'
+       payMpesaBtn.style.border = 'none'
+       payMpesaBtn.textContent = 'PAY'
+       payMpesaBtn.style.display = 'none'
+
+       // DISPLAY CONFIRM BOX
+
+       confirmMpesaBox.style.display = 'flex'
+       merchantIdInput.value = mpesaData.merchantID
+       setTimeout(() => {
+        finalConfirmMpesaBtn.style.opacity = '1'
+       }, 1500)
+
+
+    }
+})
+
+finalConfirmMpesaBtn.addEventListener('click', async (e) => {
+
+      e.preventDefault()
+    tranxSpan.textContent = 'Please wait...!!'
+    tranxMessage.textContent = 'Waiting Confirmation from safaricom..'
+    finalConfirmMpesaBtn.disabled = true
+    finalConfirmMpesaBtn.textContent = 'Checking...'
+    finalConfirmMpesaBtn.style.backgroundColor = 'transparent'
+    finalConfirmMpesaBtn.style.color = 'red'
+    animatedSpin.style.display = 'block'
+
+    fetch('/mpesa/complete-tranx', {
+        method: 'PATCH',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            reqid: merchantIdInput.value
+        })
+    }).then((resp) => {
+        const result = resp.json()
+        return result
+    }).then((result) => {
+
+        // * STKCALLBACK FAILURE
+
+        if (result.statusCode == 501) {
+            
+            errorMessage.textContent = result.data
+            animatedSpin.style.display = 'none'
+            tranxMessage.textContent = 'STK flow Terminated by Safaricom....!'
+            tranxSpan.textContent = 'You will be redirected shortly..'
+            finalConfirmMpesaBtn.textContent = 'STK Failed!!'
+            finalConfirmMpesaBtn.style.backgroundColor = 'red'
+            finalConfirmMpesaBtn.style.color = 'white'
+            
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000)
+
+        } else if ( result.statusCode == 420 ) {
+            
+            // * PROMPT INTERACTION SUCCESS BUT FAILURE PAYMENT
+            
+            errorMessage.textContent = result.data
+            animatedSpin.style.display = 'none'
+            tranxMessage.textContent = 'STK flow Terminated by Safaricom...!'
+            tranxSpan.textContent = 'You will be redirected shortly..'
+            finalConfirmMpesaBtn.textContent = 'STK Failed!!'
+            finalConfirmMpesaBtn.style.backgroundColor = 'red'
+            finalConfirmMpesaBtn.style.color = 'white'
+            
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000)
+            
+        } else if ( result.statusCode == 1000 ) {
+            
+            // * SUCCESS TRANX + COMPLETE PAYMENT
+            
+            errorMessage.textContent = result.data
+            animatedSpin.style.display = 'none'
+            tranxMessage.textContent = 'STK flow Terminated by Safaricom...!'
+            tranxSpan.textContent = 'You will be redirected shortly..'
+            finalConfirmMpesaBtn.textContent = 'Success!!'
+            finalConfirmMpesaBtn.style.backgroundColor = 'limegreen'
+            finalConfirmMpesaBtn.style.color = 'white'
+
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000)
+
+        } else if (result.statusCode == 1002) {
+
+            // * STK COMPLETE BUT UPDATE FAILURE
+
+            errorMessage.textContent = result.data
+            animatedSpin.style.display = 'none'
+            tranxMessage.textContent = 'STK flow Terminated by Safaricom...!'
+            tranxSpan.textContent = 'You will be redirected shortly..'
+            finalConfirmMpesaBtn.textContent = 'Update Failed!!'
+            finalConfirmMpesaBtn.style.backgroundColor = 'red'
+            finalConfirmMpesaBtn.style.color = 'white'
+
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000)
+
+        } else if (result.statusCode == 505) {
+
+            // * SERVER ERROR/ MONGODB ERROR
+
+            errorMessage.textContent = result.data
+            animatedSpin.style.display = 'none'
+            tranxMessage.textContent = 'STK flow Terminated by Safaricom...!'
+            tranxSpan.textContent = 'You will be redirected shortly..'
+            finalConfirmMpesaBtn.textContent = 'Update Failed.!!'
+            finalConfirmMpesaBtn.style.backgroundColor = 'red'
+            finalConfirmMpesaBtn.style.color = 'white'
+
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000)
+        }
+
+
+    }).catch((err) => {
+        console.log(err)
+        errorMessage.textContent = '~Network Failure~'
+        setTimeout(() => {
+          errorMessage.textContent = ''
+          window.location.reload()
+        }, 2000)
+    })
+})
+
+
+function validatePhone() {
+     
+   if (phoneNumberInput.value) {
+         
+        if (!phoneNumberInput.value.match(/^[0-9]{10}$/)) {
+            
+            payMpesaBtn.style.display = 'none'
+            phoneNumberInput.style.border = '1px solid #FF073A'
+            phoneNumberInput.style.color = '#FF073A'
+
+        } else {
+
+           payMpesaBtn.style.display = 'block'
+           phoneNumberInput.style.border = '1px solid #1db954'
+           phoneNumberInput.style.color = '#1db954'
+        }
+
+   } else {
+      
+      payMpesaBtn.style.display = 'none'
+
+   }
+
+}
         
 function validateHandle() {
 

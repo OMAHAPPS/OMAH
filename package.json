@@ -15,6 +15,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1065.0",
     "@giphy/js-fetch-api": "^5.8.0",
     "@google/genai": "^2.4.0",
+    "axios": "^1.7.2",
     "connect-flash": "^0.1.1",
     "cookie-session": "^2.1.1",
     "cors": "^2.8.6",
