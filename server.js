@@ -1407,7 +1407,7 @@ app.post('/post', async (req, res) => {
             
             const postString = post.post != '' ? post.post : 'New Post'
 
-         const usersToNotify = await Notification.aggregate([
+            const usersToNotify = await Notification.aggregate([
                      { $match: { parentId: post.userId } },
                      { $unwind: "$notify" },
                      { $group: { _id: null, usersRequesting: { $addToSet: "$notify" } } },
@@ -1422,7 +1422,7 @@ app.post('/post', async (req, res) => {
             return;
 
          } else {   // TRY TO NOTIFY ALL USERS WITH PUSH SUBSCRIPTIONS OBJECTS
-
+            console.log('TRYING TO NOTIFY MY FANS')
             const allUsersToNotify = await Omaruser.find({ _id: { $in: userIdArray } }).select('userName pushSubscriptions').lean()
 
             allUsersToNotify.forEach((user) => {
