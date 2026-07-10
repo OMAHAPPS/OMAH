@@ -191,55 +191,74 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
            </section>
 
      </header>
-     <main style="height: 75%; width: 100%; overflow-x: hidden; overflow-y: scroll;">
+     <main style="height: 75%; width: 100%; overflow-x: hidden; overflow-y: scroll; scroll-snap-type: y mandatory; padding:14px 14px 30px 14px; display: flex; flex-flow: column nowrap;">
 
          <% posts.map((post) => { %>
 
-            <div   style="margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
-   
-              <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
-   
-   
-                 <% if (user.userDP !== 'none') { %>
-                   <img src="<%= R2BASE %>/<%= user.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-                 <% } else { %>
-                   <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
-                 <% } %>
-   
-                <div style="flex:1">
-                  
-                      <div style="font-size: 14px; font-weight: 600; color: rgba(237,232,224,.85)">
-                                   <%= post.userName %> 
-                                   <% if (post.userName == user.userName) { %>
-                                     <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= userReq.userColor %>; background: <%= userReq.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                     <% } else { %>
-                                       <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: none; font-size:9px;color: <%= userReq.userColor %>; background: <%= userReq.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
-                                   <% } %>
-                          </div>
-                                <% const timestamp = post.createdAt %>
-                                <% const diff = new Date() - new Date(timestamp) %>
-                                <% const daysPast = Math.floor( (diff / 86400000) ) %>
-                                <% const hoursPast = Math.floor( (diff / 3600000) ) %>
-                                <% const minutesPast = Math.floor( (diff / 60000) ) %>
-   
-                                <% if (daysPast > 0) { %>
-                                 <div style="font-size:11px;color:rgba(237,232,224,.66);margin-top:1px"> · <%= daysPast %>d ago · </div>
-                                 <% } else if (hoursPast > 0) { %>
-                                   <div style="font-size:11px;color:rgba(237,232,224,.66);margin-top:1px"> · <%= hoursPast %>h ago · </div>
-                                   <% } else if (minutesPast > 0) { %>
-                                     <div style="font-size:11px;color:rgba(237,232,224,.66);margin-top:1px"> · <%= minutesPast %>min ago · </div>
-                                     <% } else if (minutesPast == 0) { %>
-                                       <div style="font-size:11px;color:rgba(237,232,224,.66);margin-top:1px"> · Just now · </div>
-                                    <% } %>
-                    </div>
-                          
-                </div>
-   
-                <a href="/post/<%= post._id %>?post=<%= post.userId %>" style="text-decoration: none; font-size: 14px;line-height:1.68;color:rgba(237,232,224,.72);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></a>
-   
-                       <%  if (post.videoUrl !== 'none') { %>
+             <a href="/post/<%= post.postId %>"  class="<%= post.videoUrl !== 'none' ? 'glass' : 'glass-images'  %> stop-fetch" style="width: 100%; text-decoration: none; margin-top: 10px; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 18px rgba(0,0,0,.32);"> 
 
-                  <video id="player" controls preload="none" style="display: block; width: 100%; max-height: 500px; object-fit: cover; object-position: center; border-radius: 12px; margin-top: 13px; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
+            
+
+                   <div class="info-button" style="display: flex; align-items: center; gap:9px; margin-bottom:10px;">
+
+             
+                       <div id="poster-username" style="display: none;"><%= post.userName %></div>
+                       <div id="poster-followers" style="display: none;"><%= post.poster.totalFollowers %></div>
+                       <div id="poster-following" style="display: none;"><%= post.poster.totalFollowing %></div>
+                       <div id="poster-posts-length" style="display: none;"><%= post.poster.totalPosts %></div>
+                       <div id="poster-userHandle" style="display: none;">@<%= post.poster.userHandle == 'none' ? post.userName : post.poster.userHandle %></div>
+               
+                          <% if (post.poster.userDP !== 'none') { %>
+                            <img src="<%= R2BASE %>/<%= post.poster.userDP %>" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+                          <% } else { %>
+                             <img src="/placeholder.jpg" alt="" width="40" height="40" style="border-radius: 50%; object-fit: cover;" />
+                           <% } %> 
+
+
+                        <div id="post-id" style="display: none;"><%= post.postId %></div>
+                        <div id="poster-id" style="display: none;"><%= post.userId %></div>
+              
+
+                        <div style="flex:1">
+                
+                              <div style="font-size: 13px; font-weight: 600; color: rgba(237,232,224,.85); display: flex; justify-content: flex-start; align-items: center;">
+
+                                    <h2 style="font-size: 14px; font-weight: bold; color: rgba(237,232,224,.85);"><%= post.userName %> </h2>
+                                        <% if (post.poster.verified) { %>
+                                          <img src="/verified.png" alt="" width="13" height="13" style="margin-left: 2px;">
+                                        <% } else { %>
+                                         <img src="/verified.png" alt="" style="display: none;">
+                                        <% } %>
+                                        <% if (post.userName == user.userName) { %>
+                                          <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size:9px;color: <%= user.userColor %>; background: <%= user.userColor %>1a; padding: 1px 7px; border-radius: 8px; margin-left: 5px;">you</span>
+                                        <% } else { %>
+                                          <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="display: block; font-size:14px; font-weight: 600; color: <%= user.userColor %>; max-width: 60%; margin-left: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@<%= post.poster.userHandle !== 'none' ? post.poster.userHandle : post.userName  %></span>
+                                        <% } %>
+                              </div>
+                              <% const timestamp = post.createdAt %>
+                              <% const diff = new Date() - new Date(timestamp) %>
+                              <% const daysPast = Math.floor( (diff / 86400000) ) %>
+                              <% const hoursPast = Math.floor( (diff / 3600000) ) %>
+                              <% const minutesPast = Math.floor( (diff / 60000) ) %>
+
+                              <% if (daysPast > 0) { %>
+                               <div style="font-size:12px;color: rgba(237, 232, 224, .65);margin-top:2px;"><%= daysPast %>d</div>
+                               <% } else if (hoursPast > 0) { %>
+                                 <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top: 2px;"><%= hoursPast %>h</div>
+                                 <% } else if (minutesPast > 0) { %>
+                                   <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;"><%= minutesPast %>m</div>
+                                   <% } else if (minutesPast == 0) { %>
+                                     <div style="font-size:12px;color: rgba(237,232,224,.65);margin-top:2px;">Just now</div>
+                                  <% } %>
+                        </div>
+                        
+              </div>
+ 
+              <p style="font-size: 15px;line-height:1.68;color:rgba(237,232,224,.78);margin-bottom:12px; white-space: pre-wrap;"><%= post.post %></p>
+
+                 <%  if (post.videoUrl !== 'none') { %>
+
+                  <video id="player" controls preload="none" style="display: block; width: 100%; max-height: 500px; border-radius: 12px; margin-top: 13px; object-fit: cover; object-position: center; background-color: transparent !important; -webkit-tap-highlight-color: transparent;"
                            src="<%=R2BASE %>/<%= post.videoUrl %>" type="video/mp4" data-src="/uploads/Expressions.mp4">
                         Your browser does not support the video tag. 
                     </video>
@@ -251,22 +270,22 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                     <article class="post-article" style="width: 100%; height: 200px; border-radius: 12px; margin-top: 13px; display: none; gap:5px; overflow-x: scroll; overflow-y: hidden; background: transparent;">  
                     </article>
 
-                        <% } else if (post.images.length === 1) { %>
+                 <% } else if (post.images.length === 1) { %>
 
                           <article class="post-article" style="z-index: 5; width: 100%; height: auto; border-radius: 12px; margin-top: 13px; display: flex; gap:5px; background: transparent;">
 
 
-                              <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div>   
+                                  <div class="placeholder-cont" style="display: none;">
+                                      <% post.images.map((image, key) => { %>
+                                        <p id="<%= key %>" ><%= image %></p>
+                                      <% }) %>
+                                  </div>   
                             
-                            <% post.images.map((image) => { %>
+                                  <% post.images.map((image) => { %>
         
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px;" />
+                                    <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px;" />
         
-                            <% }) %>
+                                  <% }) %>
          
                           </article>
                           
@@ -275,17 +294,17 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
                           <article class="post-article" style="z-index: 5;width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-top: 13px; display: flex; background: transparent;">
 
-                            <div class="placeholder-cont" style="display: none;">
-                                  <% post.images.map((image, key) => { %>
-                                    <p id="<%= key %>" ><%= image %></p>
-                                  <% }) %>
-                            </div> 
+                                 <div class="placeholder-cont" style="display: none;">
+                                      <% post.images.map((image, key) => { %>
+                                         <p id="<%= key %>" ><%= image %></p>
+                                      <% }) %>
+                                 </div> 
         
-                            <% post.images.map((image) => { %>
+                                 <% post.images.map((image) => { %>
         
-                              <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
+                                    <img class="post-images" src="<%= R2BASE %>/<%= image %>" alt="N" style="width: calc(50% - 1px); height: 100%; object-fit: cover; object-position: center;" />
         
-                            <% }) %>
+                                 <% }) %>
          
                           </article>
 
@@ -348,26 +367,117 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
                           </article>
 
                         <% } %>
-   
-                <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">
-                     <div class="likes-cont" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= userReq.userColor %>;"></ion-icon>
-                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; color: <%= userReq.userColor %>; font-weight: 600; margin-left: 3px;"><%= post.likes %></span>
-                     </div>   
+
+
+
+                 
+                   <!-- ! Likes and counts container -->
+
+              <div style="display:flex;align-items:center; justify-content: space-around; gap:15px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px; margin-top: 5px;">
+                     <button data-liked="false" class="likes-cont-event" style="padding: 12px 18px; display: flex; align-items: center; justify-content: center;">
+                         <ion-icon class="unlike" name="heart-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: block; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out ;"></ion-icon>
+                         <ion-icon class="like" name="heart-sharp" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="pointer-events: none; display: none; font-size: 20px; color: <%= user.userColor %>; transition: scale .5s ease-out;" ></ion-icon>
+                         <h3 class="like-h3" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>   style="pointer-events: none; font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.likes %></h3>
+                         <h3 class="postId-span" style="display: none;"><%= post.postId %></h3>
+                     </button>   
+                     <div class="reply-button" style="display: flex; align-items: center; justify-content: center;">
+                       <ion-icon name="chatbubble-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 16px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                       <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.replies %></h3>
+                     </div>
                      <div class="interactions" style="display: flex; align-items: center; justify-content: center;">
-                         <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= userReq.userColor %>;"></ion-icon>
-                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 15px; color: <%= userReq.userColor %>; font-weight: 600; margin-left: 3px;"><%= post.interactions %></span>
-                     </div>  
-                     <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= userReq.userColor %>;"></ion-icon>
-                     <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= userReq.userColor %>;"></ion-icon>
+                         <ion-icon name="barcode-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                         <span <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: 14px; color: <%= user.userColor %>; font-weight: bold; margin-left: 3px;"><%= post.interactions %></span>
+                     </div> 
+
+                     <ion-icon name="share-social-outline" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
+                     <ion-icon name="repeat" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="font-size: 20px; font-weight: bold; color: <%= user.userColor %>;"></ion-icon>
                    
-                   </div>
-            </div> 
+              </div>
+             </a> 
 
          <% }) %>
 
 
      </main>
+
+    <section id="profile-wrapper" style="display: none; position: absolute; top: 0; height: 100%; width: 100%; z-index: 50; gap: 12px; overflow-y: scroll; overflow-x: hidden;">
+
+        <div class="overlay" style="display: none; position: absolute; inset: 0; height: 100%; width: 100%; z-index: 3; background-color: rgba(128, 128, 128, 0.4);"></div>
+
+        <nav class="profile-content" style=" position: absolute; top: 100%; z-index: 4; border-radius: 50px 50px 0 0; width: 100%; height: 50%; background-color: #050508; touch-action: none; will-change: transform;">
+
+                <div class="scroll-icon" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="width: 40px; height: 4px; background-color: <%= user.userColor %>; border-radius: 2px; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);"></div>    
+
+                <div id="profile-info-cont" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 16px;">
+
+
+                      <img src="placeholder.jpg" alt="" width="100" height="100" style="border-radius: 50%; object-fit: cover;" />
+
+                   
+
+
+                    <h2 style="font-size: 18px; font-weight: 700; color: rgba(237,232,224,.85);"></h2>
+
+                    <p style="font-size: 16px; color: rgba(237,232,224,.45); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
+
+                    <div class="follow-wrapper" style="display: flex; justify-content: space-around; align-items: center; width: 100%; height: 40px;">
+                         
+                      <div class="following-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <p id="following" style="color: white; font-size: 16px; font-weight: bold;"></p>
+                        <span style="color: rgba(237,232,224,.45);">Following</span>
+                      </div>
+                      <div class="followers-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <p id="followers" style="color: white; font-size: 16px; font-weight: bold;"></p>
+                        <span style="color: rgba(237,232,224,.45);">Followers</span>
+
+                      </div>
+                      <div class="posts-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <p id="posts" style="color: white; font-size: 16px; font-weight: bold;"></p>
+                        <span style="color: rgba(237,232,224,.45);">Posts</span>
+                      </div>
+                        
+                    </div>
+
+                    <div class="interact" style="width: 100%; background-color: transparent; margin-top: 10px; display: flex; justify-content: space-evenly; align-items: center;">
+
+                      <a id="link-to-message" href="" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                           <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                           <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
+                      </a>
+                      <a id="link-to-profile" class="stop-fetch" href="" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                           <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                           <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Profile</h2>
+                      </a>
+                      
+
+                    </div>
+
+
+                </div>  
+        </nav>
+        
+    </section>
+
+    <div id="images-expand" style="display: none; background-color: black; position: absolute; top: 0; height: 100%; width: 100%; z-index: 100; overflow-x: scroll;">
+
+            <div id="link-holders" style="position: relative; width: 100%; height: 15%; display: flex; align-items: center; justify-content: space-between; padding: 20px;">
+
+              <button id="close-images-expand" style="border: 1px solid rgba(237,232,224,.2); height: 40px; width: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <ion-icon name="arrow-back-outline" style="color: white; font-size: 1.2rem;"></ion-icon>
+              </button>
+
+               <a id="link-to-post" href="" class="stop-fetch" <% /* eslint-disable-next-line css-propertyvalueexpected */ %>  style="text-decoration: none; display: grid; place-content: center; padding: 15px; height: 40px; width: fit-content; border-radius: 20px; border: 1px solid <%= user.userColor %>; background-color: transparent;">
+                  <h4 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="color: <%= user.userColor %>; font-size: .9rem;">View Post</h4>
+               </a> 
+
+               <h2 id="total-images" class="fs" style="position: absolute; top: 75%; left: 50%; font-size: .9rem; transform: translate(-50%, -50%); color: white;">2 Images</h2>
+
+            </div>
+            <article id="expanded-article" style="width: 100%; height: 85%; display: flex; gap:5px; align-items: center; justify-content: flex-start; overflow-x: auto; overflow-y: hidden; scroll-snap-type: inline mandatory;">
+               
+               
+            </article>
+    </div>  
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -376,6 +486,101 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
 
    const dot = (col) => { return `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${col}; box-shadow:0 0 6px ${col}; animation: throb 1.8s ease-in-out infinite;flex-shrink:0"></div>`; }
    const userColor = '<%= userReq.userColor %>'
+
+  document.querySelectorAll('.likes-cont-event').forEach((btn) => {
+  
+               let debounceTimer = null
+
+               btn.addEventListener('click', (e) => {
+    
+                    e.preventDefault()
+    
+                    const currentActiveState = btn.dataset.liked === 'true' 
+                    const likeIcon = btn.querySelector('.like')
+                    const unlikeIcon = btn.querySelector('.unlike')
+                    const h3Span = btn.querySelector('.like-h3')
+                    const postId = btn.querySelector('.postId-span').textContent
+    
+                    const newLikedState = !currentActiveState
+                 
+                    btn.dataset.liked = (newLikedState).toString()
+    
+                    if (newLikedState) {
+      
+                       likeIcon.style.display = 'block'
+                       likeIcon.style.scale = '1.2'
+                       unlikeIcon.style.display = 'none'
+      
+      
+                    } else {
+                       likeIcon.style.display = 'none'
+                       unlikeIcon.style.display = 'block'
+                       unlikeIcon.style.scale ='1.2'
+     
+                    }
+   
+                     clearTimeout(debounceTimer)
+    
+                    const updateDB = async (postId, btn) => {
+
+                        const currentDataSet = btn.dataset.liked
+                        const payload = { postId: postId, dataset: currentDataSet }
+
+                    try {
+                      
+                      const response = await socket.timeout(5000).volatile.emitWithAck("update-likes", payload)
+           
+                      if (response.success) {
+                        // update Success Instance
+                      if (response.UIStatus == 'like') {
+  
+                         h3Span.textContent = response.newLikesCount
+                         likeIcon.style.display = 'block'
+                         likeIcon.style.scale = '1'
+                         unlikeIcon.style.display = 'none'
+                         console.log(response)
+                       } else {
+                         h3Span.textContent = response.newLikesCount
+                         likeIcon.style.display = 'none'
+                         unlikeIcon.style.display = 'block'
+                         unlikeIcon.style.scale = '1'
+                         console.log('Successfully unliked the post on all fronts')
+                         console.log(response)
+                       }
+                       } else {
+                        // failure instance
+                         likeIcon.style.display = 'none'
+                         unlikeIcon.style.display = 'block'
+                         unlikeIcon.style.scale = '1'
+                         console.log('Likes did not comeThrough')
+                         console.log(response.error)
+                       }
+
+                    } catch (error) {
+
+                         likeIcon.style.display = 'none'
+                         unlikeIcon.style.display = 'block'
+                         unlikeIcon.style.scale = '1'
+                         errorMessage.textContent = 'Connection Failure'
+                         setTimeout(() => {
+                          errorMessage.textContent = ''
+                         }, 1500)
+                      
+                    }    
+
+
+
+                    } 
+
+                 debounceTimer = setTimeout(() => {
+      
+                   updateDB(postId, btn)
+     
+                 }, 500)
+    
+              })
+  })
+  
 
   const followBtn = document.querySelector('.follow-btn')
   const unfollowBtn = document.querySelector('.unfollow-btn')
@@ -549,6 +754,256 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
           
         }
   })
+
+  
+  const postImages = document.querySelectorAll('.post-images')
+  const expandedArticle = document.querySelector('#expanded-article')
+  const expandContainer = document.querySelector('#images-expand')
+  const linkToPost = document.getElementById('link-to-post')
+
+  const modal = document.querySelector('.profile-content')
+
+  postImages.forEach((img) => {
+
+    
+    img.addEventListener('click', (e) => {
+      
+       e.preventDefault();
+
+      
+
+       if (!history.state?.imageExpand) {
+
+        history.pushState( { imageExpand: true}, "", "" )
+       
+       }
+       
+        
+       const articleParent =  e.target.closest('article')
+       const wholePost = e.target.closest('a')
+       const postLink = wholePost.children[0].children[6].textContent
+       const placeholderCont = articleParent.children[0]
+       const imagesArray = Array.from(placeholderCont.children, child => child.textContent)
+       const totalImages = imagesArray.length
+
+       linkToPost.href = `/post/${postLink}` 
+       
+     
+           
+       imagesArray.forEach((img) => {
+           const image = document.createElement('img')
+           image.src = `<%= R2BASE %>/${img}`
+           image.style.width = '98%'
+           image.style.marginInline = '3px'
+           image.style.height = 'auto'
+           image.style.scrollSnapAlign = 'start'
+           image.style.objectFit = 'contain'
+           expandedArticle.appendChild(image)
+       })
+       
+       
+       document.getElementById('total-images').textContent = `${totalImages == 1 ? `${totalImages} Image` : `${totalImages} Images` }`
+       expandContainer.style.display = 'block'
+      
+
+       })
+    })
+ 
+  
+  const closeExpand = document.querySelector('#close-images-expand')
+
+  closeExpand.addEventListener('click', () => {
+
+      expandedArticle.innerHTML = ''
+      expandContainer.style.display = 'none'
+      history.back()
+  })
+
+  window.addEventListener("popstate", (event) => {
+    expandContainer.style.display = 'none'
+    expandedArticle.innerHTML = ''
+    console.log('BackBtn: ' + event.state)
+  })   
+
+  document.querySelectorAll('.info-button').forEach((btn) => {
+    
+      const userReqId = '<%= userReq._id %>'
+      btn.addEventListener('click', (e) => {
+          
+          e.preventDefault()
+
+          // Populate modal with profile info (placeholder for now)
+          const profileInfo = {
+              userName: btn.children[0].textContent,
+              userId: btn.children[7].textContent,
+              userProfilePic: btn.children[5].getAttribute('src'),
+              userHandle: btn.children[4].textContent,
+              userStats: {
+                  posts: btn.children[3].textContent,
+                  followers: btn.children[1].textContent,
+                  following: btn.children[2].textContent
+              } 
+          }
+
+      
+          const profileContainer = document.querySelector('#profile-info-cont')
+          
+          profileContainer.querySelector('img').src = profileInfo.userProfilePic  
+          profileContainer.querySelector('h2').textContent = profileInfo.userName
+          profileContainer.querySelector('p').textContent = profileInfo.userHandle
+          profileContainer.querySelector('#following').textContent = `${profileInfo.userStats.following}`
+          profileContainer.querySelector('#followers').textContent = `${profileInfo.userStats.followers}`
+          profileContainer.querySelector('#posts').textContent = `${profileInfo.userStats.posts}`
+          profileContainer.querySelector('#link-to-message').href = `/inbox/${profileInfo.userId}`
+          profileContainer.querySelector('#link-to-profile').href = `/user/${profileInfo.userId}`
+          
+          if (profileInfo.userId == userReqId) {
+              document.querySelector('.interact').innerHTML = `<a id="link-to-message" href="" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
+                                                               </a>
+                                                               <a id="link-to-profile" class="stop-fetch" href="" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Profile</h2>
+                                                               </a>
+                                                               <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Your Profile</h2>
+                                                               </a>
+                                                              `
+          } else {
+             
+              document.querySelector('.interact').innerHTML = `<a id="link-to-message" href="/inbox/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M20 1.999H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2v-12c0-1.103-.897-2-2-2zm-6 11H7v-2h7v2zm3-4H7v-2h10v2z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Message</h2>
+                                                               </a>
+                                                               <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Profile</h2>
+                                                               </a>
+                                                               <a id="link-to-profile" class="stop-fetch" href="/user/${profileInfo.userId}" class="stop-fetch" style="text-decoration: none; display: none; flex-flow: column nowrap; justify-content: center; align-items: center;">
+                                                                 <svg <% /* eslint-disable-next-line css-propertyvalueexpected */ %> xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" style="fill: <%= user.userColor %>;transform: msFilter"><path d="M19 2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h4l3 3 3-3h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 3c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zM7.177 16c.558-1.723 2.496-3 4.823-3s4.266 1.277 4.823 3H7.177z"></path></svg>
+                                                                 <h3 <% /* eslint-disable-next-line css-propertyvalueexpected */ %> style="font-size: .9rem; color: <%= user.userColor %>;">Your Profile</h2>
+                                                               </a>
+                                                              `
+             
+
+          }
+
+          document.querySelector('.overlay').style.display = 'block'
+          document.getElementById('profile-wrapper').style.display = 'block'
+          setTimeout(() => {
+              modal.style.transition = 'top 0.3s ease-out'
+              modal.style.top = '50%'
+      
+          }, 200)
+      })
+
+    })
+
+  let startY = 0
+  let currentY = 0
+  let dragging = false
+
+
+
+  modal.addEventListener('touchstart', (e) => {
+       startY = e.touches[0].clientY
+       dragging = true
+
+       modal.style.transition = 'none'
+  })
+
+  modal.addEventListener('touchmove', (e) => {
+      if(!dragging) return;
+      currentY = e.touches[0].clientY
+      const deltaY = currentY - startY
+
+      if (deltaY > 0) {  // ONLY MOVE DOWNWARD
+           
+           modal.style.transform = `translateY(${deltaY}px)`
+           // fade background
+           const opacity = 0.4 - deltaY / 500
+           document.querySelector('.overlay').style.background = `rgba(128, 128, 128, ${opacity})`
+
+      }
+
+  })
+  
+  modal.addEventListener('touchend', (e) => {
+       dragging = false
+       const deltaY = currentY - startY
+
+       if (deltaY > 100) {
+           modal.style.transition = 'top 0.3s ease-out'
+           modal.style.top = '100%'
+           document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0)` 
+           setTimeout(() => { // reset all tripped props
+               document.getElementById('profile-wrapper').style.display = 'none'
+               document.querySelector('.overlay').style.display = 'none'
+               document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0.4)`    
+               modal.style.transform = 'translateY(0px)'
+           }, 200)
+            
+       } else {
+            modal.style.transition = 'transform 0.3s ease-out'
+            modal.style.transform = `translateY(0)`
+            document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0.4)`  
+       }
+
+  })
+
+  document.querySelector('.overlay').addEventListener('click', () => {
+        modal.style.transition = 'top 0.3s ease-out'
+        modal.style.top = '100%'
+        document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0)`
+        setTimeout(() => {
+            document.getElementById('profile-wrapper').style.display = 'none'
+            document.querySelector('.overlay').style.display = 'none'
+            document.querySelector('.overlay').style.background = `rgba(128, 128, 128, 0.4)`
+            modal.style.top = '100%'
+        }, 200)
+    })
+
+  const observerOptions = {
+       root: null,
+       rootMargin: '0px',
+       threshold: 0.1
+  }
+  
+  const videoObserver = new IntersectionObserver((entries, observer) => {
+
+     entries.forEach(entry => {
+       const container = entry.target
+       const video = container.querySelector('video')
+       const videoUrl = video.getAttribute('data-src')
+  
+         if (entry.isIntersecting) {
+
+             if (!video.src) {
+              video.src = videoUrl
+             }
+
+             video.preload = 'auto'
+            //  video.play().catch(err => console.log('Video play error:', err))
+
+         } else {
+            
+             video.pause()
+             // don't remove src attribute from video
+             video.preload = 'none'
+                                            // Forces browser to flush the buffer and release memory
+         }
+     })
+}, observerOptions)
+
+  document.querySelectorAll('.glass').forEach(container => {
+     videoObserver.observe(container)
+  })
+
+
+
+
 
 </script>     
 

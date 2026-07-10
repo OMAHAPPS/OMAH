@@ -51,6 +51,7 @@ const server = createServer(app)
 const mongoose = require('mongoose')
 const { count } = require('node:console')
 const Notify = require('./models/notifications')
+const { title } = require('node:process')
 
 const PORT = 4000
 
@@ -617,10 +618,14 @@ io.on('connection', (socket) => {
                              if (recipientUser && recipientUser.pushSubscriptions && recipientUser.pushSubscriptions.length > 0) {
 
                                     const payload = JSON.stringify({
+                                             type: 'MESSAGE',
                                              title: `New Message from ${senderUserName}`,
                                              body: messageText,
                                              icon: senderDP,
-                                             data: { senderId: senderId }
+                                             data: {
+                                                 route: 'inbox',
+                                                 senderId: senderId 
+                                             }
                                         })
 
                                 // Loop and fire push notification alerts to all their saved devices concurrent streams
@@ -699,42 +704,6 @@ io.on('connection', (socket) => {
     })
     
    
-
-    // socket.on('message_delivered', async ({ msgId, roomId, userId }) => {
-
-    //      const originalSenderId = roomId.replace('dm_', '').split('_').find(uid => uid !== userId)
-    //      const emitPayload = { msgId: msgId, roomId: roomId }
-    //      const newStatus = 'delivered'
-
-    //      const targetUpdateDoc = await Chat.findOne({ roomId, roomId, "messages.id": msgId }, { "messages.$": 1 })
-    //      const acualMsg = targetUpdateDoc.messages[0]
-
-    //      if (acualMsg.status === newStatus) {
-
-    //         console.log('SKIPPED MULTIPLE UPDATES')
-    //         return;
-
-    //      } else {
-
-    //          try {
-    
-    //             await Chat.findOneAndUpdate({ roomId: roomId, "messages.id": msgId }, { $set: { "messages.$[elem].status": newStatus } }, { arrayFilters: [{ "elem.id": msgId }] })
-                
-    //             socket.to(roomId).emit('message_delivered_receipt', emitPayload)
-                
-    //             console.log('Updated Messages to Delivered Once')
-                
-    //          } catch (error) {
-    
-    //             console.log('Failed to update a Delivered/ Msg')
-    
-    //             socket.to(roomId).emit('message_delivered_receipt', emitPayload)
-                
-    //          }
-
-    //      }
-
-    // })
 
     socket.on('typing', (data) => {
         socket.to(data.receiverId).emit('typing-receipt', data.senderId )
@@ -1412,9 +1381,12 @@ app.post('/post', async (req, res) => {
 
      const { userid, userrealm, poststring, imagesrc, video } = req.body
      
-     const userData = await Omaruser.findOne({ _id: userid })
+     const userData = await Omaruser.findOne({ _id: userid }).lean()
      const username = userData.userName
      const userHandle = userData.userHandle !== 'none' ? userData.userHandle : 'none'
+     const R2Base = process.env.R2_PUBLIC_BASE_URL
+     const senderDP = userData.userDP !== 'none' ? `${R2Base}/${userData.userDP}` : `${R2Base}/feed-images/1781109238815-Xikika_ICON.jpeg`
+
 
      const postObject = {
                  userId: userid,
@@ -1428,9 +1400,76 @@ app.post('/post', async (req, res) => {
      
      
      
-     const post =  new Post(postObject).save().then((post) => { 
-         console.log(`New Post Created By: ${post.userName}`)
-         res.json({ success: true, post: post })
+     const post =  new Post(postObject).save().then( async (post) => {      // ADD NOTIFICATIONS LOGIC
+          
+            console.log(`New Post Created By: ${post.userName}`)
+            res.json({ success: true, post: post })      // SEND CONFIRMATION TO USER THAT POST WAS CREATED AVOID DELAY FROM NOTIFICATIONS LOGIC
+            
+            const postString = post.post != '' ? post.post : 'New Post'
+
+         const usersToNotify = await Notification.aggregate([
+                     { $match: { parentId: post.userId } },
+                     { $unwind: "$notify" },
+                     { $group: { _id: null, usersRequesting: { $addToSet: "$notify" } } },
+                     { $project: { _id: 0, usersRequesting: 1 } }
+         ])
+         
+         const userIdArray = usersToNotify[0]?.usersRequesting || []
+
+         if (userIdArray.length === 0) {
+
+            console.log('NO USERS TO NOTIFY')
+            return;
+
+         } else {   // TRY TO NOTIFY ALL USERS WITH PUSH SUBSCRIPTIONS OBJECTS
+
+            const allUsersToNotify = await Omaruser.find({ _id: { $in: userIdArray } }).select('userName pushSubscriptions').lean()
+
+            allUsersToNotify.forEach((user) => {
+
+                 if (user.pushSubscriptions && user.pushSubscriptions.length > 0) {  // THE USERS HAVE ACTIVE NOT SUBS
+
+                        const payload = JSON.stringify({
+                            type: 'POST',
+                            title: `${post.userName} Added a new Post`,
+                            body: postString,
+                            icon: senderDP,
+                            data: {
+                                route: 'post', 
+                                postId: String(post._id) 
+                            }
+                        })
+
+                        user.pushSubscriptions.forEach((sub) => {
+                              
+                             webpush.sendNotification(sub, payload)
+                                    .catch(async (err) => { // 🧹 AUTOMATIC DATABASE CLEANUP: Remove invalid/expired tokens (Error 404 or 410)
+
+                                       if (err.statusCode === 404 || err.statusCode === 410) {
+
+                                           console.log(`🧹 Removing expired subscription endpoint for user: ${recipientId}`)
+              
+                                           await Omaruser.updateOne({ _id: recipientId }, { $pull: { pushSubscriptions: { endpoint: sub.endpoint } } })
+
+                                        } else {
+
+                                           console.error("Unexpected Web Push delivery glitch:", err)
+                                        }
+
+                                    })
+
+                        })
+
+
+
+
+                 }
+            })
+
+         }
+
+
+
      }).catch((err) => {
          console.log(err)
          res.json({ success: false })
@@ -1593,10 +1632,53 @@ app.get('/user/:id', notLoggedInCheck,  async (req, res) => {
     const R2baseUrl = process.env.R2_PUBLIC_BASE_URL
     const notiActive = false
 
+    const requiredUsseArray = userPosts.map((post) => post.userId)
+    
+    const allUsers = await Omaruser.find({ _id: { $in: requiredUsseArray  } }).select('totalFollowers totalFollowing totalPosts userDP userHandle verified')
+    
+     const postDataArray = []
+
+     userPosts.forEach((post) => {
+
+          const userId = post.userId
+
+          const posterInfoArray = allUsers.filter((user) => user.id == userId )
+          const posterInfo = posterInfoArray[0]
+         
+         const newPostObject = {
+             postId: post._id,
+             userId: post.userId,
+             createdAt: post.createdAt,  
+             videoUrl: post.videoUrl,
+             images: post.images,
+             likes: post.likes,
+             interactions: post.interactions,
+             replies: post.replies,
+             userHandle: post.userHandle,
+             post: post.post,
+             userName: post.userName,
+             poster: {
+                 totalFollowers: posterInfo.totalFollowers,
+                 totalFollowing: posterInfo.totalFollowing,
+                 totalPosts: posterInfo.totalPosts,
+                 userDP: posterInfo.userDP,
+                 userHandle: posterInfo.userHandle,
+                 verified: posterInfo.verified
+             }
+
+         }
+
+       postDataArray.push(newPostObject)
+        
+
+        
+        
+     })
+
 
     const userReqIsFollowingRec = await Following.findOne({ parentId: userReq._id, following: userid })
 
-    res.render('userposts', { userReq, following: userReqIsFollowingRec,  posts: userPosts, user, R2BASE: R2baseUrl, origin: postOriginId, notiActive } )
+    res.render('userposts', { userReq, following: userReqIsFollowingRec,  posts: postDataArray, user, R2BASE: R2baseUrl, origin: postOriginId, notiActive } )
 })
 
 app.get('/group', notLoggedInCheck, async (req, res) => {
