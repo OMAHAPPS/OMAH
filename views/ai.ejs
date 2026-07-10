@@ -133,7 +133,7 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
     
     <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 95%; z-index: 4; padding:10px 14px 10px; border-top:1px solid rgba(255,255,255,.05); display:flex;gap:8px;flex-shrink:0;background:rgba(5,5,8,.8);">
 
-           <input id="ai-in" type="text" placeholder="Speak to <%= user.userRealm %>..." maxlength="400" style="flex:1;padding:12px 16px;border-radius:14px;font-size:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)" onkeydown=""/>
+           <input id="ai-in" type="text" placeholder="Ask Xikika AI..." maxlength="400" style="flex:1;padding:12px 16px;border-radius:14px;font-size:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)" onkeydown=""/>
 
            <button id="submit-to-ai" onclick="sendAI()" <% /* eslint-disable-next-line css-propertyvalueexpected */ %> class="tap" style="display: none; padding:12px 18px;border-radius:14px;font-size:16px;font-weight:700;background: <%= user.userColor %>20; border:1px solid <%= user.userColor %>45; color: <%= user.userColor %>;">→</button>
   
