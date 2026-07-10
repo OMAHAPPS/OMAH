@@ -1432,7 +1432,7 @@ app.post('/post', async (req, res) => {
                         const payload = JSON.stringify({
                             type: 'POST',
                             title: `${post.userName} Added a new Post`,
-                            body: postString,
+                            body: postString.length > 45 ? `${postString.slice(0, 45)}...` : postString,
                             icon: senderDP,
                             data: {
                                 route: 'post', 

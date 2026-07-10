@@ -43,7 +43,7 @@ self.addEventListener('push', (event) => {
       case 'MESSAGE':
         event.waitUntil(self.registration.showNotification(payload.title, optionsMessage));
         break;
-      case 'NEW_POST':
+      case 'POST':
         event.waitUntil(self.registration.showNotification(payload.title, optionsPost));
         break;
       default:
