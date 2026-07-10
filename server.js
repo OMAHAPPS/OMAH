@@ -1436,7 +1436,7 @@ app.post('/post', async (req, res) => {
                             icon: senderDP,
                             data: {
                                 route: 'post', 
-                                postId: String(post._id) 
+                                postId: `${post._id}` 
                             }
                         })
 
