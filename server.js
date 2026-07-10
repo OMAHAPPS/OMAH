@@ -1405,7 +1405,20 @@ app.post('/post', async (req, res) => {
             console.log(`New Post Created By: ${post.userName}`)
             res.json({ success: true, post: post })      // SEND CONFIRMATION TO USER THAT POST WAS CREATED AVOID DELAY FROM NOTIFICATIONS LOGIC
             
-            const postString = post.post != '' ? post.post : 'New Post'
+            const postString = (post) => {
+                
+                if (post.post !== '') {
+
+                    const slicedString = post.post.slice(0, 40)
+
+                    return `${slicedString}...`
+                } else {
+
+                    return 'New Post'
+                }    
+             
+            } 
+
 
             const usersToNotify = await Notification.aggregate([
                      { $match: { parentId: post.userId } },
@@ -1432,7 +1445,7 @@ app.post('/post', async (req, res) => {
                         const payload = JSON.stringify({
                             type: 'POST',
                             title: `${post.userName} Added a new Post`,
-                            body: postString,
+                            body: postString(),
                             icon: senderDP,
                             data: {
                                 route: 'post', 
