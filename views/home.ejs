@@ -131,9 +131,9 @@ input,textarea{font-family:inherit;border:none;outline:none;background:none;colo
             <% const topPosts = posts.slice(0, 3) %>
             <% const r2Base = R2BASE %>
                 
-                  <img src="<%= topPosts[0].poster.userDP !== 'none' ? `${r2Base}/${topPosts[0].poster.userDP}` : 'placeholder.jpg' %>" alt="" width="25" height="25" style="border-radius: 50%; object-fit: cover;" />
-                  <img src="<%= topPosts[0].poster.userDP !== 'none' ? `${r2Base}/${topPosts[1].poster.userDP}` : 'placeholder.jpg' %>" alt="" width="25" height="25" style="position: absolute; z-index: 2; left: 15px; border-radius: 50%; object-fit: cover;" />
-                  <img src="<%= topPosts[0].poster.userDP !== 'none' ? `${r2Base}/${topPosts[2].poster.userDP}` : 'placeholder.jpg' %>" alt="" width="25" height="25" style="position: absolute; z-index: 3; left: 35px; border-radius: 50%; object-fit: cover;" />
+                  <img src="<%= topPosts[0].poster.userDP !== 'none' ? `${r2Base}/${topPosts[0].poster.userDP}` : '/placeholder.jpg' %>" alt="" width="25" height="25" style="border-radius: 50%; object-fit: cover;" />
+                  <img src="<%= topPosts[0].poster.userDP !== 'none' ? `${r2Base}/${topPosts[1].poster.userDP}` : '/placeholder.jpg' %>" alt="" width="25" height="25" style="position: absolute; z-index: 2; left: 15px; border-radius: 50%; object-fit: cover;" />
+                  <img src="<%= topPosts[0].poster.userDP !== 'none' ? `${r2Base}/${topPosts[2].poster.userDP}` : '/placeholder.jpg' %>" alt="" width="25" height="25" style="position: absolute; z-index: 3; left: 35px; border-radius: 50%; object-fit: cover;" />
                      
            </div>
            <h2 style="font-size: 12px; margin-left: 5px; font-weight: bold; color: rgba(237, 232, 224, .85);">New Feed</h2>
